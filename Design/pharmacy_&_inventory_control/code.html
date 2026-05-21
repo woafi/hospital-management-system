@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pharmacy &amp; Inventory Control | HMS</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-[#0d141b] dark:text-slate-100 min-h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-[#e7edf3] dark:border-slate-800 bg-white dark:bg-background-dark px-6 lg:px-10 py-3 sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3 text-primary">
+<div class="size-8 bg-primary/10 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-2xl">vaccines</span>
+</div>
+<h2 class="text-[#0d141b] dark:text-white text-lg font-bold leading-tight tracking-tight">HMS Pharmacy</h2>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-primary text-sm font-semibold border-b-2 border-primary pb-1" href="#">Dashboard</a>
+<a class="text-[#4c739a] dark:text-slate-400 text-sm font-medium hover:text-primary transition-colors" href="#">Inventory</a>
+<a class="text-[#4c739a] dark:text-slate-400 text-sm font-medium hover:text-primary transition-colors" href="#">Dispensing</a>
+<a class="text-[#4c739a] dark:text-slate-400 text-sm font-medium hover:text-primary transition-colors" href="#">Reports</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden sm:flex flex-col items-end mr-4">
+<p class="text-xs text-[#4c739a] dark:text-slate-400 font-medium">Logged in as</p>
+<p class="text-sm font-bold text-[#0d141b] dark:text-white">Sr. Pharmacist James</p>
+</div>
+<button class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-[#4c739a] hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="size-10 rounded-full border-2 border-primary/20 bg-center bg-cover" data-alt="Pharmacist professional profile portrait" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDgzyaDHCrDVXMebIhCt_-oB4SA0ma79WtH-UEMbyU_DqLMmcCgxoVHbRbuygBC4STjCD8DF_WpDZLvC_5_PSlvn_F3w2PkdxkFKTQ4u7GgZWQY0pz1HqxaDfhh7rWyTA6-BEl3bS9OqySBg8K_Jk3uoyDVUfJ2UjHrUeCmmDuxlzSWvEdzVEpM36Z2OJgJC_cFWssg0eLYN80Ya860q23VS38zn6KyjKQQr-czNEbvWtWGyVBvF6vOgYuLE4PrSI1Q6ySz-7V1TiDn");'></div>
+</div>
+</header>
+<!-- Main Content Layout -->
+<main class="flex-1 flex flex-col lg:flex-row gap-6 p-6 lg:p-8 max-w-[1600px] mx-auto w-full">
+<!-- Left Side: Inventory & Search -->
+<div class="flex-1 flex flex-col gap-6">
+<!-- Summary Stats -->
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+<div class="bg-white dark:bg-slate-900 rounded-xl p-5 border border-[#cfdbe7] dark:border-slate-800 shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<span class="material-symbols-outlined text-primary bg-primary/10 p-2 rounded-lg">inventory_2</span>
+<span class="text-[#078838] text-xs font-bold bg-[#078838]/10 px-2 py-1 rounded-full">+2.4%</span>
+</div>
+<p class="text-[#4c739a] dark:text-slate-400 text-sm font-medium">Total SKUs</p>
+<p class="text-[#0d141b] dark:text-white text-2xl font-bold">1,240</p>
+</div>
+<div class="bg-white dark:bg-slate-900 rounded-xl p-5 border border-[#cfdbe7] dark:border-slate-800 shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<span class="material-symbols-outlined text-red-500 bg-red-500/10 p-2 rounded-lg">warning</span>
+<span class="text-red-500 text-xs font-bold bg-red-500/10 px-2 py-1 rounded-full">Critical</span>
+</div>
+<p class="text-[#4c739a] dark:text-slate-400 text-sm font-medium">Low Stock Alerts</p>
+<p class="text-[#0d141b] dark:text-white text-2xl font-bold text-red-500">12</p>
+</div>
+<div class="bg-white dark:bg-slate-900 rounded-xl p-5 border border-[#cfdbe7] dark:border-slate-800 shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<span class="material-symbols-outlined text-orange-500 bg-orange-500/10 p-2 rounded-lg">event_busy</span>
+<span class="text-orange-500 text-xs font-bold bg-orange-500/10 px-2 py-1 rounded-full">30 Days</span>
+</div>
+<p class="text-[#4c739a] dark:text-slate-400 text-sm font-medium">Expiring Soon</p>
+<p class="text-[#0d141b] dark:text-white text-2xl font-bold">28</p>
+</div>
+<div class="bg-white dark:bg-slate-900 rounded-xl p-5 border border-[#cfdbe7] dark:border-slate-800 shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<span class="material-symbols-outlined text-green-600 bg-green-600/10 p-2 rounded-lg">receipt_long</span>
+<span class="text-green-600 text-xs font-bold bg-green-600/10 px-2 py-1 rounded-full">+12%</span>
+</div>
+<p class="text-[#4c739a] dark:text-slate-400 text-sm font-medium">Daily Dispensed</p>
+<p class="text-[#0d141b] dark:text-white text-2xl font-bold">156</p>
+</div>
+</div>
+<!-- Inventory Controls & Table -->
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-[#cfdbe7] dark:border-slate-800 shadow-sm flex flex-col overflow-hidden">
+<div class="p-4 border-b border-[#cfdbe7] dark:border-slate-800 flex flex-wrap items-center justify-between gap-4">
+<div class="flex-1 min-w-[300px]">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#4c739a] group-focus-within:text-primary transition-colors">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border-none rounded-lg focus:ring-2 focus:ring-primary text-sm" placeholder="Search medicines by name, batch, or SKU..." type="text"/>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="flex items-center gap-2 px-4 py-2 bg-slate-50 dark:bg-slate-800 rounded-lg text-sm font-semibold text-[#0d141b] dark:text-white hover:bg-slate-100 transition-colors border border-slate-200 dark:border-slate-700">
+<span class="material-symbols-outlined text-lg">filter_list</span>
+                            Filter
+                        </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-primary/90 transition-all shadow-sm">
+<span class="material-symbols-outlined text-lg">add_circle</span>
+                            Add Medicine
+                        </button>
+</div>
+</div>
+<!-- Table Container -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-slate-50 dark:bg-slate-800/50 border-b border-[#cfdbe7] dark:border-slate-800">
+<th class="px-6 py-4 text-xs font-bold text-[#4c739a] dark:text-slate-400 uppercase tracking-wider">Medicine Name</th>
+<th class="px-6 py-4 text-xs font-bold text-[#4c739a] dark:text-slate-400 uppercase tracking-wider">Batch #</th>
+<th class="px-6 py-4 text-xs font-bold text-[#4c739a] dark:text-slate-400 uppercase tracking-wider">Expiry</th>
+<th class="px-6 py-4 text-xs font-bold text-[#4c739a] dark:text-slate-400 uppercase tracking-wider text-right">Stock</th>
+<th class="px-6 py-4 text-xs font-bold text-[#4c739a] dark:text-slate-400 uppercase tracking-wider text-center">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
+<td class="px-6 py-4">
+<p class="text-sm font-bold text-[#0d141b] dark:text-white">Amoxicillin 500mg</p>
+<p class="text-xs text-[#4c739a]">Antibiotic • SKU-AMX-001</p>
+</td>
+<td class="px-6 py-4 text-sm font-medium text-slate-600 dark:text-slate-300">BCH-9921</td>
+<td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">12/2025</td>
+<td class="px-6 py-4 text-sm font-bold text-right">450 Units</td>
+<td class="px-6 py-4 text-center">
+<span class="px-2 py-1 rounded bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-bold uppercase">In Stock</span>
+</td>
+</tr>
+<tr class="bg-red-50 dark:bg-red-900/10 hover:bg-red-100 transition-colors">
+<td class="px-6 py-4">
+<p class="text-sm font-bold text-[#0d141b] dark:text-white">Paracetamol 650mg</p>
+<p class="text-xs text-[#4c739a]">Analgesic • SKU-PCM-022</p>
+</td>
+<td class="px-6 py-4 text-sm font-medium text-slate-600 dark:text-slate-300">BCH-4412</td>
+<td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">03/2026</td>
+<td class="px-6 py-4 text-sm font-bold text-right text-red-600">8 Units</td>
+<td class="px-6 py-4 text-center">
+<span class="px-2 py-1 rounded bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 text-xs font-bold uppercase">Low Stock</span>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
+<td class="px-6 py-4">
+<p class="text-sm font-bold text-[#0d141b] dark:text-white">Metformin 500mg</p>
+<p class="text-xs text-[#4c739a]">Anti-diabetic • SKU-MTF-045</p>
+</td>
+<td class="px-6 py-4 text-sm font-medium text-slate-600 dark:text-slate-300">BCH-8832</td>
+<td class="px-6 py-4 text-sm text-orange-600 dark:text-orange-400 font-bold">04/2024</td>
+<td class="px-6 py-4 text-sm font-bold text-right">1,200 Units</td>
+<td class="px-6 py-4 text-center">
+<span class="px-2 py-1 rounded bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 text-xs font-bold uppercase">Expiring Soon</span>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
+<td class="px-6 py-4">
+<p class="text-sm font-bold text-[#0d141b] dark:text-white">Atorvastatin 10mg</p>
+<p class="text-xs text-[#4c739a]">Statins • SKU-ATR-009</p>
+</td>
+<td class="px-6 py-4 text-sm font-medium text-slate-600 dark:text-slate-300">BCH-1012</td>
+<td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">09/2026</td>
+<td class="px-6 py-4 text-sm font-bold text-right">320 Units</td>
+<td class="px-6 py-4 text-center">
+<span class="px-2 py-1 rounded bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-bold uppercase">In Stock</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Footer -->
+<div class="p-4 border-t border-[#cfdbe7] dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/30">
+<p class="text-xs text-[#4c739a] dark:text-slate-400">Showing 1 to 4 of 1,240 medicines</p>
+<div class="flex gap-1">
+<button class="size-8 flex items-center justify-center rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300"><span class="material-symbols-outlined text-sm">chevron_left</span></button>
+<button class="size-8 flex items-center justify-center rounded bg-primary text-white text-xs font-bold">1</button>
+<button class="size-8 flex items-center justify-center rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold">2</button>
+<button class="size-8 flex items-center justify-center rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold">3</button>
+<button class="size-8 flex items-center justify-center rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300"><span class="material-symbols-outlined text-sm">chevron_right</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Side: Prescription Dispensing Sidebar -->
+<div class="w-full lg:w-[400px] flex flex-col gap-6">
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-[#cfdbe7] dark:border-slate-800 shadow-xl overflow-hidden flex flex-col h-full sticky top-24">
+<div class="bg-primary p-6 text-white">
+<div class="flex items-center gap-3 mb-2">
+<span class="material-symbols-outlined">assignment_turned_in</span>
+<h3 class="text-xl font-bold">Prescription Dispensing</h3>
+</div>
+<p class="text-primary-100 text-sm opacity-90">Verify active prescriptions and bill patient</p>
+</div>
+<div class="p-6 flex-1 flex flex-col gap-6 overflow-y-auto max-h-[calc(100vh-350px)]">
+<!-- Patient Search Step -->
+<div class="flex flex-col gap-2">
+<label class="text-xs font-bold text-[#4c739a] dark:text-slate-400 uppercase tracking-wider">Patient Identification</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-primary">person_search</span>
+<input class="w-full pl-10 pr-4 py-3 bg-primary/5 dark:bg-slate-800 border-2 border-primary/20 rounded-xl focus:ring-primary focus:border-primary text-sm font-medium" placeholder="Enter Patient ID / MRN (e.g. #7721)" type="text" value="#7721-JACKSON"/>
+</div>
+</div>
+<!-- Active Prescriptions List -->
+<div class="flex flex-col gap-4">
+<div class="flex justify-between items-center">
+<h4 class="text-sm font-bold text-[#0d141b] dark:text-white">Active Prescription (2 items)</h4>
+<span class="text-[10px] text-green-600 font-bold px-2 py-0.5 bg-green-100 rounded-full">VERIFIED DR. SMITH</span>
+</div>
+<div class="space-y-3">
+<!-- Item 1 -->
+<div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 group">
+<div class="flex justify-between items-start mb-2">
+<div>
+<p class="text-sm font-bold text-[#0d141b] dark:text-white">Amoxicillin 500mg</p>
+<p class="text-xs text-slate-500">1-0-1 | 5 Days (10 Caps)</p>
+</div>
+<span class="material-symbols-outlined text-green-500 text-lg">check_circle</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1">
+<span class="text-[10px] font-bold text-[#4c739a]">STOCK:</span>
+<span class="text-[10px] font-bold text-green-600">450 AVAILABLE</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="size-6 rounded bg-slate-200 dark:bg-slate-700 flex items-center justify-center hover:bg-primary hover:text-white transition-all text-xs">-</button>
+<span class="text-sm font-bold w-4 text-center">10</span>
+<button class="size-6 rounded bg-slate-200 dark:bg-slate-700 flex items-center justify-center hover:bg-primary hover:text-white transition-all text-xs">+</button>
+</div>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="p-4 rounded-xl border-2 border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-900/10">
+<div class="flex justify-between items-start mb-2">
+<div>
+<p class="text-sm font-bold text-[#0d141b] dark:text-white">Paracetamol 650mg</p>
+<p class="text-xs text-slate-500">SOS | 3 Days (6 Tabs)</p>
+</div>
+<span class="material-symbols-outlined text-red-500 text-lg">error</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1">
+<span class="text-[10px] font-bold text-red-600 uppercase tracking-tighter">LOW STOCK ALERT (8 LEFT)</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="size-6 rounded bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-xs">-</button>
+<span class="text-sm font-bold w-4 text-center">6</span>
+<button class="size-6 rounded bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-xs">+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Billing Summary -->
+<div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-800 space-y-2">
+<div class="flex justify-between text-xs text-slate-500 font-medium">
+<span>Subtotal</span>
+<span>$42.50</span>
+</div>
+<div class="flex justify-between text-xs text-slate-500 font-medium">
+<span>Tax (5%)</span>
+<span>$2.12</span>
+</div>
+<div class="flex justify-between text-lg font-bold text-[#0d141b] dark:text-white pt-2">
+<span>Total Payable</span>
+<span class="text-primary">$44.62</span>
+</div>
+</div>
+</div>
+<div class="p-6 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-800">
+<button class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-3 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined">point_of_sale</span>
+                        Verify &amp; Generate Bill
+                    </button>
+<p class="text-[10px] text-center text-[#4c739a] mt-3 font-medium uppercase tracking-widest">Digital Prescription Copy will be sent to Patient</p>
+</div>
+</div>
+<!-- Quick Shortcuts Panel -->
+<div class="bg-white dark:bg-slate-900 p-4 rounded-xl border border-[#cfdbe7] dark:border-slate-800">
+<p class="text-xs font-bold text-[#4c739a] uppercase mb-3">System Hotkeys</p>
+<div class="grid grid-cols-2 gap-2">
+<div class="flex items-center justify-between p-2 bg-slate-50 dark:bg-slate-800 rounded border border-slate-100 dark:border-slate-700">
+<span class="text-[10px] font-bold">Search</span>
+<kbd class="px-1.5 py-0.5 rounded bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-[9px] font-mono shadow-sm">Ctrl+F</kbd>
+</div>
+<div class="flex items-center justify-between p-2 bg-slate-50 dark:bg-slate-800 rounded border border-slate-100 dark:border-slate-700">
+<span class="text-[10px] font-bold">Billing</span>
+<kbd class="px-1.5 py-0.5 rounded bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-[9px] font-mono shadow-sm">Enter</kbd>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Expiry Alert Bar (Floating bottom notification example) -->
+<div class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[#101922] text-white px-6 py-3 rounded-full flex items-center gap-4 shadow-2xl z-[100] border border-slate-700/50 max-w-lg w-full">
+<div class="size-8 bg-orange-500 rounded-full flex items-center justify-center animate-pulse">
+<span class="material-symbols-outlined text-sm">notifications_active</span>
+</div>
+<p class="text-sm font-medium truncate flex-1">
+<span class="font-bold text-orange-400">Inventory Alert:</span> 28 items reaching expiry within 30 days.
+        </p>
+<button class="text-xs font-bold text-primary hover:underline">Review All</button>
+<button class="material-symbols-outlined text-slate-500 hover:text-white transition-colors">close</button>
+</div>
+</body></html>

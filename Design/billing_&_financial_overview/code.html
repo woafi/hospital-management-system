@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>HMS Billing &amp; Financial Overview</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+<div class="flex h-screen flex-col">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 py-3">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3">
+<div class="bg-primary p-2 rounded-lg text-white">
+<span class="material-symbols-outlined block">account_balance_wallet</span>
+</div>
+<h1 class="text-lg font-bold tracking-tight">HMS Finance</h1>
+</div>
+<div class="hidden md:flex items-center gap-6">
+<a class="text-sm font-medium text-primary border-b-2 border-primary pb-1" href="#">Dashboard</a>
+<a class="text-sm font-medium text-slate-500 hover:text-slate-900 dark:hover:text-white" href="#">Invoices</a>
+<a class="text-sm font-medium text-slate-500 hover:text-slate-900 dark:hover:text-white" href="#">Insurance Claims</a>
+<a class="text-sm font-medium text-slate-500 hover:text-slate-900 dark:hover:text-white" href="#">Reports</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+<input class="pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-sm w-64 focus:ring-2 focus:ring-primary" placeholder="Search UHID or Name" type="text"/>
+</div>
+<button class="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg text-slate-600 dark:text-slate-300">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-slate-300 overflow-hidden" data-alt="User profile avatar circle">
+<img alt="Admin Profile" data-alt="Headshot of hospital administration staff member" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDEDQWL71SG0aDOQ5_-iAc6pP32IsI6F7wQ1QsIgPxhPVTr1foJa8JJbiFFvCThtcELWryPyf-KOJNPfSS1gcjKQpMSAHrrsx2DUdVrr-z6teGP6ZyBV-Qh0TQkDBV_fnNk5X_ROFiJfgqtqou0znI6G2DBrV5NxiFRIHEfVDj-YsMKNupj88pNSoAFpAmeEP_Le2t461ppDoXFUrsGYgEieAM9J3vApsT04qaaVFxWZBNpJJRnNyXgiKOuxVzfSvsSI7bzfk75I3zt"/>
+</div>
+</div>
+</header>
+<main class="flex-1 flex overflow-hidden">
+<!-- Left Sidebar Navigation -->
+<aside class="w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 flex flex-col gap-2 overflow-y-auto">
+<div class="mb-4 px-2">
+<p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Main Menu</p>
+</div>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm font-medium">Overview</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">outpatient</span>
+<span class="text-sm font-medium">OPD Billing</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">inpatient</span>
+<span class="text-sm font-medium">IPD Billing</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="text-sm font-medium">Payment Logs</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">account_balance</span>
+<span class="text-sm font-medium">Ledgers</span>
+</a>
+<div class="mt-auto p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+<p class="text-xs text-slate-500 mb-1">Shift Revenue</p>
+<p class="text-lg font-bold">$12,480.00</p>
+<button class="mt-3 w-full py-2 bg-white dark:bg-slate-700 text-xs font-bold rounded shadow-sm border border-slate-200 dark:border-slate-600">Reconcile Now</button>
+</div>
+</aside>
+<!-- Dashboard Content -->
+<section class="flex-1 overflow-y-auto p-6 bg-background-light dark:bg-background-dark">
+<!-- Header Stats -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+<div class="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<span class="text-sm font-medium text-slate-500">Pending Revenue</span>
+<span class="text-emerald-500 text-xs font-bold">+12%</span>
+</div>
+<h3 class="text-2xl font-bold">$42,500.20</h3>
+<p class="text-xs text-slate-400 mt-1">142 Unsettled Bills</p>
+</div>
+<div class="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<span class="text-sm font-medium text-slate-500">Insurance Outstanding</span>
+<span class="text-emerald-500 text-xs font-bold">+5.2%</span>
+</div>
+<h3 class="text-2xl font-bold">$18,200.00</h3>
+<p class="text-xs text-slate-400 mt-1">45 Awaiting Approval</p>
+</div>
+<div class="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<span class="text-sm font-medium text-slate-500">Daily Collections</span>
+<span class="text-rose-500 text-xs font-bold">-2.1%</span>
+</div>
+<h3 class="text-2xl font-bold">$9,840.45</h3>
+<p class="text-xs text-slate-400 mt-1">8:00 AM - 4:00 PM</p>
+</div>
+</div>
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
+<!-- Billing Queue -->
+<div class="xl:col-span-7 flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<h2 class="text-lg font-bold">Billing Queue</h2>
+<div class="flex bg-slate-200 dark:bg-slate-800 p-1 rounded-lg">
+<button class="px-4 py-1.5 text-xs font-bold rounded-md bg-white dark:bg-slate-700 shadow-sm">IPD Patients</button>
+<button class="px-4 py-1.5 text-xs font-bold rounded-md text-slate-500">OPD Patients</button>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+<table class="w-full text-left border-collapse">
+<thead class="bg-slate-50 dark:bg-slate-800/50 text-slate-500 uppercase text-[10px] font-bold tracking-widest">
+<tr>
+<th class="px-4 py-3">Patient Details</th>
+<th class="px-4 py-3">Dept / Room</th>
+<th class="px-4 py-3">Bill Amount</th>
+<th class="px-4 py-3">Status</th>
+<th class="px-4 py-3 text-right">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-4 py-4">
+<div class="font-semibold text-sm">Johnathan Doe</div>
+<div class="text-xs text-slate-400 tracking-tighter">UHID-8821 • 45Y/M</div>
+</td>
+<td class="px-4 py-4 text-xs font-medium">
+<div>Cardiology</div>
+<div class="text-slate-400">ICU-B 104</div>
+</td>
+<td class="px-4 py-4 font-bold text-sm">$1,240.00</td>
+<td class="px-4 py-4">
+<span class="px-2 py-1 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 rounded text-[10px] font-bold uppercase">Ready</span>
+</td>
+<td class="px-4 py-4 text-right">
+<button class="text-primary hover:underline text-xs font-bold">Process</button>
+</td>
+</tr>
+<tr class="bg-primary/5 border-l-4 border-primary">
+<td class="px-4 py-4">
+<div class="font-semibold text-sm">Jane Smith</div>
+<div class="text-xs text-slate-400 tracking-tighter text-primary/70">UHID-9042 • 29Y/F</div>
+</td>
+<td class="px-4 py-4 text-xs font-medium">
+<div>Neurology</div>
+<div class="text-slate-400">PVT-402</div>
+</td>
+<td class="px-4 py-4 font-bold text-sm">$3,150.00</td>
+<td class="px-4 py-4">
+<span class="px-2 py-1 bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 rounded text-[10px] font-bold uppercase">Lab Pending</span>
+</td>
+<td class="px-4 py-4 text-right">
+<button class="px-3 py-1 bg-primary text-white text-xs font-bold rounded">Active</button>
+</td>
+</tr>
+<tr>
+<td class="px-4 py-4">
+<div class="font-semibold text-sm">Robert Brown</div>
+<div class="text-xs text-slate-400 tracking-tighter">UHID-7723 • 62Y/M</div>
+</td>
+<td class="px-4 py-4 text-xs font-medium">
+<div>General Medicine</div>
+<div class="text-slate-400">Ward-4 Bed 12</div>
+</td>
+<td class="px-4 py-4 font-bold text-sm">$850.50</td>
+<td class="px-4 py-4">
+<span class="px-2 py-1 bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 rounded text-[10px] font-bold uppercase">Awaiting Disp.</span>
+</td>
+<td class="px-4 py-4 text-right">
+<button class="text-primary hover:underline text-xs font-bold">Process</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Bill Generator Pane -->
+<div class="xl:col-span-5">
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden flex flex-col h-full sticky top-0">
+<div class="p-4 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+<h3 class="font-bold">Active Bill Generator</h3>
+<button class="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+<span class="material-symbols-outlined text-sm">close</span>
+</button>
+</div>
+<div class="p-5 flex-1 overflow-y-auto no-scrollbar">
+<div class="flex items-center gap-4 mb-6">
+<div class="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-3xl">patient_list</span>
+</div>
+<div>
+<h4 class="font-bold text-lg">Jane Smith</h4>
+<p class="text-xs text-slate-500 font-medium">Neurology • Admission: Oct 21, 2023</p>
+</div>
+</div>
+<!-- Itemized Costs -->
+<div class="space-y-4">
+<div>
+<h5 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Doctor Fees</h5>
+<div class="flex justify-between items-center text-sm py-1">
+<span>Consultation (Dr. Aris Thorne) x3</span>
+<span class="font-semibold text-slate-700 dark:text-slate-200">$450.00</span>
+</div>
+</div>
+<div>
+<h5 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Lab Tests &amp; Diagnostics</h5>
+<div class="space-y-2">
+<div class="flex justify-between items-center text-sm">
+<span>MRI Brain (Contrast)</span>
+<span class="font-semibold text-slate-700 dark:text-slate-200">$1,200.00</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span>CBC &amp; Metabolic Panel</span>
+<span class="font-semibold text-slate-700 dark:text-slate-200">$180.00</span>
+</div>
+</div>
+</div>
+<div>
+<h5 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Pharmacy</h5>
+<div class="flex justify-between items-center text-sm py-1">
+<span>Neurological Package A</span>
+<span class="font-semibold text-slate-700 dark:text-slate-200">$320.00</span>
+</div>
+</div>
+<div>
+<h5 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Room Charges</h5>
+<div class="flex justify-between items-center text-sm py-1">
+<span>Private Room (402) x2 Days</span>
+<span class="font-semibold text-slate-700 dark:text-slate-200">$1,000.00</span>
+</div>
+</div>
+</div>
+<!-- Insurance Status Section -->
+<div class="mt-8 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-lg">verified_user</span>
+<span class="text-xs font-bold text-primary">Insurance Details</span>
+</div>
+<span class="px-2 py-0.5 bg-emerald-500 text-white rounded text-[10px] font-bold">APPROVED</span>
+</div>
+<div class="flex justify-between items-end mt-3">
+<div>
+<p class="text-[10px] text-slate-500 leading-none">Provider</p>
+<p class="text-xs font-bold text-slate-700 dark:text-slate-300">BlueShield Global TPA</p>
+</div>
+<div class="text-right">
+<p class="text-[10px] text-slate-500 leading-none">Max Coverage</p>
+<p class="text-xs font-bold text-slate-700 dark:text-slate-300">$2,500.00</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Payment Controls Footer -->
+<div class="p-5 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-800">
+<div class="flex flex-col gap-3 mb-4">
+<div class="flex justify-between text-sm">
+<span class="text-slate-500">Subtotal</span>
+<span class="font-medium">$3,150.00</span>
+</div>
+<div class="flex justify-between text-sm">
+<span class="text-slate-500">Insurance Contribution</span>
+<span class="font-medium text-emerald-600">-$2,500.00</span>
+</div>
+<div class="flex justify-between items-center pt-2 border-t border-slate-200 dark:border-slate-700">
+<span class="font-bold text-slate-700 dark:text-slate-200">Patient Payable</span>
+<span class="text-xl font-black text-primary">$650.00</span>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-2 mb-4">
+<button class="flex flex-col items-center justify-center p-2 rounded border border-primary bg-primary/10 text-primary transition-all">
+<span class="material-symbols-outlined text-lg">payments</span>
+<span class="text-[10px] font-bold mt-1">Cash</span>
+</button>
+<button class="flex flex-col items-center justify-center p-2 rounded border border-slate-200 dark:border-slate-700 hover:border-primary transition-all">
+<span class="material-symbols-outlined text-lg">credit_card</span>
+<span class="text-[10px] font-bold mt-1">Card</span>
+</button>
+<button class="flex flex-col items-center justify-center p-2 rounded border border-slate-200 dark:border-slate-700 hover:border-primary transition-all">
+<span class="material-symbols-outlined text-lg">account_balance</span>
+<span class="text-[10px] font-bold mt-1">TPA/Wire</span>
+</button>
+</div>
+<div class="flex gap-2">
+<button class="flex-1 py-3 bg-primary hover:bg-primary/90 text-white font-bold rounded-lg shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">receipt_long</span>
+                                        Finalize &amp; Print
+                                    </button>
+<button class="px-3 py-3 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold rounded-lg transition-all">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+</div>
+</body></html>

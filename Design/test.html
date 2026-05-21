@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Secure Patient Login | HMS Portal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "primary": "#137fec",
+                "background-light": "#f6f7f8",
+                "background-dark": "#101922",
+              },
+              fontFamily: {
+                "display": ["Inter"]
+              },
+              borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            },
+          },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .transition-wrapper {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+        }
+        /* Simple toggle simulation for demo purposes using radio hacks */
+        #auth-toggle:checked ~ #login-form { display: none; }
+        #auth-toggle:checked ~ #tfa-form { display: block; }
+        #auth-toggle { display: none; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-slate-200">
+<div class="min-h-screen flex">
+<!-- Left Side: Hero / Brand Image -->
+<div class="hidden lg:flex lg:w-1/2 relative bg-primary/10 overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img alt="Modern Hospital Hallway" class="w-full h-full object-cover opacity-60 mix-blend-overlay" data-alt="Clean bright modern hospital hallway interior" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkkg-X3zpy_tqyH2Veg5X1YJULpPjrFjdIa-Snn7UHRdkvm5cTc73fcqearxx5-XP34xZsX-wmD8SGhNHfqlRS360kk6dEW9DDWeF36bDR94-evKZ8vAog3gtgF7IUMniUxcwe_QlBp1qqlYX8fXVlD7hrE10oXL0IR6hdH7X49hZS8v6avJrek2pSG-qPEos1-4x2t1s39J2hmH40A25gWAHSAwX5VfJRFCC1IkG1HQr7l7YeXUg9JNxYQoE7txRsBBq0IlZGiXXk"/>
+</div>
+<div class="relative z-10 w-full flex flex-col justify-center px-16 text-slate-900 dark:text-white">
+<div class="flex items-center gap-3 mb-8">
+<div class="bg-primary p-2 rounded-lg">
+<span class="material-icons text-white">local_hospital</span>
+</div>
+<span class="text-2xl font-bold tracking-tight">MedCore HMS</span>
+</div>
+<h1 class="text-5xl font-extrabold leading-tight mb-6">
+                    Your Health, <br/><span class="text-primary">Secured.</span>
+</h1>
+<p class="text-lg text-slate-600 dark:text-slate-400 max-w-md leading-relaxed">
+                    Access your medical records, schedule appointments, and communicate with your doctors through our HIPAA-compliant patient portal.
+                </p>
+<div class="mt-12 flex items-center gap-4 bg-white/50 dark:bg-white/5 backdrop-blur-md p-4 rounded-xl border border-white/20 w-fit">
+<div class="flex -space-x-2">
+<img alt="Doctor 1" class="w-10 h-10 rounded-full border-2 border-white" data-alt="Female doctor portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIyKG28GIQhjstpO7hBPybc_xrvsYdsEmX3jWOLK70lJZtm02yd1KQnRH0iJmUHLUEketp3Q4MJXw7I4AH6Bl0cqwooOSBVXehoI0VIhlLelTvOSHRcpNqeRi8vLMzWXETYNvVUE8zwgoj-KWRh9CsAiFAmpl43_o4sfXqlT2d_C7WkEh4cS1QwuBkj_I_xM8ZhjcbZkSjzNBAZe-sPKwSfcP_R4lO4c-96tsPjqRo2Q82nFx8M2Kd6CYNhKcL5vrJJITAnN3PjGKf"/>
+<img alt="Doctor 2" class="w-10 h-10 rounded-full border-2 border-white" data-alt="Male doctor portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC02Ay29T_nghiNDHxf5s2Vow6LA1MpY92GAwJeNJMzJpJkgEY1UbQNPPY6V69I4OH7jC1dnvjL3Av_lXaec7kcOcf0JfhYw2xFTuHeioPPOtyJNHJoYzY2duMe7_Enr_2uTw_6LMwMDVDoj8Iy0jreQWpF7Q8FuLAPSKd1Xh8DSB4H5NpDroGQbV9trPvuVEVXORlMDDff0MVhqRcJb5xcm8QVpguNUt8z6nk-4oaN1pKjNhmbfrJZTt_Kv29C3gsTySBeyvgieQPK"/>
+<div class="w-10 h-10 rounded-full border-2 border-white bg-primary flex items-center justify-center text-white text-xs font-bold">+50</div>
+</div>
+<span class="text-sm font-medium">Trusted by leading medical professionals</span>
+</div>
+</div>
+<!-- Decorative circle -->
+<div class="absolute -bottom-24 -left-24 w-96 h-96 bg-primary/20 rounded-full blur-3xl"></div>
+</div>
+<!-- Right Side: Authentication Forms -->
+<div class="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 bg-background-light dark:bg-background-dark">
+<div class="w-full max-w-md">
+<!-- This hidden checkbox controls the state for demo purposes -->
+<input id="auth-toggle" type="checkbox"/>
+<!-- Login Form Phase -->
+<div class="space-y-8" id="login-form">
+<div class="text-center lg:text-left">
+<h2 class="text-3xl font-bold text-slate-900 dark:text-white">Welcome Back</h2>
+<p class="mt-2 text-slate-500 dark:text-slate-400">Please sign in to your patient account</p>
+</div>
+<div class="space-y-6">
+<div>
+<label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1" for="email">Email or Patient ID</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-icons text-slate-400 text-sm">person</span>
+</div>
+<input class="block w-full pl-10 pr-3 py-3 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" id="email" placeholder="e.g. PT-2024-001" type="text"/>
+</div>
+</div>
+<div>
+<div class="flex justify-between items-center mb-1">
+<label class="block text-sm font-medium text-slate-700 dark:text-slate-300" for="password">Password</label>
+<a class="text-xs font-semibold text-primary hover:text-primary/80 transition-colors" href="#">Forgot Password?</a>
+</div>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-icons text-slate-400 text-sm">lock</span>
+</div>
+<input class="block w-full pl-10 pr-10 py-3 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" id="password" placeholder="••••••••" type="password"/>
+<div class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
+<span class="material-icons text-slate-400 text-sm hover:text-slate-600 transition-colors">visibility</span>
+</div>
+</div>
+</div>
+<div class="flex items-center">
+<input class="h-4 w-4 text-primary focus:ring-primary border-slate-300 dark:border-slate-700 rounded transition-all" id="remember" type="checkbox"/>
+<label class="ml-2 block text-sm text-slate-600 dark:text-slate-400" for="remember">Remember me for 30 days</label>
+</div>
+<!-- For the demo, clicking Sign In will "trigger" the 2FA view -->
+<label class="cursor-pointer flex w-full justify-center bg-primary hover:bg-primary/90 text-white py-3 px-4 rounded-lg font-semibold shadow-lg shadow-primary/20 transition-all focus:ring-2 focus:ring-primary focus:ring-offset-2 text-center" for="auth-toggle">
+                            Sign In
+                        </label>
+</div>
+<div class="relative my-8">
+<div class="absolute inset-0 flex items-center">
+<div class="w-full border-t border-slate-300 dark:border-slate-700"></div>
+</div>
+<div class="relative flex justify-center text-sm">
+<span class="px-2 bg-background-light dark:bg-background-dark text-slate-500">New to MedCore?</span>
+</div>
+</div>
+<button class="w-full flex items-center justify-center gap-2 border border-slate-300 dark:border-slate-700 py-3 px-4 rounded-lg font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">
+                        Register New Account
+                    </button>
+<div class="pt-10 flex items-center justify-center gap-6 opacity-60 grayscale hover:grayscale-0 transition-all">
+<span class="text-[10px] font-bold tracking-widest uppercase flex items-center gap-1">
+<span class="material-icons text-[14px]">verified_user</span> HIPAA SECURE
+                        </span>
+<span class="text-[10px] font-bold tracking-widest uppercase flex items-center gap-1">
+<span class="material-icons text-[14px]">shield</span> SSL ENCRYPTED
+                        </span>
+</div>
+</div>
+<!-- 2FA Verification Phase (Initially Hidden) -->
+<div class="hidden space-y-8" id="tfa-form">
+<div class="text-center lg:text-left">
+<div class="inline-flex items-center justify-center w-12 h-12 bg-primary/10 rounded-full mb-4">
+<span class="material-icons text-primary">security</span>
+</div>
+<h2 class="text-3xl font-bold text-slate-900 dark:text-white">Two-Step Verification</h2>
+<p class="mt-2 text-slate-500 dark:text-slate-400 leading-relaxed">
+                            We've sent a 6-digit verification code to your registered mobile number ending in <span class="font-semibold text-slate-900 dark:text-slate-200">•••• 1234</span>
+</p>
+</div>
+<div class="space-y-6">
+<div class="flex justify-between gap-2 sm:gap-4">
+<input class="w-full h-14 text-center text-2xl font-bold border border-slate-300 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" maxlength="1" type="text" value="4"/>
+<input class="w-full h-14 text-center text-2xl font-bold border border-slate-300 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" maxlength="1" type="text" value="9"/>
+<input class="w-full h-14 text-center text-2xl font-bold border border-slate-300 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" maxlength="1" placeholder="•" type="text"/>
+<input class="w-full h-14 text-center text-2xl font-bold border border-slate-300 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" maxlength="1" placeholder="•" type="text"/>
+<input class="w-full h-14 text-center text-2xl font-bold border border-slate-300 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" maxlength="1" placeholder="•" type="text"/>
+<input class="w-full h-14 text-center text-2xl font-bold border border-slate-300 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" maxlength="1" placeholder="•" type="text"/>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center">
+<input class="h-4 w-4 text-primary focus:ring-primary border-slate-300 dark:border-slate-700 rounded transition-all" id="trust-device" type="checkbox"/>
+<label class="ml-2 block text-sm text-slate-600 dark:text-slate-400" for="trust-device">Trust this device</label>
+</div>
+<button class="text-sm font-semibold text-primary hover:text-primary/80 transition-colors">Resend Code</button>
+</div>
+<button class="w-full bg-primary hover:bg-primary/90 text-white py-4 px-4 rounded-lg font-bold shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2">
+                            Verify &amp; Login <span class="material-icons text-sm">arrow_forward</span>
+</button>
+<label class="cursor-pointer block text-center text-sm text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors" for="auth-toggle">
+                            Back to Login
+                        </label>
+</div>
+<div class="bg-primary/5 dark:bg-primary/10 p-4 rounded-xl border border-primary/10 mt-12">
+<div class="flex gap-3">
+<span class="material-icons text-primary text-xl">help_outline</span>
+<div>
+<h4 class="text-sm font-bold text-slate-900 dark:text-white">Having trouble?</h4>
+<p class="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
+                                    If you no longer have access to this phone number, please contact our support team at <span class="text-primary font-medium">1-800-MED-CORE</span> for identity verification.
+                                </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body></html>

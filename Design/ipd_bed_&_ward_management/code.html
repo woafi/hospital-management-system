@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>IPD Bed &amp; Ward Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .fill-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 antialiased min-h-screen">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 flex items-center justify-between px-6 py-3 bg-white dark:bg-background-dark border-b border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3">
+<div class="bg-primary p-1.5 rounded-lg text-white">
+<span class="material-symbols-outlined text-2xl block">local_hospital</span>
+</div>
+<h1 class="text-lg font-bold tracking-tight">HMS Bed Manager</h1>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-sm font-semibold text-primary" href="#">Dashboard</a>
+<a class="text-sm font-medium text-slate-500 hover:text-primary transition-colors" href="#">Patient Flow</a>
+<a class="text-sm font-medium text-slate-500 hover:text-primary transition-colors" href="#">Staffing</a>
+<a class="text-sm font-medium text-slate-500 hover:text-primary transition-colors" href="#">Analytics</a>
+</nav>
+</div>
+<div class="flex items-center gap-4 flex-1 justify-end max-w-xl">
+<div class="relative w-full max-w-xs group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-sm focus:ring-2 focus:ring-primary outline-none transition-all" placeholder="Search patient, bed, or MRN..." type="text"/>
+</div>
+<div class="flex items-center gap-2 border-l border-slate-200 dark:border-slate-800 pl-4">
+<button class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-background-dark"></span>
+</button>
+<div class="flex items-center gap-3 ml-2">
+<div class="text-right hidden sm:block">
+<p class="text-xs font-bold">Dr. Sarah Smith</p>
+<p class="text-[10px] text-slate-500 uppercase font-medium">Head Nurse</p>
+</div>
+<img alt="Profile" class="w-9 h-9 rounded-full object-cover border-2 border-primary/20" data-alt="Professional profile photo of a female doctor" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDoKwVxT84Xl-dgkY-LNrlQxpiZvwDo1Js6xAF37HhQYbsxxGnrIb5N3tTusEH_AjYxh_tpBWuaEydZSAWiotwfuLEH0qcACrQcI-IgIkgWJivJA42tDsptw5d4yfY3bkKHZ-lqdmd7Cv0siXxdLpmZe0Iqi6v_sRmlV3g1lsWp--d6ATznC_bv6N69FckOGJNEvyvS8woooWEhcRI7NR9khdS96dOy2NCXHQpoJIlVZIug2XeMcMfKAlk6nAqT2eFblVUJe1OwSsDt"/>
+</div>
+</div>
+</div>
+</header>
+<div class="flex min-h-[calc(100-3.5rem)]">
+<!-- Sidebar Navigation -->
+<aside class="w-64 bg-white dark:bg-background-dark border-r border-slate-200 dark:border-slate-800 hidden lg:flex flex-col p-4 shrink-0">
+<div class="mb-6">
+<h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 px-2">Hospital Units</h3>
+<div class="space-y-1">
+<button class="flex items-center justify-between w-full px-3 py-2.5 rounded-lg bg-primary/10 text-primary font-semibold group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined fill-icon">grid_view</span>
+<span>All Wards</span>
+</div>
+<span class="text-xs bg-primary text-white px-2 py-0.5 rounded-full">24</span>
+</button>
+<button class="flex items-center justify-between w-full px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined">emergency</span>
+<span>ICU Unit</span>
+</div>
+<span class="text-xs bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded-full">4</span>
+</button>
+<button class="flex items-center justify-between w-full px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined">medical_services</span>
+<span>General Ward</span>
+</div>
+<span class="text-xs bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded-full">12</span>
+</button>
+<button class="flex items-center justify-between w-full px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined">pregnant_woman</span>
+<span>Maternity</span>
+</div>
+<span class="text-xs bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded-full">2</span>
+</button>
+<button class="flex items-center justify-between w-full px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined">hotel</span>
+<span>Private Rooms</span>
+</div>
+<span class="text-xs bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded-full">6</span>
+</button>
+</div>
+</div>
+<div class="mt-auto p-4 bg-slate-100 dark:bg-slate-800/50 rounded-xl">
+<p class="text-xs font-bold text-slate-500 uppercase mb-2">Live Status</p>
+<div class="flex items-center gap-2 mb-3">
+<span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+<span class="text-xs font-medium">Real-time sync active</span>
+</div>
+<p class="text-[10px] text-slate-400">Last updated: <br/>Today, 10:45 AM</p>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 p-6 overflow-y-auto">
+<!-- Summary Bar -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+<div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+<div class="flex justify-between items-start mb-2">
+<p class="text-sm font-medium text-slate-500">Total Capacity</p>
+<span class="material-symbols-outlined text-slate-400">hotel</span>
+</div>
+<div class="flex items-baseline gap-2">
+<h2 class="text-2xl font-bold">250</h2>
+<span class="text-xs font-medium text-slate-400">Beds Total</span>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+<div class="flex justify-between items-start mb-2">
+<p class="text-sm font-medium text-slate-500">Occupancy Rate</p>
+<span class="material-symbols-outlined text-red-500">analytics</span>
+</div>
+<div class="flex items-baseline gap-2">
+<h2 class="text-2xl font-bold text-red-500">85%</h2>
+<span class="text-xs font-medium text-green-500">+2% from yesterday</span>
+</div>
+<div class="w-full bg-slate-100 dark:bg-slate-700 h-1.5 rounded-full mt-3 overflow-hidden">
+<div class="bg-red-500 h-full w-[85%]"></div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+<div class="flex justify-between items-start mb-2">
+<p class="text-sm font-medium text-slate-500">Available Beds</p>
+<span class="material-symbols-outlined text-green-500">task_alt</span>
+</div>
+<div class="flex items-baseline gap-2">
+<h2 class="text-2xl font-bold text-green-600">32</h2>
+<span class="text-xs font-medium text-slate-400">Ready for Intake</span>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+<div class="flex justify-between items-start mb-2">
+<p class="text-sm font-medium text-slate-500">In Maintenance</p>
+<span class="material-symbols-outlined text-amber-500">cleaning_services</span>
+</div>
+<div class="flex items-baseline gap-2">
+<h2 class="text-2xl font-bold text-amber-600">5</h2>
+<span class="text-xs font-medium text-slate-400">Cleaning/Repair</span>
+</div>
+</div>
+</div>
+<!-- Legend & Action Bar -->
+<div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+<div class="flex items-center gap-4 bg-white dark:bg-slate-800 px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-green-500"></span>
+<span class="text-xs font-medium">Available</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-red-500"></span>
+<span class="text-xs font-medium">Occupied</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-amber-500"></span>
+<span class="text-xs font-medium">Reserved/Cleaning</span>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-800 rounded-lg text-sm font-medium hover:bg-slate-50 transition-colors">
+<span class="material-symbols-outlined text-lg">filter_list</span>
+                        Filter Wards
+                    </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-lg">swap_horiz</span>
+                        Transfer Patient
+                    </button>
+</div>
+</div>
+<!-- Wards Grid -->
+<div class="space-y-10">
+<!-- Ward Section: ICU -->
+<section>
+<div class="flex items-center gap-3 mb-4">
+<h3 class="text-lg font-bold">ICU Unit - 4th Floor</h3>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-600 uppercase">Critical Care</span>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
+<!-- Bed Cards -->
+<div class="bg-white dark:bg-slate-800 p-3 rounded-xl border-2 border-red-500 shadow-sm group cursor-pointer relative">
+<div class="flex justify-between items-start mb-2">
+<span class="text-xs font-bold text-slate-400">B-401</span>
+<span class="material-symbols-outlined text-red-500 fill-icon">bed</span>
+</div>
+<p class="text-sm font-bold truncate">John Doe</p>
+<p class="text-[10px] text-slate-500 font-medium">Adm: 24 Oct</p>
+<!-- Hover Tooltip/Flyout Visual Placeholder -->
+<div class="absolute -top-2 -right-2 bg-primary text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-xs">info</span>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm opacity-50 grayscale">
+<div class="flex justify-between items-start mb-2">
+<span class="text-xs font-bold text-slate-400">B-402</span>
+<span class="material-symbols-outlined text-amber-500">cleaning_services</span>
+</div>
+<p class="text-sm font-bold text-amber-600 italic">Cleaning...</p>
+<p class="text-[10px] text-slate-500 font-medium">ETA: 20m</p>
+</div>
+<div class="bg-white dark:bg-slate-800 p-3 rounded-xl border-2 border-red-500 shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<span class="text-xs font-bold text-slate-400">B-403</span>
+<span class="material-symbols-outlined text-red-500 fill-icon">bed</span>
+</div>
+<p class="text-sm font-bold truncate">A. Martinez</p>
+<p class="text-[10px] text-slate-500 font-medium">Adm: 25 Oct</p>
+</div>
+<div class="bg-green-50 dark:bg-green-900/10 p-3 rounded-xl border-2 border-green-500 shadow-sm group cursor-pointer hover:bg-green-100 dark:hover:bg-green-900/20 transition-colors">
+<div class="flex justify-between items-start mb-2">
+<span class="text-xs font-bold text-green-600">B-404</span>
+<span class="material-symbols-outlined text-green-600">bed</span>
+</div>
+<p class="text-sm font-bold text-green-600">Available</p>
+<p class="text-[10px] text-green-600/70 font-medium">Ready for admission</p>
+</div>
+<div class="bg-white dark:bg-slate-800 p-3 rounded-xl border-2 border-red-500 shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<span class="text-xs font-bold text-slate-400">B-405</span>
+<span class="material-symbols-outlined text-red-500 fill-icon">bed</span>
+</div>
+<p class="text-sm font-bold truncate">S. Watson</p>
+<p class="text-[10px] text-slate-500 font-medium">Adm: 26 Oct</p>
+</div>
+<div class="bg-white dark:bg-slate-800 p-3 rounded-xl border-2 border-amber-500 shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<span class="text-xs font-bold text-slate-400">B-406</span>
+<span class="material-symbols-outlined text-amber-500 fill-icon">pending_actions</span>
+</div>
+<p class="text-sm font-bold truncate">Reserved</p>
+<p class="text-[10px] text-slate-500 font-medium">Intake from ER</p>
+</div>
+</div>
+</section>
+<!-- Ward Section: General Ward -->
+<section>
+<div class="flex items-center gap-3 mb-4">
+<h3 class="text-lg font-bold">General Ward - 3rd Floor</h3>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-600 uppercase">Standard</span>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
+<!-- Repeat Bed Cards with mix of statuses -->
+<div class="bg-white dark:bg-slate-800 p-3 rounded-xl border-2 border-red-500 shadow-sm group">
+<div class="flex justify-between items-start mb-2">
+<span class="text-xs font-bold text-slate-400">G-301</span>
+<span class="material-symbols-outlined text-red-500 fill-icon">bed</span>
+</div>
+<p class="text-sm font-bold truncate">Robert Fox</p>
+<p class="text-[10px] text-slate-500 font-medium">Adm: 20 Oct</p>
+</div>
+<!-- Generating multiple placeholders for general ward -->
+<div class="bg-green-50 dark:bg-green-900/10 p-3 rounded-xl border-2 border-green-500 shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<span class="text-xs font-bold text-green-600">G-302</span>
+<span class="material-symbols-outlined text-green-600">bed</span>
+</div>
+<p class="text-sm font-bold text-green-600">Available</p>
+</div>
+<div class="bg-green-50 dark:bg-green-900/10 p-3 rounded-xl border-2 border-green-500 shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<span class="text-xs font-bold text-green-600">G-303</span>
+<span class="material-symbols-outlined text-green-600">bed</span>
+</div>
+<p class="text-sm font-bold text-green-600">Available</p>
+</div>
+<div class="bg-white dark:bg-slate-800 p-3 rounded-xl border-2 border-red-500 shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<span class="text-xs font-bold text-slate-400">G-304</span>
+<span class="material-symbols-outlined text-red-500 fill-icon">bed</span>
+</div>
+<p class="text-sm font-bold truncate">Jenny Wilson</p>
+<p class="text-[10px] text-slate-500 font-medium">Adm: 22 Oct</p>
+</div>
+<div class="bg-white dark:bg-slate-800 p-3 rounded-xl border-2 border-red-500 shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<span class="text-xs font-bold text-slate-400">G-305</span>
+<span class="material-symbols-outlined text-red-500 fill-icon">bed</span>
+</div>
+<p class="text-sm font-bold truncate">Mark Ruffalo</p>
+<p class="text-[10px] text-slate-500 font-medium">Adm: 21 Oct</p>
+</div>
+<div class="bg-green-50 dark:bg-green-900/10 p-3 rounded-xl border-2 border-green-500 shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<span class="text-xs font-bold text-green-600">G-306</span>
+<span class="material-symbols-outlined text-green-600">bed</span>
+</div>
+<p class="text-sm font-bold text-green-600">Available</p>
+</div>
+<div class="bg-white dark:bg-slate-800 p-3 rounded-xl border-2 border-red-500 shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<span class="text-xs font-bold text-slate-400">G-307</span>
+<span class="material-symbols-outlined text-red-500 fill-icon">bed</span>
+</div>
+<p class="text-sm font-bold truncate">S. Johansson</p>
+<p class="text-[10px] text-slate-500 font-medium">Adm: 23 Oct</p>
+</div>
+<div class="bg-white dark:bg-slate-800 p-3 rounded-xl border-2 border-red-500 shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<span class="text-xs font-bold text-slate-400">G-308</span>
+<span class="material-symbols-outlined text-red-500 fill-icon">bed</span>
+</div>
+<p class="text-sm font-bold truncate">Chris Evans</p>
+<p class="text-[10px] text-slate-500 font-medium">Adm: 23 Oct</p>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Right Detail Panel (Simulated Popover) -->
+<aside class="w-80 bg-white dark:bg-background-dark border-l border-slate-200 dark:border-slate-800 hidden xl:flex flex-col p-6 overflow-y-auto">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-bold text-lg">Bed Details</h3>
+<span class="px-2 py-1 bg-red-100 text-red-600 text-[10px] font-bold rounded uppercase">Occupied</span>
+</div>
+<div class="space-y-6">
+<div class="text-center pb-6 border-b border-slate-100 dark:border-slate-800">
+<div class="w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-full mx-auto mb-3 flex items-center justify-center overflow-hidden">
+<img alt="Patient" class="w-full h-full object-cover" data-alt="Close up portrait of an elderly male patient" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYIjsylD7CTaGPMfVu03V0QCmcNT0By-UQOL8E1D6aH6XPGAiG49WrN9-ma2yqinpaQRShKutCLRwG_1cl7Dfm-T8B3XDXVrfrFkvOnq5wMkZJEwuP8A00y26ane-PSwHcSW4qcL5RT_VGMXh53AOOi_6_5gUrKS7jyAY0Ycop-dxWlnH2b4f4R3V0JNGjKZebtDjhIqN08eLTHX492h7YYgIBq4r8lWrZ8Ic-8ekxRXNn0IDEcLWS4S4JLMbyqoVIiP568DBalde5"/>
+</div>
+<h4 class="text-xl font-bold">John Doe</h4>
+<p class="text-sm text-slate-500">MRN: #44892-00</p>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<p class="text-[10px] text-slate-400 font-bold uppercase">Age / Gender</p>
+<p class="text-sm font-semibold">68 yrs / Male</p>
+</div>
+<div>
+<p class="text-[10px] text-slate-400 font-bold uppercase">Admission</p>
+<p class="text-sm font-semibold">24 Oct, 09:12</p>
+</div>
+<div class="col-span-2">
+<p class="text-[10px] text-slate-400 font-bold uppercase">Diagnosis</p>
+<p class="text-sm font-semibold">Myocardial Infarction</p>
+</div>
+</div>
+<div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl">
+<p class="text-[10px] text-slate-400 font-bold uppercase mb-3">Assigned Care Team</p>
+<div class="flex items-center gap-3 mb-3">
+<img alt="Nurse" class="w-8 h-8 rounded-full object-cover" data-alt="Portrait of a medical professional in scrubs" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSKkb32n92LY5zwI0dJhVHeXyWM4Qi7qmDsy4NpWu8_Deion6q9cv1f8ivqp9MeKUFtoQ-dzKFK0SujdZ2JjlsHnT45XL5a6kkqWArWbw_n1CeU0K2QZeTOPB7QR5AiPPwG6LARa0vBWwvuufb0TjdHHsgcRQEaakYfOTIU2ZAABPc41za86h5mJoaSe2KfXY3nLqKy3u4hDBV7oe4QHiyjVedsfy1dtcv10owJBAGSgaiAZuahQ8-2ldQ9q1eb0ZpIpEt1ZrYheeK"/>
+<div>
+<p class="text-xs font-bold">Nurse Clara Barton</p>
+<p class="text-[10px] text-slate-500 italic">Primary Nurse</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center text-xs font-bold">DT</div>
+<div>
+<p class="text-xs font-bold">Dr. Thomas Owens</p>
+<p class="text-[10px] text-slate-500 italic">Cardiologist</p>
+</div>
+</div>
+</div>
+<div class="space-y-2 pt-4">
+<button class="w-full py-2.5 bg-primary text-white rounded-lg font-bold flex items-center justify-center gap-2 shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-lg">swap_horiz</span>
+                        Initiate Transfer
+                    </button>
+<button class="w-full py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-800 rounded-lg font-bold text-sm hover:bg-slate-50">
+                        View Patient Chart
+                    </button>
+<button class="w-full py-2.5 text-red-500 font-bold text-sm hover:bg-red-50 dark:hover:bg-red-900/10 rounded-lg">
+                        Discharge Patient
+                    </button>
+</div>
+</div>
+</aside>
+</div>
+</body></html>

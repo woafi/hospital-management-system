@@ -1,0 +1,376 @@
+<html class="dark" lang="en">
+
+<head></head>
+
+<body class="bg-background-dark text-white font-display antialiased">
+
+
+
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Doctor Profile &amp; Schedule Setup</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3b82f6", // More vibrant medical blue
+                        "background-dark": "#05070a", // Near-black for maximum depth
+                        "surface-dark": "#0d1117", // Slightly lighter for cards
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style type="text/tailwindcss">
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .active-tab { border-bottom: 3px solid #3b82f6; color: #ffffff; }.dark .border-contrast { border-color: rgba(255, 255, 255, 0.15); }
+        .dark .separator-line { border-color: rgba(255, 255, 255, 0.2); }::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #05070a; }
+        ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #374151; }
+    </style>
+
+
+    <div class="relative flex min-h-screen flex-col overflow-x-hidden">
+        <header
+            class="flex items-center justify-between border-b border-white/10 bg-surface-dark px-6 py-3 sticky top-0 z-50">
+            <div class="flex items-center gap-8">
+                <div class="flex items-center gap-3 text-primary">
+                    <span class="material-symbols-outlined text-3xl">medical_services</span>
+                    <h2 class="text-white text-lg font-bold tracking-tight">HMS Portal</h2>
+                </div>
+                <div class="hidden md:flex items-center gap-1">
+                    <div class="relative group">
+                        <span
+                            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">search</span>
+                        <input
+                            class="pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white focus:ring-2 focus:ring-primary/50 focus:border-primary/50 w-64 placeholder-slate-500"
+                            placeholder="Search patients or records..." type="text" />
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <nav class="hidden lg:flex items-center gap-6 mr-4">
+                    <a class="text-sm font-medium text-slate-400 hover:text-white transition-colors"
+                        href="#">Dashboard</a>
+                    <a class="text-sm font-medium text-slate-400 hover:text-white transition-colors"
+                        href="#">Patients</a>
+                    <a class="text-sm font-medium text-primary" href="#">Profile</a>
+                </nav>
+                <div class="flex gap-2">
+                    <button
+                        class="p-2 rounded-lg bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10 transition-all">
+                        <span class="material-symbols-outlined">notifications</span>
+                    </button>
+                    <button
+                        class="p-2 rounded-lg bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10 transition-all">
+                        <span class="material-symbols-outlined">settings</span>
+                    </button>
+                </div>
+                <div class="size-10 rounded-full border-2 border-primary overflow-hidden ring-2 ring-primary/20">
+                    <img alt="Profile" class="w-full h-full object-cover"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCiKyJOKg7JKBBiagvrgpkhccRKOmefvM9a7EkyoB1K4b6ICejNxpBNAONZD_R4zk0yR6f7a2i-tmHPXo4lvbC_rtlgDkPc5tnWQhZPkm5iv-CtFXNwm3enGeAT2d8G42-ipNrXCPNJ02wM1PETnRAFXAH6hNcVWUjFcEtZ1IKjhhPzKPxzuUenuXEsDRnsNzGmDToLk9739bvAgCxtlpEvrv_2rMbT4MMnNzm61IvoaEuJUhf0YbHyPdqytEVchKIIfct8uxkgOfQ_" />
+                </div>
+            </div>
+        </header>
+        <main class="flex-1 max-w-7xl mx-auto w-full p-6 lg:p-10 space-y-8">
+            <div class="bg-surface-dark rounded-xl p-8 shadow-2xl border border-white/10">
+                <div class="flex flex-col md:flex-row gap-8 items-center md:items-start justify-between">
+                    <div class="flex flex-col md:flex-row gap-8 items-center">
+                        <div class="relative group">
+                            <div class="size-36 rounded-full overflow-hidden border-4 border-white/10 shadow-2xl">
+                                <img alt="Dr. Adrian Stone" class="w-full h-full object-cover"
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGD191gJSgZDN11UvJRAWm7u4TXBKRHpeN0NMZ6AWnBAY2fBPIZxMgsf8kOcvfLuz7QTNRyHQOD_zY_K7Ljwc-9XON4wiCL_EbSJ97e4iETk66tn4irIhyJKS7oHMmnUHG4nnaOdNAl1HndhVYOyB4o2YjjZfEWk35IYlVy22WVEDm399MQqD1k8ZZsqC_GUL0SoPdIYmZSo_6eamyIyNWuZr-fuwfsEPPehJ8Ott523Jze1c5yVoAAfpKkeYjpYSm-Q0OzprvcOwK" />
+                            </div>
+                            <button
+                                class="absolute bottom-1 right-1 bg-primary text-white p-2.5 rounded-full shadow-lg hover:scale-110 transition-transform ring-4 ring-surface-dark">
+                                <span class="material-symbols-outlined text-sm">photo_camera</span>
+                            </button>
+                        </div>
+                        <div class="text-center md:text-left">
+                            <h1 class="text-4xl font-bold text-white tracking-tight">Dr. Adrian Stone</h1>
+                            <p class="text-primary font-bold text-xl mt-1">Senior Cardiologist</p>
+                            <div class="flex flex-wrap justify-center md:justify-start gap-3 mt-4">
+                                <span
+                                    class="px-4 py-1.5 bg-white/5 border border-white/10 text-slate-300 text-xs font-bold rounded-full uppercase tracking-wider">Department
+                                    of Cardiology</span>
+                                <span
+                                    class="px-4 py-1.5 bg-white/5 border border-white/10 text-slate-300 text-xs font-bold rounded-full uppercase tracking-wider">NPI:
+                                    1234567890</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+                        <button
+                            class="flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-white/20 font-bold text-sm text-white hover:bg-white/10 transition-all">
+                            <span class="material-symbols-outlined text-lg">visibility</span> View Public Profile
+                        </button>
+                        <button
+                            class="flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-primary font-bold text-sm text-white hover:brightness-110 shadow-lg shadow-primary/20 transition-all">
+                            <span class="material-symbols-outlined text-lg">save</span> Save All Changes
+                        </button>
+                    </div>
+                </div>
+                <div class="flex border-b border-white/10 mt-10 gap-10 overflow-x-auto whitespace-nowrap">
+                    <button class="active-tab pb-4 text-sm font-bold flex items-center gap-2">
+                        <span class="material-symbols-outlined">account_circle</span> Professional Details
+                    </button>
+                    <button
+                        class="text-slate-500 pb-4 text-sm font-bold flex items-center gap-2 hover:text-white transition-colors">
+                        <span class="material-symbols-outlined">calendar_month</span> Weekly Schedule
+                    </button>
+                    <button
+                        class="text-slate-500 pb-4 text-sm font-bold flex items-center gap-2 hover:text-white transition-colors">
+                        <span class="material-symbols-outlined">workspace_premium</span> Certifications
+                    </button>
+                    <button
+                        class="text-slate-500 pb-4 text-sm font-bold flex items-center gap-2 hover:text-white transition-colors">
+                        <span class="material-symbols-outlined">settings_suggest</span> Consultation Settings
+                    </button>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-1 space-y-6">
+                    <h2 class="text-xl font-bold flex items-center gap-2 text-white">
+                        <span class="material-symbols-outlined text-primary">info</span> Core Expertise
+                    </h2>
+                    <div class="bg-surface-dark rounded-xl p-6 shadow-xl border border-white/10 space-y-6">
+                        <div>
+                            <label
+                                class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Qualifications</label>
+                            <textarea
+                                class="w-full bg-white/5 border-white/10 rounded-lg text-sm text-white focus:ring-primary focus:border-primary placeholder-slate-600 transition-all"
+                                rows="3">MD, Cardiology, Harvard Medical School; Fellowship in Interventional Cardiology</textarea>
+                        </div>
+                        <div class="h-px bg-white/10"></div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Years
+                                of Experience</label>
+                            <div
+                                class="flex items-center gap-3 bg-white/5 border border-white/10 rounded-lg px-3 focus-within:ring-1 focus-within:ring-primary focus-within:border-primary">
+                                <span class="material-symbols-outlined text-slate-500">history_edu</span>
+                                <input class="w-full bg-transparent border-none py-2.5 text-sm text-white focus:ring-0"
+                                    type="number" value="15" />
+                            </div>
+                        </div>
+                        <div class="h-px bg-white/10"></div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Base
+                                Consultation Fee ($)</label>
+                            <div
+                                class="flex items-center gap-3 bg-white/5 border border-white/10 rounded-lg px-3 focus-within:ring-1 focus-within:ring-primary focus-within:border-primary">
+                                <span class="material-symbols-outlined text-slate-500">payments</span>
+                                <input class="w-full bg-transparent border-none py-2.5 text-sm text-white focus:ring-0"
+                                    type="text" value="250.00" />
+                            </div>
+                        </div>
+                        <div class="h-px bg-white/10"></div>
+                        <div>
+                            <label
+                                class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Professional
+                                Summary</label>
+                            <textarea
+                                class="w-full bg-white/5 border-white/10 rounded-lg text-sm text-white focus:ring-primary focus:border-primary placeholder-slate-600 transition-all"
+                                rows="5">Highly experienced cardiologist specializing in minimally invasive cardiac procedures and preventive heart care with over 15 years of clinical practice in major medical centers.</textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-xl font-bold flex items-center gap-2 text-white">
+                            <span class="material-symbols-outlined text-primary">schedule</span> Weekly Availability
+                        </h2>
+                        <button
+                            class="text-primary text-sm font-bold hover:brightness-125 flex items-center gap-1 transition-all">
+                            <span class="material-symbols-outlined text-sm">content_copy</span> Copy to all days
+                        </button>
+                    </div>
+                    <div class="bg-surface-dark rounded-xl shadow-xl border border-white/10 overflow-hidden">
+                        <table class="w-full border-collapse">
+                            <thead class="bg-white/5">
+                                <tr>
+                                    <th
+                                        class="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-white/10">
+                                        Day</th>
+                                    <th
+                                        class="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-white/10">
+                                        Status</th>
+                                    <th
+                                        class="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-white/10">
+                                        Time Range</th>
+                                    <th
+                                        class="px-6 py-4 text-right text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-white/10">
+                                        Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-white/10">
+                                <tr>
+                                    <td class="px-6 py-5 font-bold text-sm text-white">Monday</td>
+                                    <td class="px-6 py-5">
+                                        <select
+                                            class="text-xs font-bold bg-green-900/30 text-green-400 border border-green-400/20 rounded-lg focus:ring-0 py-1.5 px-3">
+                                            <option class="bg-surface-dark">Available</option>
+                                            <option class="bg-surface-dark">Emergency Only</option>
+                                            <option class="bg-surface-dark">Off-duty</option>
+                                        </select>
+                                    </td>
+                                    <td class="px-6 py-5">
+                                        <div class="flex items-center gap-3 text-sm text-slate-300">
+                                            <input
+                                                class="bg-white/5 border border-white/10 rounded p-1.5 text-xs text-white focus:ring-primary focus:border-primary"
+                                                type="time" value="09:00" />
+                                            <span class="text-slate-500">to</span>
+                                            <input
+                                                class="bg-white/5 border border-white/10 rounded p-1.5 text-xs text-white focus:ring-primary focus:border-primary"
+                                                type="time" value="17:00" />
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-5 text-right">
+                                        <button class="text-slate-500 hover:text-red-400 transition-colors">
+                                            <span class="material-symbols-outlined">delete</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-5 font-bold text-sm text-white">Tuesday</td>
+                                    <td class="px-6 py-5">
+                                        <select
+                                            class="text-xs font-bold bg-green-900/30 text-green-400 border border-green-400/20 rounded-lg focus:ring-0 py-1.5 px-3">
+                                            <option class="bg-surface-dark">Available</option>
+                                            <option class="bg-surface-dark">Emergency Only</option>
+                                            <option class="bg-surface-dark">Off-duty</option>
+                                        </select>
+                                    </td>
+                                    <td class="px-6 py-5">
+                                        <div class="flex items-center gap-3 text-sm text-slate-300">
+                                            <input
+                                                class="bg-white/5 border border-white/10 rounded p-1.5 text-xs text-white focus:ring-primary focus:border-primary"
+                                                type="time" value="09:00" />
+                                            <span class="text-slate-500">to</span>
+                                            <input
+                                                class="bg-white/5 border border-white/10 rounded p-1.5 text-xs text-white focus:ring-primary focus:border-primary"
+                                                type="time" value="17:00" />
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-5 text-right">
+                                        <button class="text-slate-500 hover:text-red-400 transition-colors">
+                                            <span class="material-symbols-outlined">delete</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-5 font-bold text-sm text-white">Wednesday</td>
+                                    <td class="px-6 py-5">
+                                        <select
+                                            class="text-xs font-bold bg-amber-900/30 text-amber-400 border border-amber-400/20 rounded-lg focus:ring-0 py-1.5 px-3">
+                                            <option class="bg-surface-dark">Emergency Only</option>
+                                            <option class="bg-surface-dark">Available</option>
+                                            <option class="bg-surface-dark">Off-duty</option>
+                                        </select>
+                                    </td>
+                                    <td class="px-6 py-5">
+                                        <div class="flex items-center gap-3 text-sm text-slate-300">
+                                            <input
+                                                class="bg-white/5 border border-white/10 rounded p-1.5 text-xs text-white focus:ring-primary focus:border-primary"
+                                                type="time" value="08:00" />
+                                            <span class="text-slate-500">to</span>
+                                            <input
+                                                class="bg-white/5 border border-white/10 rounded p-1.5 text-xs text-white focus:ring-primary focus:border-primary"
+                                                type="time" value="12:00" />
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-5 text-right">
+                                        <button class="text-slate-500 hover:text-red-400 transition-colors">
+                                            <span class="material-symbols-outlined">delete</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-5 font-bold text-sm text-slate-500">Saturday</td>
+                                    <td class="px-6 py-5">
+                                        <select
+                                            class="text-xs font-bold bg-white/5 text-slate-500 border border-white/10 rounded-lg focus:ring-0 py-1.5 px-3">
+                                            <option class="bg-surface-dark">Off-duty</option>
+                                            <option class="bg-surface-dark">Available</option>
+                                            <option class="bg-surface-dark">Emergency Only</option>
+                                        </select>
+                                    </td>
+                                    <td class="px-6 py-5">
+                                        <span class="text-xs italic text-slate-600">No active time slots</span>
+                                    </td>
+                                    <td class="px-6 py-5 text-right">
+                                        <button class="text-primary hover:brightness-125 transition-all">
+                                            <span class="material-symbols-outlined">add_circle</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="bg-surface-dark rounded-xl p-8 shadow-xl border border-white/10">
+                        <h3 class="font-bold text-sm mb-6 text-white uppercase tracking-widest text-slate-400">
+                            Availability Preferences</h3>
+                        <div class="space-y-6">
+                            <label class="flex items-center justify-between group cursor-pointer">
+                                <span
+                                    class="text-sm font-medium text-slate-200 group-hover:text-white transition-colors">Allow
+                                    same-day appointments</span>
+                                <div class="relative inline-flex items-center cursor-pointer">
+                                    <input checked="" class="sr-only peer" type="checkbox" />
+                                    <div
+                                        class="w-12 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:bg-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-500 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
+                                    </div>
+                                </div>
+                            </label>
+                            <div class="h-px bg-white/10"></div>
+                            <label class="flex items-center justify-between group cursor-pointer">
+                                <span
+                                    class="text-sm font-medium text-slate-200 group-hover:text-white transition-colors">Enable
+                                    automatic emergency slot blocking</span>
+                                <div class="relative inline-flex items-center cursor-pointer">
+                                    <input class="sr-only peer" type="checkbox" />
+                                    <div
+                                        class="w-12 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:bg-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-500 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer
+                class="bg-surface-dark rounded-xl p-6 flex flex-col sm:flex-row items-center justify-between border border-white/10 shadow-2xl gap-4">
+                <div class="flex items-center gap-3 text-slate-400 text-sm italic">
+                    <span class="material-symbols-outlined text-green-400">cloud_done</span>
+                    Cloud synced • Last saved 2 mins ago
+                </div>
+                <div class="flex gap-4 w-full sm:w-auto">
+                    <button
+                        class="flex-1 sm:flex-none px-8 py-2.5 rounded-lg text-sm font-bold text-slate-400 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/10 transition-all">Discard
+                        Changes</button>
+                    <button
+                        class="flex-1 sm:flex-none bg-primary px-10 py-2.5 rounded-lg text-sm font-bold text-white shadow-xl shadow-primary/20 hover:brightness-110 transition-all">Save
+                        Profile &amp; Schedule</button>
+                </div>
+            </footer>
+        </main>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Comprehensive Patient Profile - HMS</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .timeline-line::before {
+            content: '';
+            position: absolute;
+            left: 19px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: #e5e7eb;
+            z-index: 0;
+        }
+        .dark .timeline-line::before {
+            background-color: #2d3748;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="flex flex-col h-screen">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between h-16 px-6 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 z-20">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<div class="bg-primary p-1.5 rounded-lg">
+<span class="material-symbols-outlined text-white text-2xl">local_hospital</span>
+</div>
+<h2 class="text-lg font-bold tracking-tight">CuraHMS</h2>
+</div>
+<nav class="hidden md:flex items-center gap-4">
+<a class="px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary" href="#">Dashboard</a>
+<a class="px-3 py-2 text-sm font-medium text-primary bg-primary/10 rounded-lg" href="#">Patients</a>
+<a class="px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary" href="#">Appointments</a>
+<a class="px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary" href="#">Inventory</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+<input class="pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-sm w-64 focus:ring-2 focus:ring-primary/50" placeholder="Search patient, ID, or file..." type="text"/>
+</div>
+<button class="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900"></span>
+</button>
+<div class="h-8 w-8 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Portrait of a male doctor in lab coat" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyWN45qlpte_1FLeNoBmBU1q8S6zvRr48YFIxZkuptKxj_IZNUQXzo3HhF7BOtnWHWrP4UN_BuYKzbtBpJmZQrU18eTIcQt0i-uv-t8pyHG3u6Ms3evsArfQjrvyg5KwrtkeozAOYMsDvX4odmCL-cpzGKEFHn_6o47WOQi4U42YmL6x6iBmEAYsFnw4_hRQTaOi7K-wsfsWf890fjz_mrWQhG38mCGkRVn3AMSDc28XusAEpKg20SBCCTZ8sDC86vHFakXELHhYE9"/>
+</div>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<!-- Left Sidebar: Patient Summary -->
+<aside class="w-80 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 overflow-y-auto hidden lg:flex flex-col">
+<div class="p-6 text-center border-b border-slate-100 dark:border-slate-800">
+<div class="relative inline-block mb-4">
+<div class="w-24 h-24 rounded-full border-4 border-slate-50 dark:border-slate-800 shadow-sm mx-auto overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Close up portrait of a mature female patient" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBn373DxGLw_rqs_4h1nSJzJK5E7iL85WazZvLAxMz3IXDYiyGlFsMpfSadHo5Dn2B_b7wBoaJ84hRG2bb_40FeKBTRuDjdYGp8WCTFDDScx_pKGQ510aOIDQ_r3BlnYqRQWxURf70Z6Cw0G4jiwpmrN8xf4BKIpLIx93FJtr_MqUWsGcYBgdK0MrFyFUxQudbWhVd7GPgHC1S7Irnk_Njes9lrHZoMh9kQqnv7HDsQKIln6K7Zdiv8byR9Ebrtmh39j7uv7OE-aU4B"/>
+</div>
+<span class="absolute bottom-1 right-1 w-5 h-5 bg-green-500 border-4 border-white dark:border-slate-900 rounded-full"></span>
+</div>
+<h3 class="text-xl font-bold">Eleanor Rigby</h3>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Patient ID: P-8829-01</p>
+<div class="flex justify-center gap-2 mt-3">
+<span class="px-2 py-1 bg-primary/10 text-primary text-xs font-bold rounded-lg uppercase tracking-wider">Female</span>
+<span class="px-2 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-bold rounded-lg uppercase tracking-wider">42 Years</span>
+</div>
+</div>
+<div class="p-6 space-y-6">
+<!-- Critical Info Section -->
+<div class="space-y-3">
+<div class="p-3 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/30 rounded-lg">
+<div class="flex items-center gap-2 text-red-600 dark:text-red-400 mb-1">
+<span class="material-symbols-outlined text-sm">warning</span>
+<span class="text-xs font-bold uppercase tracking-tight">Active Allergies</span>
+</div>
+<p class="text-sm font-semibold text-red-700 dark:text-red-300">Penicillin, Peanuts, Shellfish</p>
+</div>
+<div class="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-900/30 rounded-lg">
+<div class="flex items-center gap-2 text-primary mb-1">
+<span class="material-symbols-outlined text-sm">water_drop</span>
+<span class="text-xs font-bold uppercase tracking-tight">Blood Group</span>
+</div>
+<p class="text-sm font-semibold text-primary">O Positive (Rh+)</p>
+</div>
+</div>
+<!-- Details List -->
+<div class="space-y-4">
+<h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Contact Information</h4>
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-slate-400">call</span>
+<div class="text-sm">
+<p class="text-slate-500 dark:text-slate-400 text-xs uppercase font-bold">Phone</p>
+<p class="font-medium">+1 (555) 902-3481</p>
+</div>
+</div>
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-slate-400">emergency_home</span>
+<div class="text-sm">
+<p class="text-slate-500 dark:text-slate-400 text-xs uppercase font-bold">Emergency Contact</p>
+<p class="font-medium">John Rigby (Husband)</p>
+<p class="text-slate-400">+1 (555) 902-3482</p>
+</div>
+</div>
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-slate-400">location_on</span>
+<div class="text-sm">
+<p class="text-slate-500 dark:text-slate-400 text-xs uppercase font-bold">Address</p>
+<p class="font-medium leading-tight">221B Baker St, London, NW1 6XE</p>
+</div>
+</div>
+</div>
+<!-- Insurance -->
+<div class="pt-4 border-t border-slate-100 dark:border-slate-800">
+<h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Insurance Policy</h4>
+<div class="p-3 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+<p class="font-bold text-sm">Aetna Global Health</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">Policy: #GH-2293881</p>
+<span class="inline-block mt-2 px-2 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-600 text-[10px] font-black uppercase rounded">Active</span>
+</div>
+</div>
+</div>
+<div class="mt-auto p-4 flex gap-2">
+<button class="flex-1 px-4 py-2 text-sm font-bold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors">Edit Profile</button>
+<button class="px-4 py-2 text-red-600 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors">
+<span class="material-symbols-outlined">logout</span>
+</button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col bg-background-light dark:bg-background-dark overflow-y-auto relative">
+<!-- Sticky Header with Actions -->
+<div class="sticky top-0 z-10 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-6 py-4 flex flex-wrap items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<h1 class="text-2xl font-black tracking-tight">Patient 360 View</h1>
+<span class="text-slate-400 text-sm font-medium hidden sm:inline">• Last updated 24 mins ago</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex items-center gap-2 px-4 h-10 text-sm font-bold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg transition-colors shadow-sm">
+<span class="material-symbols-outlined text-lg">upload_file</span>
+                            Upload Document
+                        </button>
+<button class="flex items-center gap-2 px-4 h-10 text-sm font-bold text-white bg-primary hover:bg-blue-600 rounded-lg transition-colors shadow-md shadow-primary/20">
+<span class="material-symbols-outlined text-lg">add_circle</span>
+                            Add Vital Signs
+                        </button>
+</div>
+</div>
+<!-- Tabbed Navigation -->
+<div class="px-6 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+<div class="flex gap-8 overflow-x-auto no-scrollbar">
+<button class="py-4 text-sm font-bold text-slate-400 border-b-2 border-transparent whitespace-nowrap">Medical History</button>
+<button class="py-4 text-sm font-bold text-primary border-b-2 border-primary whitespace-nowrap">Timeline</button>
+<button class="py-4 text-sm font-bold text-slate-400 border-b-2 border-transparent whitespace-nowrap">Prescriptions</button>
+<button class="py-4 text-sm font-bold text-slate-400 border-b-2 border-transparent whitespace-nowrap">Lab Reports</button>
+<button class="py-4 text-sm font-bold text-slate-400 border-b-2 border-transparent whitespace-nowrap">Billing</button>
+</div>
+</div>
+<!-- Tab Content: Timeline -->
+<div class="p-6">
+<div class="max-w-4xl mx-auto">
+<div class="flex items-center justify-between mb-8">
+<h2 class="text-lg font-bold">Activity Timeline</h2>
+<div class="flex gap-2">
+<button class="p-2 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+<span class="material-symbols-outlined text-slate-500">filter_list</span>
+</button>
+<button class="p-2 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+<span class="material-symbols-outlined text-slate-500">calendar_month</span>
+</button>
+</div>
+</div>
+<!-- Timeline Feed -->
+<div class="relative timeline-line space-y-12 pb-10">
+<!-- Timeline Entry 1 -->
+<div class="relative flex gap-6 z-10">
+<div class="flex-none">
+<div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center ring-4 ring-white dark:ring-slate-900">
+<span class="material-symbols-outlined">stethoscope</span>
+</div>
+</div>
+<div class="flex-1 bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h4 class="font-bold text-lg">General Consultation</h4>
+<p class="text-sm text-slate-500">Dr. Sarah Thompson • Internal Medicine</p>
+</div>
+<span class="text-sm font-bold text-slate-400">Oct 12, 2023 • 10:30 AM</span>
+</div>
+<div class="mt-4 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg border-l-4 border-primary">
+<p class="text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+                                            Patient reported mild chest tightness and occasional palpitations. BP: 142/90 mmHg (elevated). ECG performed - normal sinus rhythm. Prescribed Atenolol 25mg once daily for hypertension management.
+                                        </p>
+</div>
+<div class="mt-4 flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-semibold rounded-full">#hypertension</span>
+<span class="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-semibold rounded-full">#cardiology</span>
+</div>
+</div>
+</div>
+<!-- Timeline Entry 2 -->
+<div class="relative flex gap-6 z-10">
+<div class="flex-none">
+<div class="w-10 h-10 rounded-full bg-amber-500 text-white flex items-center justify-center ring-4 ring-white dark:ring-slate-900">
+<span class="material-symbols-outlined">lab_research</span>
+</div>
+</div>
+<div class="flex-1 bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h4 class="font-bold text-lg">Blood Panel Results</h4>
+<p class="text-sm text-slate-500">Central Diagnostics Laboratory</p>
+</div>
+<span class="text-sm font-bold text-slate-400">Oct 10, 2023 • 09:15 AM</span>
+</div>
+<div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
+<div class="p-3 border border-slate-100 dark:border-slate-800 rounded-lg">
+<p class="text-xs text-slate-400 uppercase font-bold">Glucose</p>
+<p class="text-lg font-bold">98 <span class="text-xs font-normal">mg/dL</span></p>
+<span class="text-[10px] text-green-500 font-bold uppercase">Normal</span>
+</div>
+<div class="p-3 border border-slate-100 dark:border-slate-800 rounded-lg bg-red-50/50 dark:bg-red-900/10">
+<p class="text-xs text-slate-400 uppercase font-bold">LDL Cholesterol</p>
+<p class="text-lg font-bold text-red-600 dark:text-red-400">165 <span class="text-xs font-normal">mg/dL</span></p>
+<span class="text-[10px] text-red-500 font-bold uppercase">High</span>
+</div>
+<div class="p-3 border border-slate-100 dark:border-slate-800 rounded-lg">
+<p class="text-xs text-slate-400 uppercase font-bold">Hemoglobin</p>
+<p class="text-lg font-bold">14.2 <span class="text-xs font-normal">g/dL</span></p>
+<span class="text-[10px] text-green-500 font-bold uppercase">Normal</span>
+</div>
+</div>
+<button class="mt-4 text-primary text-sm font-bold flex items-center gap-1 hover:underline">
+<span class="material-symbols-outlined text-base">picture_as_pdf</span>
+                                        View Full Report (PDF)
+                                    </button>
+</div>
+</div>
+<!-- Timeline Entry 3 -->
+<div class="relative flex gap-6 z-10">
+<div class="flex-none">
+<div class="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center ring-4 ring-white dark:ring-slate-900">
+<span class="material-symbols-outlined">medication</span>
+</div>
+</div>
+<div class="flex-1 bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h4 class="font-bold text-lg">Prescription Renewed</h4>
+<p class="text-sm text-slate-500">Pharmacy: Walgreens Central</p>
+</div>
+<span class="text-sm font-bold text-slate-400">Sep 28, 2023 • 02:40 PM</span>
+</div>
+<div class="mt-3 flex items-center gap-4 text-sm font-medium">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-green-500">check_circle</span>
+<span>Metformin (500mg) - 60 Tablets</span>
+</div>
+<div class="text-slate-400">|</div>
+<span>Refills remaining: 2</span>
+</div>
+</div>
+</div>
+<!-- Timeline Entry 4 -->
+<div class="relative flex gap-6 z-10">
+<div class="flex-none">
+<div class="w-10 h-10 rounded-full bg-slate-400 text-white flex items-center justify-center ring-4 ring-white dark:ring-slate-900">
+<span class="material-symbols-outlined">vaccines</span>
+</div>
+</div>
+<div class="flex-1 bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h4 class="font-bold text-lg">Flu Vaccination</h4>
+<p class="text-sm text-slate-500">Annual Routine Immunization</p>
+</div>
+<span class="text-sm font-bold text-slate-400">Sep 15, 2023 • 11:00 AM</span>
+</div>
+<p class="mt-2 text-sm text-slate-600 dark:text-slate-400">Administered: Influvac Tetra 2023/2024. No immediate adverse reactions noted. Patient advised on potential side effects.</p>
+</div>
+</div>
+</div>
+<!-- Load More -->
+<div class="text-center py-6">
+<button class="px-6 py-2 text-sm font-bold text-primary bg-primary/5 hover:bg-primary/10 rounded-full transition-all">
+                                Load Earlier History
+                            </button>
+</div>
+</div>
+</div>
+</main>
+<!-- Quick Action Floating Column (Optional / Supplemental for Desktop) -->
+<aside class="w-16 bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 hidden xl:flex flex-col items-center py-6 gap-6">
+<button class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-primary transition-colors flex items-center justify-center" title="Messaging">
+<span class="material-symbols-outlined">chat_bubble</span>
+</button>
+<button class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-primary transition-colors flex items-center justify-center" title="Schedule">
+<span class="material-symbols-outlined">event</span>
+</button>
+<button class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-primary transition-colors flex items-center justify-center" title="Documents">
+<span class="material-symbols-outlined">folder</span>
+</button>
+<div class="w-8 h-[1px] bg-slate-200 dark:bg-slate-800"></div>
+<button class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-primary transition-colors flex items-center justify-center" title="Settings">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</aside>
+</div>
+</div>
+</body></html>

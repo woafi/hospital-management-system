@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Patient Portal Registration | City Hospital HMS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-[#0d141b] font-display min-h-screen">
+<div class="flex min-h-screen flex-col lg:flex-row">
+<!-- Left Section: Hero/Branding (Hidden on mobile/tablet if needed, but here designed as split screen) -->
+<div class="relative hidden lg:flex lg:w-5/12 xl:w-1/2 flex-col justify-between p-12 text-white overflow-hidden">
+<!-- Background Image with Overlay -->
+<div class="absolute inset-0 z-0 bg-primary/90">
+<div class="absolute inset-0 opacity-40 bg-cover bg-center" data-alt="Modern bright hospital hallway with friendly medical staff" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAReL1ukCM1wpRL3ByHrCS08-YQtLUbmYngxdE_BwxBO0CmTU41Qw_MGT7xnla33riXY5HZIN77MdWPvMJBhtwx-ogofN_tnpVvJPe0R9WqK3MhUE_MKoph36-8YsVxrQ5v0IvxVhsY-4H_OHS2O-hjSqzSjs2FDY7ayyTOvWSYlyeg0qgRGIcRykpjr-cxTiVHVyG2U_5qGgXbLgrUtip1N4FoFhzY7HzsDVjHYQ7grvZrfptdZeiFxhiF6Glu828K9SPqUzHp8r0V");'></div>
+<div class="absolute inset-0 bg-gradient-to-br from-primary via-primary/80 to-primary/40"></div>
+</div>
+<!-- Content -->
+<div class="relative z-10">
+<div class="flex items-center gap-3 mb-12">
+<div class="bg-white p-2 rounded-lg">
+<span class="material-symbols-outlined text-primary text-3xl">local_hospital</span>
+</div>
+<h2 class="text-2xl font-bold tracking-tight">City Hospital HMS</h2>
+</div>
+<div class="max-w-md">
+<h1 class="text-5xl font-extrabold leading-tight mb-6">
+                        Your health journey starts here.
+                    </h1>
+<p class="text-lg text-white/90 leading-relaxed mb-8">
+                        Join thousands of patients managing their health securely and easily. Get access to medical records, appointments, and doctors instantly.
+                    </p>
+<div class="space-y-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-white/80">verified_user</span>
+<span class="text-sm font-medium">HIPAA Compliant &amp; Secure</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-white/80">calendar_month</span>
+<span class="text-sm font-medium">24/7 Appointment Booking</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-white/80">lab_profile</span>
+<span class="text-sm font-medium">Instant Lab Results Access</span>
+</div>
+</div>
+</div>
+</div>
+<div class="relative z-10 pt-12">
+<p class="text-sm text-white/70">© 2024 City Hospital Management Systems. All rights reserved.</p>
+</div>
+</div>
+<!-- Right Section: Registration Form -->
+<div class="flex-1 flex flex-col justify-center items-center bg-white dark:bg-background-dark px-6 py-12 lg:px-20">
+<!-- Mobile Logo -->
+<div class="lg:hidden flex items-center gap-3 mb-10 w-full max-w-md">
+<span class="material-symbols-outlined text-primary text-3xl">local_hospital</span>
+<h2 class="text-xl font-bold tracking-tight text-[#0d141b] dark:text-white">City Hospital HMS</h2>
+</div>
+<div class="w-full max-w-[480px]">
+<!-- Header -->
+<div class="mb-8">
+<h2 class="text-3xl font-bold text-[#0d141b] dark:text-white mb-2">Create your patient account</h2>
+<p class="text-[#4c739a] dark:text-slate-400">Please fill in your details to get started.</p>
+</div>
+<!-- Progress Tracker -->
+<div class="mb-10">
+<div class="flex justify-between items-center mb-2">
+<span class="text-sm font-semibold text-primary">Step 1 of 2: Basic Information</span>
+<span class="text-sm font-medium text-[#4c739a] dark:text-slate-400">50% Completed</span>
+</div>
+<div class="w-full bg-[#cfdbe7] dark:bg-slate-700 h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full transition-all duration-500" style="width: 50%;"></div>
+</div>
+<p class="mt-2 text-xs text-[#4c739a] dark:text-slate-500 italic flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">info</span>
+                        Next: Identity Verification
+                    </p>
+</div>
+<!-- Form -->
+<form class="space-y-5">
+<!-- Full Name -->
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-[#0d141b] dark:text-slate-200" for="full-name">Full Name</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#4c739a]">person</span>
+<input class="w-full pl-10 pr-4 py-3.5 rounded-lg border border-[#cfdbe7] dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-[#4c739a]/60" id="full-name" placeholder="John Doe" type="text"/>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+<!-- Email / Phone -->
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-[#0d141b] dark:text-slate-200" for="contact">Email Address</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#4c739a]">mail</span>
+<input class="w-full pl-10 pr-4 py-3.5 rounded-lg border border-[#cfdbe7] dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-[#4c739a]/60" id="contact" placeholder="john@example.com" type="email"/>
+</div>
+</div>
+<!-- DOB -->
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-[#0d141b] dark:text-slate-200" for="dob">Date of Birth</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#4c739a]">calendar_today</span>
+<input class="w-full pl-10 pr-4 py-3.5 rounded-lg border border-[#cfdbe7] dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all" id="dob" type="date"/>
+</div>
+</div>
+</div>
+<!-- Password -->
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-[#0d141b] dark:text-slate-200" for="password">Create Password</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#4c739a]">lock</span>
+<input class="w-full pl-10 pr-12 py-3.5 rounded-lg border border-[#cfdbe7] dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all" id="password" placeholder="••••••••" type="password"/>
+<button class="absolute right-3 top-1/2 -translate-y-1/2 text-[#4c739a] hover:text-primary" type="button">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</div>
+<div class="flex gap-1 mt-1">
+<div class="h-1 flex-1 rounded bg-primary"></div>
+<div class="h-1 flex-1 rounded bg-primary"></div>
+<div class="h-1 flex-1 rounded bg-[#cfdbe7] dark:bg-slate-700"></div>
+<div class="h-1 flex-1 rounded bg-[#cfdbe7] dark:bg-slate-700"></div>
+</div>
+<p class="text-[10px] text-[#4c739a] dark:text-slate-500 uppercase font-bold tracking-wider">Password Strength: Good</p>
+</div>
+<!-- Terms -->
+<div class="flex items-start gap-3 py-2">
+<input class="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary" id="terms" type="checkbox"/>
+<label class="text-sm text-[#4c739a] dark:text-slate-400" for="terms">
+                            I agree to the <a class="text-primary hover:underline" href="#">Terms of Service</a> and <a class="text-primary hover:underline" href="#">Privacy Policy</a>.
+                        </label>
+</div>
+<!-- Submit Button -->
+<button class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-lg shadow-lg shadow-primary/20 flex items-center justify-center gap-2 transition-all active:scale-[0.98]" type="submit">
+<span>Continue to Verification</span>
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</form>
+<!-- Footer Links -->
+<div class="mt-10 pt-6 border-t border-[#e7edf3] dark:border-slate-800 text-center">
+<p class="text-[#4c739a] dark:text-slate-400 text-sm">
+                        Already have an account? 
+                        <a class="text-primary font-bold hover:underline ml-1" href="#">Login here</a>
+</p>
+</div>
+<!-- Contact Support -->
+<div class="mt-12 flex justify-center">
+<button class="flex items-center gap-2 text-xs text-[#4c739a] dark:text-slate-500 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-sm">help_outline</span>
+<span>Need help with registration? Contact Support</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</body></html>

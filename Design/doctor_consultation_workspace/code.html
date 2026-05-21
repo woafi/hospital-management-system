@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Doctor Consultation Workspace | MedCare HMS</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        .dark ::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar Navigation -->
+        <aside
+            class="w-20 lg:w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark flex flex-col shrink-0">
+            <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center gap-3">
+                <div class="size-10 bg-primary rounded-lg flex items-center justify-center text-white">
+                    <span class="material-symbols-outlined">medical_services</span>
+                </div>
+                <span class="font-bold text-lg hidden lg:block">MedCare HMS</span>
+            </div>
+            <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+                <a class="flex items-center gap-3 p-3 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                    href="#">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span class="font-medium hidden lg:block">Dashboard</span>
+                </a>
+                <a class="flex items-center gap-3 p-3 rounded-lg bg-primary/10 text-primary font-bold" href="#">
+                    <span class="material-symbols-outlined">stethoscope</span>
+                    <span class="hidden lg:block">Consultation</span>
+                </a>
+                <a class="flex items-center gap-3 p-3 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                    href="#">
+                    <span class="material-symbols-outlined">groups</span>
+                    <span class="font-medium hidden lg:block">Patients</span>
+                </a>
+                <a class="flex items-center gap-3 p-3 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                    href="#">
+                    <span class="material-symbols-outlined">lab_panel</span>
+                    <span class="font-medium hidden lg:block">Lab Reports</span>
+                </a>
+                <a class="flex items-center gap-3 p-3 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                    href="#">
+                    <span class="material-symbols-outlined">inventory_2</span>
+                    <span class="font-medium hidden lg:block">Pharmacy</span>
+                </a>
+            </nav>
+            <div class="p-4 border-t border-slate-200 dark:border-slate-800 space-y-4">
+                <div class="flex items-center gap-3 p-2 bg-slate-50 dark:bg-slate-900 rounded-lg">
+                    <div class="size-8 rounded-full bg-slate-300 overflow-hidden shrink-0">
+                        <img alt="Dr. Wilson" data-alt="Portrait of Dr. James Wilson"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxlMGU8HOCRoOvWu-ryjyaJR1_PjpZhFDohdE3_QfSBmoPle4ZJbTeZTF2wmGWz5SZdEXm12lIXnqyhVuegQc1MI4ppyblC6yv36jdRi3lLdFI62KVzgCHQWyeQei630jtVQoCUiOetxP86doUEnOfYW-MGE2xuIxOx0ZYEWdL1HgPF75sjBFQj57iYka2eeH-9Hir72rkobWfW8p-Q4VGgCZ-QfN9gd-48aVyY-bH_rr9QMTq4EohCFc_Wm3rw8PnaG2-93s4NJcp" />
+                    </div>
+                    <div class="hidden lg:block truncate">
+                        <p class="text-xs font-bold truncate">Dr. James Wilson</p>
+                        <p class="text-[10px] text-slate-500 truncate">Cardiologist</p>
+                    </div>
+                </div>
+                <button
+                    class="w-full flex items-center justify-center gap-2 p-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors">
+                    <span class="material-symbols-outlined text-sm">emergency</span>
+                    <span class="text-xs font-bold hidden lg:block">EMERGENCY ALERT</span>
+                </button>
+            </div>
+        </aside>
+        <!-- Main Workspace -->
+        <main class="flex-1 flex flex-col min-w-0 bg-background-light dark:bg-background-dark">
+            <!-- Top Header -->
+            <header
+                class="h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between px-6 shrink-0">
+                <h1 class="text-xl font-bold">Consultation Workspace</h1>
+                <div class="flex items-center gap-4">
+                    <div class="relative">
+                        <span
+                            class="material-symbols-outlined text-slate-500 cursor-pointer hover:text-primary transition-colors">notifications</span>
+                        <span
+                            class="absolute -top-1 -right-1 size-2 bg-red-500 rounded-full border-2 border-white"></span>
+                    </div>
+                    <div class="h-8 w-px bg-slate-200 dark:bg-slate-800"></div>
+                    <div class="flex items-center gap-2 text-sm text-slate-500">
+                        <span class="material-symbols-outlined text-lg">calendar_today</span>
+                        <span class="font-medium">Monday, Oct 23</span>
+                    </div>
+                </div>
+            </header>
+            <div class="flex-1 flex overflow-hidden">
+                <!-- Left Rail: Appointments Queue -->
+                <section
+                    class="w-80 border-r border-slate-200 dark:border-slate-800 flex flex-col bg-white dark:bg-slate-900 shrink-0">
+                    <div class="p-4 border-b border-slate-200 dark:border-slate-800">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="font-bold text-sm">Today's Appointments</h2>
+                            <span class="text-[10px] font-bold bg-primary/10 text-primary px-2 py-0.5 rounded-full">18
+                                Total</span>
+                        </div>
+                        <div class="flex gap-1">
+                            <button
+                                class="text-[10px] font-bold bg-primary text-white px-3 py-1.5 rounded-lg flex-1">Waiting
+                                (5)</button>
+                            <button
+                                class="text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-3 py-1.5 rounded-lg flex-1">Active
+                                (1)</button>
+                            <button
+                                class="text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-3 py-1.5 rounded-lg flex-1">Done
+                                (12)</button>
+                        </div>
+                    </div>
+                    <div class="flex-1 overflow-y-auto">
+                        <!-- Appointment Card: Active -->
+                        <div class="p-4 border-l-4 border-primary bg-primary/5 cursor-pointer">
+                            <div class="flex justify-between items-start mb-1">
+                                <h3 class="font-bold text-sm">Sarah Jenkins</h3>
+                                <span class="text-[10px] font-bold text-primary uppercase tracking-wider italic">In
+                                    Consultation</span>
+                            </div>
+                            <p class="text-xs text-slate-500 mb-2">ID: #P-12894 • 42y • Female</p>
+                            <div class="flex items-center gap-2">
+                                <span
+                                    class="text-[10px] bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2 py-0.5 rounded italic">09:30
+                                    AM</span>
+                                <span class="text-[10px] text-slate-400">• Follow-up visit</span>
+                            </div>
+                        </div>
+                        <!-- Appointment Card: Waiting -->
+                        <div
+                            class="p-4 border-b border-slate-100 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-800/40 cursor-pointer transition-colors">
+                            <div class="flex justify-between items-start mb-1">
+                                <h3 class="font-bold text-sm">Robert Miller</h3>
+                                <span
+                                    class="text-[10px] font-bold text-amber-600 uppercase tracking-wider italic">Waiting</span>
+                            </div>
+                            <p class="text-xs text-slate-500 mb-2">ID: #P-12901 • 58y • Male</p>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">10:00
+                                    AM</span>
+                                <span class="text-[10px] text-slate-400">• Hypertension check</span>
+                            </div>
+                        </div>
+                        <!-- Appointment Card: Waiting -->
+                        <div
+                            class="p-4 border-b border-slate-100 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-800/40 cursor-pointer transition-colors">
+                            <div class="flex justify-between items-start mb-1">
+                                <h3 class="font-bold text-sm">Emily Chen</h3>
+                                <span
+                                    class="text-[10px] font-bold text-amber-600 uppercase tracking-wider italic">Waiting</span>
+                            </div>
+                            <p class="text-xs text-slate-500 mb-2">ID: #P-12905 • 29y • Female</p>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">10:15
+                                    AM</span>
+                                <span class="text-[10px] text-slate-400">• Lab Review</span>
+                            </div>
+                        </div>
+                        <!-- Appointment Card: Completed -->
+                        <div class="p-4 border-b border-slate-100 dark:border-slate-800/50 opacity-60">
+                            <div class="flex justify-between items-start mb-1">
+                                <h3 class="font-bold text-sm">Mark Thompson</h3>
+                                <span
+                                    class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider italic">Completed</span>
+                            </div>
+                            <p class="text-xs text-slate-500 mb-2">ID: #P-12888 • 65y • Male</p>
+                            <div class="flex items-center gap-2">
+                                <span
+                                    class="text-[10px] bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded line-through">09:00
+                                    AM</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <!-- Center Core: Consultation Form -->
+                <section class="flex-1 flex flex-col overflow-y-auto">
+                    <!-- Current Patient Bar -->
+                    <div
+                        class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 p-4 sticky top-0 z-10">
+                        <div class="flex flex-wrap items-center gap-6">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="size-12 rounded-full bg-primary/20 flex items-center justify-center text-primary">
+                                    <span class="material-symbols-outlined text-2xl">person</span>
+                                </div>
+                                <div>
+                                    <h2 class="text-lg font-bold leading-none">Sarah Jenkins</h2>
+                                    <p class="text-xs text-slate-500 mt-1">42 Years • Female • O+ positive</p>
+                                </div>
+                            </div>
+                            <div class="flex-1 flex gap-4 min-w-[300px]">
+                                <div
+                                    class="bg-slate-50 dark:bg-slate-800 rounded-lg px-3 py-2 border border-slate-100 dark:border-slate-700 flex-1">
+                                    <p class="text-[10px] text-slate-400 font-bold uppercase">Weight</p>
+                                    <p class="text-sm font-bold">64 kg</p>
+                                </div>
+                                <div
+                                    class="bg-slate-50 dark:bg-slate-800 rounded-lg px-3 py-2 border border-slate-100 dark:border-slate-700 flex-1">
+                                    <p class="text-[10px] text-slate-400 font-bold uppercase">Blood Pressure</p>
+                                    <p class="text-sm font-bold text-red-500">145/90</p>
+                                </div>
+                                <div
+                                    class="bg-slate-50 dark:bg-slate-800 rounded-lg px-3 py-2 border border-slate-100 dark:border-slate-700 flex-1">
+                                    <p class="text-[10px] text-slate-400 font-bold uppercase">Pulse Rate</p>
+                                    <p class="text-sm font-bold">82 bpm</p>
+                                </div>
+                                <div
+                                    class="bg-slate-50 dark:bg-slate-800 rounded-lg px-3 py-2 border border-slate-100 dark:border-slate-700 flex-1">
+                                    <p class="text-[10px] text-slate-400 font-bold uppercase">Temp</p>
+                                    <p class="text-sm font-bold">98.6°F</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button
+                                    class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 p-2 rounded-lg text-slate-600 dark:text-slate-400 transition-colors"
+                                    title="Patient History">
+                                    <span class="material-symbols-outlined">history</span>
+                                </button>
+                                <button
+                                    class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 p-2 rounded-lg text-slate-600 dark:text-slate-400 transition-colors"
+                                    title="Recent Lab Results">
+                                    <span class="material-symbols-outlined">analytics</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6 space-y-6">
+                        <!-- Diagnosis & Notes -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">Chief
+                                    Complaints</label>
+                                <textarea
+                                    class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-sm focus:ring-1 focus:ring-primary focus:outline-none placeholder:text-slate-400"
+                                    placeholder="Describe symptoms..." rows="3"></textarea>
+                            </div>
+                            <div class="space-y-4">
+                                <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">Clinical
+                                    Diagnosis (ICD-10)</label>
+                                <div class="relative">
+                                    <span
+                                        class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-sm">search</span>
+                                    <input
+                                        class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg pl-9 pr-3 py-2.5 text-sm focus:ring-1 focus:ring-primary focus:outline-none"
+                                        placeholder="Search diagnosis code..." type="text" />
+                                </div>
+                                <div class="flex flex-wrap gap-2">
+                                    <span
+                                        class="inline-flex items-center gap-1 bg-primary/10 text-primary text-[10px] font-bold px-2 py-1 rounded-lg">I10
+                                        - Essential Hypertension <button
+                                            class="material-symbols-outlined text-sm">close</button></span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Digital Prescription Builder -->
+                        <div
+                            class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+                            <div
+                                class="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50">
+                                <h3 class="text-sm font-bold flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-primary">pill</span>
+                                    Digital Prescription
+                                </h3>
+                                <div class="flex gap-2">
+                                    <button
+                                        class="text-xs font-bold text-primary flex items-center gap-1 hover:underline">
+                                        <span class="material-symbols-outlined text-sm">history</span> Load Previous
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="p-4">
+                                <div class="flex gap-3 mb-4">
+                                    <div class="flex-1 relative">
+                                        <input
+                                            class="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-lg px-4 py-2.5 text-sm placeholder:text-slate-400"
+                                            placeholder="Search medicine (e.g. Amlodipine)..." type="text" />
+                                    </div>
+                                    <select
+                                        class="bg-slate-50 dark:bg-slate-800 border-none rounded-lg px-4 py-2.5 text-sm">
+                                        <option>Dosage</option>
+                                        <option>5mg</option>
+                                        <option>10mg</option>
+                                        <option>500mg</option>
+                                    </select>
+                                    <button
+                                        class="bg-primary text-white px-6 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-primary/90 transition-colors">
+                                        <span class="material-symbols-outlined text-sm">add</span> Add
+                                    </button>
+                                </div>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-left text-sm">
+                                        <thead
+                                            class="bg-slate-50 dark:bg-slate-800/50 text-slate-500 uppercase text-[10px] font-bold">
+                                            <tr>
+                                                <th class="px-4 py-2">Medicine Name</th>
+                                                <th class="px-4 py-2">Dosage</th>
+                                                <th class="px-4 py-2">Frequency</th>
+                                                <th class="px-4 py-2">Duration</th>
+                                                <th class="px-4 py-2">Notes</th>
+                                                <th class="px-4 py-2 text-right">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                                            <tr>
+                                                <td class="px-4 py-3 font-medium">Amlodipine Besylate</td>
+                                                <td class="px-4 py-3">5 mg</td>
+                                                <td class="px-4 py-3">1 - 0 - 0</td>
+                                                <td class="px-4 py-3">30 Days</td>
+                                                <td class="px-4 py-3 text-slate-400 italic text-xs">Morning, empty
+                                                    stomach</td>
+                                                <td class="px-4 py-3 text-right">
+                                                    <button
+                                                        class="material-symbols-outlined text-slate-400 hover:text-red-500 transition-colors text-lg">delete</button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="px-4 py-3 font-medium">Atorvastatin Calcium</td>
+                                                <td class="px-4 py-3">10 mg</td>
+                                                <td class="px-4 py-3">0 - 0 - 1</td>
+                                                <td class="px-4 py-3">30 Days</td>
+                                                <td class="px-4 py-3 text-slate-400 italic text-xs">Night, after meal
+                                                </td>
+                                                <td class="px-4 py-3 text-right">
+                                                    <button
+                                                        class="material-symbols-outlined text-slate-400 hover:text-red-500 transition-colors text-lg">delete</button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Clinical Notes Area -->
+                        <div class="space-y-4">
+                            <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">Clinical Notes /
+                                Advice</label>
+                            <div
+                                class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
+                                <div
+                                    class="flex border-b border-slate-100 dark:border-slate-800 px-3 py-2 gap-2 bg-slate-50 dark:bg-slate-800/30">
+                                    <button
+                                        class="material-symbols-outlined text-slate-400 text-lg hover:text-slate-600">format_bold</button>
+                                    <button
+                                        class="material-symbols-outlined text-slate-400 text-lg hover:text-slate-600">format_italic</button>
+                                    <button
+                                        class="material-symbols-outlined text-slate-400 text-lg hover:text-slate-600">format_list_bulleted</button>
+                                </div>
+                                <textarea
+                                    class="w-full border-none p-4 text-sm focus:ring-0 focus:outline-none placeholder:text-slate-400 dark:bg-slate-900"
+                                    placeholder="Enter clinical observations, advice, and lifestyle modifications..."
+                                    rows="6"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <!-- Right Rail: Quick Actions & Tools -->
+                <section
+                    class="w-72 border-l border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col shrink-0">
+                    <div class="p-6 border-b border-slate-100 dark:border-slate-800">
+                        <h3 class="font-bold text-sm mb-4">Quick Actions</h3>
+                        <div class="grid grid-cols-1 gap-3">
+                            <button
+                                class="flex items-center gap-3 p-3 rounded-xl border border-primary/20 bg-primary/5 text-primary hover:bg-primary/10 transition-colors">
+                                <span class="material-symbols-outlined">biotech</span>
+                                <div class="text-left">
+                                    <p class="text-xs font-bold leading-tight">Order Lab Test</p>
+                                    <p class="text-[10px] opacity-70">Blood, ECG, X-Ray</p>
+                                </div>
+                            </button>
+                            <button
+                                class="flex items-center gap-3 p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                                <span class="material-symbols-outlined">event_repeat</span>
+                                <div class="text-left">
+                                    <p class="text-xs font-bold leading-tight">Schedule Follow-up</p>
+                                    <p class="text-[10px] opacity-70">Set date &amp; time</p>
+                                </div>
+                            </button>
+                            <button
+                                class="flex items-center gap-3 p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                                <span class="material-symbols-outlined">print</span>
+                                <div class="text-left">
+                                    <p class="text-xs font-bold leading-tight">Print Summary</p>
+                                    <p class="text-[10px] opacity-70">Visit record for patient</p>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-bold text-sm mb-4">Referral &amp; Docs</h3>
+                        <div class="space-y-4">
+                            <div
+                                class="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-dashed border-slate-300 dark:border-slate-600">
+                                <p class="text-[10px] text-slate-400 font-bold uppercase mb-2">Internal Referral</p>
+                                <select
+                                    class="w-full bg-white dark:bg-slate-900 border-none rounded-lg text-xs py-2 shadow-sm">
+                                    <option>Select Department</option>
+                                    <option>Neurology</option>
+                                    <option>Orthopedics</option>
+                                    <option>Radiology</option>
+                                </select>
+                            </div>
+                            <div class="space-y-2">
+                                <p class="text-[10px] text-slate-400 font-bold uppercase">Quick Notes (Draft)</p>
+                                <div
+                                    class="p-3 bg-yellow-50 dark:bg-yellow-900/10 text-yellow-800 dark:text-yellow-200/60 text-xs rounded-lg border border-yellow-100 dark:border-yellow-900/30">
+                                    Remember to ask about family history of hypertension next time.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-auto p-6 border-t border-slate-200 dark:border-slate-800">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-[10px] text-slate-400">Autosaved 10:42 AM</span>
+                            <div class="flex gap-1">
+                                <div class="size-1.5 bg-emerald-500 rounded-full"></div>
+                                <div class="size-1.5 bg-emerald-500 rounded-full"></div>
+                            </div>
+                        </div>
+                        <button
+                            class="w-full bg-primary text-white py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all">
+                            <span class="material-symbols-outlined">check_circle</span>
+                            Complete Visit
+                        </button>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>
