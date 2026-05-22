@@ -83,7 +83,7 @@ async function seedDoctors() {
             specialization: "Oncology",
             qualification: "MBBS, MD (Onco)",
             gender: "MALE",
-            room: 220,
+            room: 607,
         },
         {
             name: "Dr. Rafia Islam",
@@ -143,7 +143,7 @@ async function seedDoctors() {
             specialization: "General Surgery",
             qualification: "MBBS, MS",
             gender: "MALE",
-            room: 101,
+            room: 608,
         },
         {
             name: "Dr. Tania Haque",

@@ -46,23 +46,23 @@ const receptionistSchema = z.object({
     .trim()
     .regex(/^01[0-9]{9}$/, "Invalid phone number format"),
   receptionists_id: z
-  .string()
-  .trim()
-  .min(1, "Receptionist ID is required")
-  .regex(
-    /^[A-Z]+-\d+$/,
-    "Format must be like REC-247"
-  ),
+    .string()
+    .trim()
+    .min(1, "Receptionist ID is required")
+    .regex(
+      /^[A-Z]+-\d+$/,
+      "Format must be like REC-247"
+    ),
   gender: z
     .enum(["Male", "Female", "Other"], "Gender is required")
     .transform((value) => value.toUpperCase()),
   shift: z.enum(["Morning", "Evening", "Night"], "Shift is required"),
   profileImage: z
-        .string()
-        .trim()
-        .url("Uploaded image URL is invalid")
-        .optional()
-        .or(z.literal("")),
+    .string()
+    .trim()
+    .url("Uploaded image URL is invalid")
+    .optional()
+    .or(z.literal("")),
   isActive: z
     .enum(["on", "off"])
     .transform((value) => value === "on" ? "on" : "off"),
@@ -156,11 +156,19 @@ export async function receptionistFormsubmissionAction(prevState, formData) {
 }
 
 export async function receptionistEditFormsubmissionAction(prevState, formData) {
-    const raw = Object.fromEntries(formData);
-    const receptionistId = String(raw.id || "");
-    const result = receptionistSchema.safeParse(raw);
+  const raw = Object.fromEntries(formData);
+  const receptionistId = String(raw.id || "");
+  const result = receptionistSchema.safeParse(raw);
 
-    if (!result.success) {
+  if (!receptionistId) {
+    return {
+      message: "Receptionist ID is missing",
+      fieldErrors: emptyFieldErrors,
+      values: getValues(raw),
+    };
+  }
+
+  if (!result.success) {
     const fieldErrors = result.error.flatten().fieldErrors;
 
     return {
@@ -178,3 +186,60 @@ export async function receptionistEditFormsubmissionAction(prevState, formData) 
       values: getValues(raw),
     };
   }
+
+  let { name, email, phone, receptionists_id, gender, shift, profileImage, isActive } =
+    result.data;
+  isActive = raw.isActive === "on" ? true : false;
+
+  try {
+    await prisma.receptionist.update({
+      where: { id: receptionistId },
+      data: {
+        name,
+        receptionists_id,
+        gender,
+        shift,
+        profileImage: profileImage || null,
+        isActive,
+        user: {
+          update: {
+            email,
+            phone,
+          },
+        },
+      },
+    });
+  } catch (error) {
+    // Unique constraint (email, phone, or receptionists_id)
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2002"
+    ) {
+      const target = error.meta?.target || [];
+      const fields = Array.isArray(target) ? target : [target];
+
+      return {
+        message: "Receptionist or account already exists",
+        fieldErrors: {
+          ...emptyFieldErrors,
+          email: fields.includes("email") ? "Email already exists" : "",
+          phone: fields.includes("phone") ? "Phone number already exists" : "",
+          receptionists_id: fields.includes("receptionists_id")
+            ? "Receptionist ID already exists"
+            : "",
+        },
+        values: getValues(raw),
+      };
+    }
+
+    console.error(error);
+
+    return {
+      message: "Server Error",
+      fieldErrors: emptyFieldErrors,
+      values: getValues(raw),
+    };
+  }
+  
+  redirect("/dashboard/receptionists");
+}

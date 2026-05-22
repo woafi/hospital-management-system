@@ -141,7 +141,7 @@ export default async function ReceptionistListPage({ searchParams }) {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex gap-2 justify-end">
-                        <Link href="#">
+                        <Link href={`/dashboard/receptionists/editingareceptionist?id=${receptionist.id}`}>
                           <button className="cursor-pointer p-2 text-gray-400 hover:text-blue-600 transition-colors bg-gray-50 dark:bg-gray-700 rounded-lg">
                             <svg
                               className="w-5 h-5"
