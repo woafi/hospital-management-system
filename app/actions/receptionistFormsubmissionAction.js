@@ -161,4 +161,20 @@ export async function receptionistEditFormsubmissionAction(prevState, formData) 
     const result = receptionistSchema.safeParse(raw);
 
     if (!result.success) {
-        const fieldErrors = result.error.flatten().fieldErrors;
+    const fieldErrors = result.error.flatten().fieldErrors;
+
+    return {
+      message: "Invalid receptionist information",
+      fieldErrors: {
+        name: fieldErrors.name?.[0] || "",
+        email: fieldErrors.email?.[0] || "",
+        phone: fieldErrors.phone?.[0] || "",
+        receptionists_id: fieldErrors.receptionists_id?.[0] || "",
+        gender: fieldErrors.gender?.[0] || "",
+        shift: fieldErrors.shift?.[0] || "",
+        profileImage: fieldErrors.profileImage?.[0] || "",
+        isActive: fieldErrors.isActive?.[0] || "",
+      },
+      values: getValues(raw),
+    };
+  }
