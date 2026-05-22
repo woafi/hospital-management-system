@@ -246,7 +246,7 @@ export default function AvailabilitySchedule() {
               <button
                 key={v}
                 onClick={() => setView(v)}
-                className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${view === v ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+                className={`cursor-pointer px-3 py-1.5 rounded-md text-xs font-bold transition-all ${view === v ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
               >
                 {label}
               </button>

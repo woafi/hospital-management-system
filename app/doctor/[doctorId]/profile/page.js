@@ -1,95 +1,319 @@
-export default async function DoctorProfile() {
-  return (
-    <div className="relative flex flex-1 flex-col overflow-x-hidden bg-background text-gray-900 dark:text-gray-100 font-sans">
+import Image from "next/image";
+import { notFound } from "next/navigation";
+import { PrismaClient } from "@prisma/client";
 
-      {/* Main Content Layout */}
-      <main className="flex-1 max-w-7xl mx-auto w-full p-6 lg:p-10 space-y-8">
-        {/* Hero Profile Section */}
-        <div className="bg-foreground rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-800">
-          <div className="flex flex-col md:flex-row gap-6 items-center md:items-start justify-between">
-            <div className="flex flex-col md:flex-row gap-6 items-center">
-              <div className="relative group">
-                <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-100 dark:border-gray-800 shadow-lg">
-                  <div className="w-full h-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-3xl">
-                    AS
-                  </div>
+const prisma = new PrismaClient();
+
+// export const dynamic = "force-dynamic";
+
+const dayOrder = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
+];
+
+function formatGender(gender) {
+  const labels = { MALE: "Male", FEMALE: "Female", OTHER: "Other" };
+  return labels[gender] ?? gender;
+}
+
+function formatStatus(status) {
+  return String(status ?? "").replace(/_/g, " ");
+}
+
+function formatDateTime(value) {
+  if (!value) return "Not recorded";
+  return new Intl.DateTimeFormat("en-US", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(new Date(value));
+}
+
+function formatTime(value) {
+  return new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(new Date(value));
+}
+
+function formatFee(value) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 2,
+  }).format(Number(value ?? 0));
+}
+
+function initialsFromName(name) {
+  if (!name?.trim()) return "?";
+  return name
+    .trim()
+    .split(/\s+/)
+    .map((word) => word[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+}
+
+function FieldCard({ label, children, className = "" }) {
+  return (
+    <div
+      className={`rounded-xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900 ${className}`}
+    >
+      <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-gray-500">
+        {label}
+      </label>
+      <div className="rounded-lg border border-gray-200 bg-gray-50 p-3 text-sm text-gray-800 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-200">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function SectionTitle({ icon, children }) {
+  return (
+    <h2 className="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white">
+      <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300">
+        {icon}
+      </span>
+      {children}
+    </h2>
+  );
+}
+
+function ActiveBadge({ active }) {
+  return (
+    <span
+      className={`rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider ${
+        active
+          ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300"
+          : "bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-300"
+      }`}
+    >
+      {active ? "Active" : "Inactive"}
+    </span>
+  );
+}
+
+function ScheduleCard({ availabilities }) {
+  const sortedAvailabilities = [...availabilities].sort(
+    (a, b) => dayOrder.indexOf(a.day) - dayOrder.indexOf(b.day)
+  );
+
+  return (
+    <section className="space-y-4 lg:col-span-2">
+      <SectionTitle
+        icon={
+          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+            />
+          </svg>
+        }
+      >
+        Weekly Availability
+      </SectionTitle>
+
+      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
+        {sortedAvailabilities.length === 0 ? (
+          <div className="p-6 text-sm text-gray-500 dark:text-gray-400">
+            No availability schedule has been assigned.
+          </div>
+        ) : (
+          <div className="divide-y divide-gray-100 dark:divide-gray-800">
+            {sortedAvailabilities.map((availability) => (
+              <div
+                key={availability.id}
+                className="grid gap-3 px-5 py-4 md:grid-cols-[160px_160px_1fr] md:items-center"
+              >
+                <div className="text-sm font-bold text-gray-900 dark:text-white">
+                  {availability.day}
                 </div>
-                <button className="absolute bottom-1 right-1 bg-blue-600 text-white p-2 rounded-full shadow-md hover:scale-105 transition-transform">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                </button>
+                <div>
+                  <span className="inline-flex rounded-full bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+                    {formatStatus(availability.status)}
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {availability.available_slots.length === 0 ? (
+                    <span className="text-sm text-gray-400">No slots</span>
+                  ) : (
+                    availability.available_slots.map((slot) => (
+                      <span
+                        key={slot.id}
+                        className="rounded-lg bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                      >
+                        {formatTime(slot.startTime)} - {formatTime(slot.endTime)}
+                      </span>
+                    ))
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+export default async function DoctorProfilePage({ searchParams }) {
+  const { doctorId } = await searchParams;
+
+  const doctor = await prisma.doctor.findFirst({
+    where: {
+      OR: [{ id: doctorId }, { userId: doctorId }, { doctor_id: doctorId }],
+    },
+    include: {
+      user: {
+        select: {
+          email: true,
+          phone: true,
+          lastLoginAt: true,
+          createdAt: true,
+        },
+      },
+      availabilities: {
+        include: {
+          available_slots: {
+            orderBy: { startTime: "asc" },
+          },
+        },
+      },
+      _count: {
+        select: {
+          appointments: true,
+        },
+      },
+    },
+  });
+
+  if (!doctor) {
+    notFound();
+  }
+
+  const initials = initialsFromName(doctor.name);
+
+  return (
+    <div className="relative flex flex-1 flex-col overflow-x-hidden overflow-y-auto bg-background font-sans text-gray-900 dark:text-gray-100">
+      <main className="mx-auto w-full max-w-7xl flex-1 space-y-8 p-6 lg:p-10">
+        <section className="rounded-xl border border-gray-200 bg-foreground p-6 shadow-sm dark:border-gray-800">
+          <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+            <div className="flex flex-col items-center gap-6 md:flex-row">
+              <div className="relative h-32 w-32 overflow-hidden rounded-full border-4 border-gray-100 bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg dark:border-gray-800">
+                {doctor.profileImage ? (
+                  <Image
+                    src={doctor.profileImage}
+                    alt={`${doctor.name} profile photo`}
+                    fill
+                    sizes="128px"
+                    className="object-cover"
+                    priority
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center text-3xl font-bold text-white">
+                    {initials}
+                  </div>
+                )}
               </div>
 
               <div className="text-center md:text-left">
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dr. Adrian Stone</h1>
-                <p className="text-primary font-semibold text-lg">Senior Cardiologist</p>
-                <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-2">
-                  <span className="px-3 py-1 bg-foregd dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-bold rounded-full uppercase tracking-wider">
-                    Department of Cardiology
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                  {doctor.name}
+                </h1>
+                <p className="mt-1 text-lg font-semibold text-primary">
+                  {doctor.specialization}
+                </p>
+                <div className="mt-3 flex flex-wrap justify-center gap-3 md:justify-start">
+                  <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+                    ID {doctor.doctor_id}
                   </span>
+                  <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+                    Room {doctor.room ?? "Not assigned"}
+                  </span>
+                  <ActiveBadge active={doctor.isActive} />
                 </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        <div>
-          {/* Professional Details Sidebar */}
-          <div className="lg:col-span-1 space-y-6">
-            <h2 className="text-xl font-bold flex items-center gap-2">
-              <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              Core Expertise
-            </h2>
-
-            {/* Qualification Card */}
-            <div className="bg-white dark:bg-gray-900 rounded-xl p-5 shadow-sm border border-gray-200 dark:border-gray-800">
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">
-                Qualifications
-              </label>
-              <div className="w-full bg-foregd border-gray-200 dark:border-gray-700 rounded-lg text-sm p-3">
-                MD, Cardiology, Harvard Medical School; Fellowship in Interventional Cardiology
+            <div className="grid grid-cols-2 gap-3 text-center sm:min-w-72">
+              <div className="rounded-xl border border-blue-100 bg-blue-50 p-4 dark:border-blue-900/40 dark:bg-blue-950/20">
+                <p className="text-xs font-bold uppercase tracking-widest text-blue-600 dark:text-blue-300">
+                  Fee
+                </p>
+                <p className="mt-1 text-xl font-black text-gray-900 dark:text-white">
+                  {formatFee(doctor.consultationFee)}
+                </p>
+              </div>
+              <div className="rounded-xl border border-emerald-100 bg-emerald-50 p-4 dark:border-emerald-900/40 dark:bg-emerald-950/20">
+                <p className="text-xs font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-300">
+                  Appointments
+                </p>
+                <p className="mt-1 text-xl font-black text-gray-900 dark:text-white">
+                  {doctor._count.appointments}
+                </p>
               </div>
             </div>
+          </div>
+        </section>
 
-            <div className="bg-white dark:bg-gray-900 rounded-xl p-5 shadow-sm border border-gray-200 dark:border-gray-800">
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">
-                Base Consultation Fee ($)
-              </label>
-              <div className="flex items-center gap-3">
-                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <section className="space-y-4">
+            <SectionTitle
+              icon={
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
                 </svg>
-                <div className="w-full bg-foregd border-gray-200 dark:border-gray-700 rounded-lg text-sm p-3">
-                  1500.00
-                </div>
-              </div>
-            </div>
+              }
+            >
+              Professional Details
+            </SectionTitle>
 
-            {/* Professional Bio */}
-            <div className="bg-white dark:bg-gray-900 rounded-xl p-5 shadow-sm border border-gray-200 dark:border-gray-800">
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">
-                Professional Summary
-              </label>
-              <div className="w-full bg-foregd border-gray-200 dark:border-gray-700 rounded-lg text-sm p-3">
-                Highly experienced cardiologist specializing in minimally invasive cardiac procedures and preventive heart care with over 15 years of clinical practice in major medical centers.
-              </div>
-            </div>
-          </div>
+            <FieldCard label="Qualification">{doctor.qualification}</FieldCard>
+            <FieldCard label="Specialization">{doctor.specialization}</FieldCard>
+            <FieldCard label="Gender">{formatGender(doctor.gender)}</FieldCard>
+            <FieldCard label="Professional Summary">{doctor.bio}</FieldCard>
+          </section>
+
+          <section className="space-y-4">
+            <SectionTitle
+              icon={
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  />
+                </svg>
+              }
+            >
+              Account Details
+            </SectionTitle>
+
+            <FieldCard label="Email">
+              <span className="break-all">{doctor.user.email}</span>
+            </FieldCard>
+            <FieldCard label="Phone">{doctor.user.phone}</FieldCard>
+            <FieldCard label="Account Created">{formatDateTime(doctor.user.createdAt)}</FieldCard>
+            <FieldCard label="Last Sign-In">{formatDateTime(doctor.user.lastLoginAt)}</FieldCard>
+          </section>
+
+          <ScheduleCard availabilities={doctor.availabilities} />
         </div>
       </main>
     </div>
   );
 }
-
-export async function generateStaticParams() {
-  const doctorIds = ["32HDJ3G5", "32HDJ3G4F", "32HDJ3G52"];
-  return doctorIds.map((doctorId) => ({
-    doctorId,
-  }));
-}
-
-// export const revalidate = 3600; // Revalidate every hour (ISR)

@@ -1,9 +1,41 @@
 import AvailabilitySchedule from "@/components/WeeklyAvailability"
 import AppointmentCalender from "@/components/AppointmentCalender";
 import AppointmentButton from "@/components/AppointmentButton";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 export default async function DoctorPage({ params }) {
   const { doctorId } = await params; // Log the doctor ID to the console
+
+  const doctor = await prisma.doctor.findFirst({
+    where: {
+      OR: [{ id: doctorId }, { userId: doctorId }, { doctor_id: doctorId }],
+    },
+    include: {
+      user: {
+        select: {
+          email: true,
+          phone: true,
+          lastLoginAt: true,
+          createdAt: true,
+        },
+      },
+      availabilities: {
+        include: {
+          available_slots: {
+            orderBy: { startTime: "asc" },
+          },
+        },
+      },
+      _count: {
+        select: {
+          appointments: true,
+        },
+      },
+    },
+  });
+
   const today = new Date();
   const todayLabel = new Intl.DateTimeFormat(undefined, {
     weekday: "long",
@@ -287,17 +319,17 @@ export default async function DoctorPage({ params }) {
         </section>
         
         {/* Schedule Grid */}
-        <AvailabilitySchedule />
+        <AvailabilitySchedule availabilities={doctor.availabilities} />
       </main>
     </div>
   );
 }
 
-export async function generateStaticParams() {
-  const doctorIds = ["32HDJ3G5", "32HDJ3G4F", "32HDJ3G52"];
-  return doctorIds.map((doctorId) => ({
-    doctorId,
-  }));
-}
+// export async function generateStaticParams() {
+//   const doctorIds = ["32HDJ3G5", "32HDJ3G4F", "32HDJ3G52"];
+//   return doctorIds.map((doctorId) => ({
+//     doctorId,
+//   }));
+// }
 
 // export const revalidate = 3600; // Revalidate every hour (ISR)           

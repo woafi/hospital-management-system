@@ -86,6 +86,8 @@ export default async function EditDoctorPage({ searchParams }) {
     },
   });
 
+  
+
   if (!doctor) {
     notFound();
   }

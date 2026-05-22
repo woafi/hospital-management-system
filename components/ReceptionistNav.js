@@ -2,6 +2,7 @@
 import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react";
 import Link from "next/link"
+import Image from "next/image";
 import { getReceptionistDetails } from "@/app/actions/GetIDdetails";
 
 
@@ -17,7 +18,6 @@ export default function ReceptionistNav() {
             try {
                 const data = await getReceptionistDetails(receptionist_id);
                 setReceptionist(data);
-                console.log(data)
             } catch (error) {
                 console.error("Error fetching receptionist:", error);
             } finally {
@@ -78,7 +78,7 @@ export default function ReceptionistNav() {
                         <p className="text-sm text-black dark:text-white font-bold leading-none">{receptionistName}</p>
                         <p className="text-xs text-gray-500 mt-1">Receptionist</p>
                     </div>
-                    <div className="w-10 h-10 rounded-full bg-blue-100 border-2 border-blue-600 overflow-hidden">
+                    <div className="relative w-10 h-10 rounded-full bg-blue-100 border-2 border-blue-600 overflow-hidden">
                         <Link href={`/receptionist/${receptionist_id}/profile`} className="w-full h-full bg-blue-600 flex items-center justify-center text-white font-bold">
                             {receptionist?.profileImage ? (
                                 <Image

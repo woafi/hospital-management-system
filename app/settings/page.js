@@ -1,19 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { useTheme } from "next-themes";
 
+const subscribe = () => () => {};
+const getClientSnapshot = () => true;
+const getServerSnapshot = () => false;
+
+function useMounted() {
+    return useSyncExternalStore(subscribe, getClientSnapshot, getServerSnapshot);
+}
+
 export default function SettingPage() {
-    const { theme, setTheme, resolvedTheme } = useTheme();
-    const [mounted, setMounted] = useState(false);
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
-
-    if (!mounted) return null;
-
-    const isDark = resolvedTheme === "dark";
+    const { setTheme, resolvedTheme } = useTheme();
+    const mounted = useMounted();
+    const isDark = mounted && resolvedTheme === "dark";
 
     return (
         <div className="max-w-4xl bg-background mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -41,11 +42,11 @@ export default function SettingPage() {
                         }`}
                     >
                         <span
-                            className={`inline-flex cursor-pointer h-7 w-7 items-center justify-center rounded-full bg-white shadow-lg transition-transform ${
+                            className={`inline-flex h-7 w-7 items-center justify-center rounded-full bg-white text-[8px] font-bold text-gray-700 shadow-lg transition-transform ${
                                 isDark ? "translate-x-8" : "translate-x-1"
                             }`}
                         >
-                            {isDark ? "🌙" : "☀️"}
+                            {isDark ? "Dark" : "Light"}
                         </span>
                     </button>
                 </div>

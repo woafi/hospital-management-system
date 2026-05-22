@@ -39,7 +39,7 @@ export async function getDoctorDetails(doctorId) {
         // Get doctor with user details
         const doctor = await prisma.doctor.findFirst({
             where: {
-                OR: [{ userId: doctorId }, { id: doctorId }],
+                OR: [{ userId: doctorId }, { id: doctorId }, { doctor_id: doctorId }],
             },
             include: {
                 user: {

@@ -2,11 +2,12 @@
 import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react";
 import Link from "next/link"
+import Image from "next/image";
 import { getDoctorDetails } from "@/app/actions/GetIDdetails";
 
 export default function DoctorNavbar() {
     const pathname = usePathname();
-    const doctor_id = pathname.split("/")[2]; 
+    const doctor_id = pathname.split("/")[2];
     
     const [doctor, setDoctor] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -16,7 +17,6 @@ export default function DoctorNavbar() {
             try {
                 const data = await getDoctorDetails(doctor_id);
                 setDoctor(data);
-                console.log(data)
             } catch (error) {
                 console.error("Error fetching doctor:", error);
             } finally {
@@ -73,9 +73,9 @@ export default function DoctorNavbar() {
                 <div className="flex items-center gap-3 pl-4 border-l border-gray-200 dark:border-gray-600">
                     <div className="text-right hidden sm:block">
                         <p className="text-sm text-black dark:text-white font-bold leading-none">{doctorName}</p>
-                        <p className="text-xs text-gray-500 mt-1">{doctor?.specialty || "Specialist"}</p>
+                        <p className="text-xs text-gray-500 mt-1">{doctor?.specialization || "Specialist"}</p>
                     </div>
-                    <div className="w-10 h-10 rounded-full bg-blue-100 border-2 border-blue-600 overflow-hidden">
+                    <div className="relative w-10 h-10 rounded-full bg-blue-100 border-2 border-blue-600 overflow-hidden">
                         <Link href={`/doctor/${doctor_id}/profile`} className="w-full h-full bg-blue-600 flex items-center justify-center text-white font-bold">
                            { doctor?.profileImage ? (
                                 <Image
@@ -93,8 +93,6 @@ export default function DoctorNavbar() {
                         </Link>
                     </div>
                 </div>
-
-
             </div>
         </div>
     )
