@@ -154,3 +154,11 @@ export async function receptionistFormsubmissionAction(prevState, formData) {
 
   redirect("/dashboard/receptionists");
 }
+
+export async function receptionistEditFormsubmissionAction(prevState, formData) {
+    const raw = Object.fromEntries(formData);
+    const receptionistId = String(raw.id || "");
+    const result = receptionistSchema.safeParse(raw);
+
+    if (!result.success) {
+        const fieldErrors = result.error.flatten().fieldErrors;

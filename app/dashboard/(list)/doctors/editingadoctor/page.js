@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PrismaClient } from "@prisma/client";
-import EditDoctorForm from "../../../../../components/EditDoctorForm";
+import EditDoctorForm from "@/components/EditDoctorForm";
 
 const prisma = new PrismaClient();
 
