@@ -164,12 +164,12 @@ function ScheduleCard({ availabilities }) {
   );
 }
 
-export default async function DoctorProfilePage({ searchParams }) {
-  const { doctorId } = await searchParams;
+export default async function DoctorProfilePage({ params }) {
+  const { doctorId } = await params;
 
   const doctor = await prisma.doctor.findFirst({
     where: {
-      OR: [{ id: doctorId }, { userId: doctorId }, { doctor_id: doctorId }],
+      OR: [{ id: doctorId }, { userId: doctorId }],
     },
     include: {
       user: {

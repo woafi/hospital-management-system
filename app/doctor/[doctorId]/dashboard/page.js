@@ -319,7 +319,11 @@ export default async function DoctorPage({ params }) {
         </section>
         
         {/* Schedule Grid */}
-        <AvailabilitySchedule availabilities={doctor.availabilities} />
+        <AvailabilitySchedule
+          availabilities={doctor.availabilities}
+          doctorId={doctor.id}
+          revalidatePaths={[`/doctor/${doctorId}/dashboard`, `/doctor/${doctorId}/profile`]}
+        />
       </main>
     </div>
   );

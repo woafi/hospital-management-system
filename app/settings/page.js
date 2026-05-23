@@ -46,7 +46,7 @@ export default function SettingPage() {
                                 isDark ? "translate-x-8" : "translate-x-1"
                             }`}
                         >
-                            {isDark ? "Dark" : "Light"}
+                            
                         </span>
                     </button>
                 </div>

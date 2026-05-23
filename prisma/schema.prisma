@@ -151,7 +151,7 @@ enum Shift {
 
 model Patient {
     id        String @id @default(cuid())
-    patientId String @unique // HMS-YYYY-XXXXXX
+    patientId String @unique
 
     fullname       String
     dateOfBirth    DateTime?
@@ -160,7 +160,7 @@ model Patient {
     phone          String?
     email          String?
     address        String?
-    bloodGroup     String?
+    bloodGroup     BloodGroup
     allergies      String?
     emergencyName  String?
     emergencyPhone String?

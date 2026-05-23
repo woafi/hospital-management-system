@@ -33,7 +33,6 @@ export async function getReceptionistDetails(receptionistId) {
     }
 }
 
-
 export async function getDoctorDetails(doctorId) {
     try {
         // Get doctor with user details
