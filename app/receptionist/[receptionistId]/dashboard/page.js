@@ -224,7 +224,7 @@ export default async function DoctorPage({ params }) {
 
             <div className="flex items-center gap-2">
               <a
-                href={`/receptionistId/${receptionistId}/patients`}
+                href={`/receptionist/${receptionistId}/patients`}
                 className="px-3 py-2 rounded-xl text-sm font-semibold bg-black/5 hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/15 border border-black/5 dark:border-white/10 transition-colors"
               >
                 Patient Directory

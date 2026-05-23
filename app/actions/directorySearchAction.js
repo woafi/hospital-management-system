@@ -8,7 +8,7 @@ function cleanSearchTerm(term) {
   return String(term || "").trim().slice(0, 80);
 }
 
-export async function searchDirectory(entity, term) {
+export async function searchDirectory(entity, term, context = {}) {
   const query = cleanSearchTerm(term);
 
   if (!query) {
@@ -106,6 +106,46 @@ export async function searchDirectory(entity, term) {
       contact: receptionist.user?.phone || receptionist.user?.email || "",
       image: receptionist.profileImage,
       href: `/receptionist/${receptionist.id}/dashboard`,
+    }));
+  }
+
+  if (entity === "patients") {
+    const patients = await prisma.patient.findMany({
+      where: {
+        OR: [
+          { fullname: { contains: query, mode: "insensitive" } },
+          { patientId: { contains: query, mode: "insensitive" } },
+          { phone: { contains: query, mode: "insensitive" } },
+          { email: { contains: query, mode: "insensitive" } },
+        ],
+      },
+      orderBy: { createdAt: "desc" },
+      take: 6,
+      select: {
+        id: true,
+        patientId: true,
+        fullname: true,
+        phone: true,
+        email: true,
+        profileImage: true,
+        gender: true,
+      },
+    });
+
+    const genderLabels = { MALE: "Male", FEMALE: "Female", OTHER: "Other" };
+    const profileBase =
+      typeof context.profileBasePath === "string" ? context.profileBasePath : "";
+
+    return patients.map((patient) => ({
+      id: patient.id,
+      title: patient.fullname,
+      code: patient.patientId,
+      subtitle: genderLabels[patient.gender] ?? patient.gender,
+      contact: patient.phone || patient.email || "",
+      image: patient.profileImage,
+      href: profileBase
+        ? `${profileBase}/profile?id=${patient.id}`
+        : `/patients/profile?id=${patient.id}`,
     }));
   }
 

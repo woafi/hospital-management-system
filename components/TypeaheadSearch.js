@@ -10,6 +10,7 @@ const DEBOUNCE_MS = 500;
 export default function TypeaheadSearch({
   entity,
   placeholder = "Search by name, ID, phone, or email...",
+  searchContext = {},
 }) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
@@ -34,7 +35,7 @@ export default function TypeaheadSearch({
     const timer = setTimeout(() => {
       startTransition(async () => {
         try {
-          const matches = await searchDirectory(entity, term);
+          const matches = await searchDirectory(entity, term, searchContext);
 
           if (searchIdRef.current !== searchId) return;
 
@@ -55,7 +56,7 @@ export default function TypeaheadSearch({
     }, DEBOUNCE_MS);
 
     return () => clearTimeout(timer);
-  }, [entity, query]);
+  }, [entity, query, searchContext]);
 
   useEffect(() => {
     function handlePointerDown(event) {

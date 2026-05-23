@@ -1,292 +1,356 @@
 "use client";
-import { useState } from "react";
 
-// ─── Inline SVG Icon helper ───────────────────────────────────────────────────
-const Icon = ({ path, className = "w-5 h-5" }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={path} />
-  </svg>
-);
+import { useActionState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+import {
+  AlertTriangle,
+  CheckCircle2,
+  ClipboardPlus,
+  Mail,
+  Phone,
+  ShieldPlus,
+  UserRound,
+  X,
+} from "lucide-react";
+import {
+  createPatientAction,
+} from "@/app/actions/patientActions";
 
-const ICONS = {
-  close: "M6 18L18 6M6 6l12 12",
-  person: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z",
-  contact: "M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z",
-  emergency: "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z",
-  medical: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z",
-  register: "M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z",
-  check: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",
+const initialPatientFormState = {
+  success: false,
+  message: "",
+  fieldErrors: {
+    fullname: "",
+    gender: "",
+    dateOfBirth: "",
+    phone: "",
+    email: "",
+    address: "",
+    emergencyName: "",
+    relationship: "",
+    emergencyPhone: "",
+    bloodGroup: "",
+    allergies: "",
+  },
+  values: {
+    fullname: "",
+    gender: "",
+    dateOfBirth: "",
+    phone: "",
+    email: "",
+    address: "",
+    emergencyName: "",
+    relationship: "",
+    emergencyPhone: "",
+    bloodGroup: "O_Positive",
+    allergies: "",
+  },
 };
 
-// ─── Reusable field components ────────────────────────────────────────────────
-const Label = ({ children }) => (
-  <label className="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5">
-    {children}
-  </label>
-);
+const bloodGroups = [
+  ["O_Positive", "O+"],
+  ["O_Negative", "O-"],
+  ["A_Positive", "A+"],
+  ["A_Negative", "A-"],
+  ["B_Positive", "B+"],
+  ["B_Negative", "B-"],
+  ["AB_Positive", "AB+"],
+  ["AB_Negative", "AB-"],
+];
 
-const Input = ({ className = "", ...props }) => (
-  <input
-    className={`
-      w-full px-4 py-2.5 rounded-xl text-sm
-      bg-gray-50 dark:bg-gray-800
-      border border-gray-200 dark:border-gray-700
-      text-gray-900 dark:text-white placeholder-gray-400
-      focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600
-      outline-none transition-all
-      ${className}
-    `}
-    {...props}
-  />
-);
+const inputClassName =
+  "w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-blue-400 dark:focus:bg-gray-900 dark:focus:ring-blue-900/40";
 
-const Select = ({ children, ...props }) => (
-  <div className="relative">
-    <select
-      className="
-        appearance-none w-full px-4 py-2.5 rounded-xl text-sm
-        bg-gray-50 dark:bg-gray-800
-        border border-gray-200 dark:border-gray-700
-        text-gray-900 dark:text-white
-        focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600
-        outline-none transition-all cursor-pointer
-      "
-      {...props}
-    >
-      {children}
-    </select>
-    <svg className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-    </svg>
-  </div>
-);
-
-// ─── Section header ───────────────────────────────────────────────────────────
-const SectionHeader = ({ icon, label, accent = "blue" }) => {
-  const colors = {
-    blue: "bg-blue-600/10 text-blue-600",
-    green: "bg-emerald-500/10 text-emerald-600",
-    amber: "bg-amber-500/10 text-amber-600",
-    red: "bg-red-500/10 text-red-500",
-  };
+function Field({ label, error, children }) {
   return (
-    <div className="flex items-center gap-3 mb-5">
-      <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${colors[accent]}`}>
-        <Icon path={icon} className="w-4 h-4" />
-      </div>
-      <h3 className="text-sm font-black uppercase tracking-widest text-gray-700 dark:text-gray-200">{label}</h3>
+    <div className="space-y-1.5">
+      <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+        {label}
+      </label>
+      {children}
+      {error ? <p className="text-xs font-medium text-red-500">{error}</p> : null}
     </div>
   );
-};
+}
 
-// ─── Main Modal ───────────────────────────────────────────────────────────────
-export default function AddPatientModal({ onClose }) {
-  const [done, setDone] = useState(false);
-
-  const [form, setForm] = useState({
-    fullName: "", gender: "", dob: "",
-    phone: "", email: "", address: "",
-    ecName: "", ecRelation: "", ecPhone: "",
-    bloodGroup: "O+", allergies: "",
-  });
-
-  const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
-
-  const handleSubmit = () => {
-    setDone(true);
-    setTimeout(() => {
-      setDone(false);
-      onClose?.();
-    }, 1800);
+function SectionTitle({ icon: Icon, title, tone = "blue" }) {
+  const tones = {
+    blue: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300",
+    amber: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
+    red: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300",
   };
+
+  return (
+    <div className="mb-5 flex items-center gap-3">
+      <div className={`flex h-9 w-9 items-center justify-center rounded-xl ${tones[tone]}`}>
+        <Icon className="h-4 w-4" />
+      </div>
+      <h3 className="text-sm font-black uppercase tracking-widest text-gray-700 dark:text-gray-200">
+        {title}
+      </h3>
+    </div>
+  );
+}
+
+function SubmitButton({ pending, success }) {
+  return (
+    <button
+      type="submit"
+      disabled={pending || success}
+      className={`inline-flex items-center gap-2 rounded-xl px-6 py-2.5 text-sm font-bold text-white shadow-lg transition-all disabled:cursor-not-allowed ${
+        success
+          ? "bg-emerald-500 shadow-emerald-500/25"
+          : "bg-blue-600 shadow-blue-600/25 hover:bg-blue-700 disabled:opacity-60"
+      }`}
+    >
+      {success ? <CheckCircle2 className="h-4 w-4" /> : <ClipboardPlus className="h-4 w-4" />}
+      {pending ? "Registering..." : success ? "Registered" : "Register Patient"}
+    </button>
+  );
+}
+
+export default function AddPatientModal({ onClose }) {
+  const params = useParams();
+  const router = useRouter();
+  const receptionistId = Array.isArray(params?.receptionistId)
+    ? params.receptionistId[0]
+    : params?.receptionistId || "";
+  const [state, formAction, pending] = useActionState(
+    createPatientAction,
+    initialPatientFormState
+  );
+
+  useEffect(() => {
+    if (!state.success) return undefined;
+
+    router.refresh();
+    const timeout = window.setTimeout(() => {
+      onClose?.();
+    }, 1000);
+
+    return () => window.clearTimeout(timeout);
+  }, [onClose, router, state.success]);
 
   return (
     <>
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+      <button
+        type="button"
+        aria-label="Close patient registration modal"
+        className="fixed inset-0 z-40 cursor-default bg-black/50 backdrop-blur-sm"
         onClick={onClose}
       />
 
-      {/* Modal */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div
-          className="
-            bg-white dark:bg-gray-900
-            w-full max-w-3xl
-            rounded-2xl shadow-2xl
-            border border-gray-100 dark:border-gray-800
-            flex flex-col
-            overflow-hidden
-            max-h-[95vh]
-          "
-          style={{ animation: "modalIn 0.25s cubic-bezier(.22,1,.36,1) both" }}
+        <form
+          action={formAction}
+          className="flex max-h-[95vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-2xl dark:border-gray-800 dark:bg-gray-900"
         >
-          <style>{`
-            @keyframes modalIn {
-              from { opacity:0; transform:scale(0.96) translateY(14px); }
-              to   { opacity:1; transform:scale(1)    translateY(0); }
-            }
-          `}</style>
+          <input type="hidden" name="receptionistId" value={receptionistId} />
 
-          {/* ── Header ── */}
-          <header className="flex items-center justify-between px-6 py-5 border-b border-gray-100 dark:border-gray-800 flex-shrink-0">
-            <div className="flex items-center gap-3">
-              <div className="bg-blue-600/10 p-2 rounded-xl">
-                <Icon path={ICONS.register} className="w-5 h-5 text-blue-600" />
+          <header className="flex shrink-0 items-center justify-between gap-4 border-b border-gray-100 px-6 py-5 dark:border-gray-800">
+            <div className="flex min-w-0 items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300">
+                <ClipboardPlus className="h-5 w-5" />
               </div>
-              <div>
-                <h2 className="text-gray-900 dark:text-white text-lg font-extrabold tracking-tight leading-none">Register New Patient</h2>
-                <p className="text-gray-400 text-xs mt-0.5">Enter clinical and personal data to create a new record</p>
+              <div className="min-w-0">
+                <h2 className="text-lg font-extrabold leading-none tracking-tight text-gray-900 dark:text-white">
+                  Register New Patient
+                </h2>
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  Patient ID will be generated after registration.
+                </p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              {/* Auto-generated patient ID badge */}
-              <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs font-bold font-mono border border-blue-100 dark:border-blue-800">
-                ID: CS-2024-0891
-              </span>
-              <button
-                onClick={onClose}
-                className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                <Icon path={ICONS.close} className="w-4 h-4" />
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+              aria-label="Close"
+            >
+              <X className="h-4 w-4" />
+            </button>
           </header>
 
-          {/* ── Scrollable Form ── */}
-          <div className="flex-1 overflow-y-auto min-h-0 px-6 py-6 space-y-8">
+          <div className="min-h-0 flex-1 space-y-8 overflow-y-auto px-6 py-6">
+            {state.message ? (
+              <div
+                className={`flex items-start gap-3 rounded-xl border p-4 text-sm ${
+                  state.success
+                    ? "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-900/40 dark:bg-emerald-900/20 dark:text-emerald-300"
+                    : "border-red-200 bg-red-50 text-red-800 dark:border-red-900/40 dark:bg-red-900/20 dark:text-red-300"
+                }`}
+              >
+                {state.success ? (
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
+                ) : (
+                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                )}
+                <span className="font-semibold">{state.message}</span>
+              </div>
+            ) : null}
 
-            {/* ── Section 1: Personal Info ── */}
             <section>
-              <SectionHeader icon={ICONS.person} label="Personal Information" accent="blue" />
-              <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+              <SectionTitle icon={UserRound} title="Personal Information" />
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
                 <div className="sm:col-span-2">
-                  <Label>Full Name</Label>
-                  <Input placeholder="e.g. Eleanor Vance" value={form.fullName} onChange={set("fullName")} />
+                  <Field label="Full Name" error={state.fieldErrors.fullname}>
+                    <input
+                      name="fullname"
+                      type="text"
+                      className={inputClassName}
+                      placeholder="e.g. Amina Rahman"
+                      defaultValue={state.values.fullname}
+                      disabled={pending || state.success}
+                      required
+                    />
+                  </Field>
                 </div>
-                <div>
-                  <Label>Gender</Label>
-                  <Select value={form.gender} onChange={set("gender")}>
+                <Field label="Gender" error={state.fieldErrors.gender}>
+                  <select
+                    name="gender"
+                    className={inputClassName}
+                    defaultValue={state.values.gender}
+                    disabled={pending || state.success}
+                    required
+                  >
                     <option value="">Select</option>
-                    <option>Male</option>
-                    <option>Female</option>
-                    <option>Other</option>
-                  </Select>
-                </div>
-                <div>
-                  <Label>Date of Birth</Label>
-                  <Input type="date" value={form.dob} onChange={set("dob")} />
-                </div>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </Field>
+                <Field label="Date of Birth" error={state.fieldErrors.dateOfBirth}>
+                  <input
+                    name="dateOfBirth"
+                    type="date"
+                    className={inputClassName}
+                    defaultValue={state.values.dateOfBirth}
+                    disabled={pending || state.success}
+                  />
+                </Field>
               </div>
             </section>
 
-            {/* ── Section 2: Contact Details ── */}
             <section>
-              <SectionHeader icon={ICONS.contact} label="Contact Details" accent="blue" />
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <Label>Phone Number</Label>
-                  <Input type="tel" placeholder="+1 (555) 000-0000" value={form.phone} onChange={set("phone")} />
-                </div>
-                <div>
-                  <Label>Email Address</Label>
-                  <Input type="email" placeholder="patient@example.com" value={form.email} onChange={set("email")} />
-                </div>
+              <SectionTitle icon={Mail} title="Contact Details" />
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <Field label="Phone Number" error={state.fieldErrors.phone}>
+                  <input
+                    name="phone"
+                    type="tel"
+                    className={inputClassName}
+                    placeholder="+880 17XX-XXXXXX"
+                    defaultValue={state.values.phone}
+                    disabled={pending || state.success}
+                  />
+                </Field>
+                <Field label="Email Address" error={state.fieldErrors.email}>
+                  <input
+                    name="email"
+                    type="email"
+                    className={inputClassName}
+                    placeholder="patient@example.com"
+                    defaultValue={state.values.email}
+                    disabled={pending || state.success}
+                  />
+                </Field>
                 <div className="sm:col-span-2">
-                  <Label>Residential Address</Label>
-                  <Input placeholder="Street name, City, State, ZIP" value={form.address} onChange={set("address")} />
+                  <Field label="Residential Address" error={state.fieldErrors.address}>
+                    <input
+                      name="address"
+                      type="text"
+                      className={inputClassName}
+                      placeholder="Street, city, district"
+                      defaultValue={state.values.address}
+                      disabled={pending || state.success}
+                    />
+                  </Field>
                 </div>
               </div>
             </section>
 
-            {/* ── Section 3: Emergency Contact ── */}
-            <section className="bg-amber-50 dark:bg-amber-900/10 rounded-2xl p-5 border border-amber-100 dark:border-amber-800/30">
-              <SectionHeader icon={ICONS.emergency} label="Emergency Contact" accent="amber" />
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div>
-                  <Label>Full Name</Label>
-                  <Input
+            <section className="rounded-2xl border border-amber-100 bg-amber-50 p-5 dark:border-amber-800/30 dark:bg-amber-900/10">
+              <SectionTitle icon={Phone} title="Emergency Contact" tone="amber" />
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <Field label="Full Name" error={state.fieldErrors.emergencyName}>
+                  <input
+                    name="emergencyName"
+                    type="text"
+                    className={`${inputClassName} bg-white dark:bg-gray-800`}
                     placeholder="Relative's name"
-                    value={form.ecName} onChange={set("ecName")}
-                    className="bg-white dark:bg-gray-800 border-amber-200 dark:border-amber-800/40"
+                    defaultValue={state.values.emergencyName}
+                    disabled={pending || state.success}
                   />
-                </div>
-                <div>
-                  <Label>Relationship</Label>
-                  <Input
+                </Field>
+                <Field label="Relationship" error={state.fieldErrors.relationship}>
+                  <input
+                    name="relationship"
+                    type="text"
+                    className={`${inputClassName} bg-white dark:bg-gray-800`}
                     placeholder="e.g. Spouse"
-                    value={form.ecRelation} onChange={set("ecRelation")}
-                    className="bg-white dark:bg-gray-800 border-amber-200 dark:border-amber-800/40"
+                    defaultValue={state.values.relationship}
+                    disabled={pending || state.success}
                   />
-                </div>
-                <div>
-                  <Label>Emergency Phone</Label>
-                  <Input
-                    type="tel" placeholder="+1 (555) 000-0000"
-                    value={form.ecPhone} onChange={set("ecPhone")}
-                    className="bg-white dark:bg-gray-800 border-amber-200 dark:border-amber-800/40"
+                </Field>
+                <Field label="Emergency Phone" error={state.fieldErrors.emergencyPhone}>
+                  <input
+                    name="emergencyPhone"
+                    type="tel"
+                    className={`${inputClassName} bg-white dark:bg-gray-800`}
+                    placeholder="+880 17XX-XXXXXX"
+                    defaultValue={state.values.emergencyPhone}
+                    disabled={pending || state.success}
                   />
-                </div>
+                </Field>
               </div>
             </section>
 
-            {/* ── Section 4: Medical Data ── */}
             <section>
-              <SectionHeader icon={ICONS.medical} label="Preliminary Medical Data" accent="red" />
-              <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                <div>
-                  <Label>Blood Group</Label>
-                  <Select value={form.bloodGroup} onChange={set("bloodGroup")}>
-                    {["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"].map(g => <option key={g}>{g}</option>)}
-                  </Select>
-                </div>
+              <SectionTitle icon={ShieldPlus} title="Medical Snapshot" tone="red" />
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
+                <Field label="Blood Group" error={state.fieldErrors.bloodGroup}>
+                  <select
+                    name="bloodGroup"
+                    className={inputClassName}
+                    defaultValue={state.values.bloodGroup}
+                    disabled={pending || state.success}
+                    required
+                  >
+                    {bloodGroups.map(([value, label]) => (
+                      <option key={value} value={value}>
+                        {label}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
                 <div className="sm:col-span-3">
-                  <Label>Known Allergies</Label>
-                  <textarea
-                    rows={2}
-                    placeholder="List any known medication or environmental allergies…"
-                    value={form.allergies}
-                    onChange={set("allergies")}
-                    className="
-                      w-full px-4 py-2.5 rounded-xl text-sm resize-none
-                      bg-gray-50 dark:bg-gray-800
-                      border border-gray-200 dark:border-gray-700
-                      text-gray-900 dark:text-white placeholder-gray-400
-                      focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600
-                      outline-none transition-all
-                    "
-                  />
+                  <Field label="Known Allergies" error={state.fieldErrors.allergies}>
+                    <textarea
+                      name="allergies"
+                      rows={2}
+                      className={`${inputClassName} resize-none`}
+                      placeholder="Medication or environmental allergies"
+                      defaultValue={state.values.allergies}
+                      disabled={pending || state.success}
+                    />
+                  </Field>
                 </div>
               </div>
             </section>
           </div>
 
-          {/* ── Footer ── */}
-          <footer className="px-6 py-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/40 flex items-center justify-end gap-3 flex-shrink-0">
+          <footer className="flex shrink-0 items-center justify-end gap-3 border-t border-gray-100 bg-gray-50 px-6 py-4 dark:border-gray-800 dark:bg-gray-800/40">
             <button
+              type="button"
               onClick={onClose}
-              className="px-5 py-2.5 rounded-xl text-sm font-bold text-gray-500 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              disabled={pending}
+              className="rounded-xl px-5 py-2.5 text-sm font-bold text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-60 dark:hover:bg-gray-700 dark:hover:text-gray-200"
             >
               Cancel
             </button>
-            <button
-              onClick={handleSubmit}
-              disabled={done}
-              className={`
-                px-6 py-2.5 rounded-xl text-sm font-bold text-white
-                flex items-center gap-2 transition-all
-                ${done
-                  ? "bg-emerald-500 shadow-lg shadow-emerald-500/30 scale-[0.98]"
-                  : "bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-600/25 active:scale-[0.97]"
-                }
-              `}
-            >
-              <Icon path={done ? ICONS.check : ICONS.register} className="w-4 h-4" />
-              {done ? "Patient Registered!" : "Register Patient"}
-            </button>
+            <SubmitButton pending={pending} success={state.success} />
           </footer>
-        </div>
+        </form>
       </div>
     </>
   );
