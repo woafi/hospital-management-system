@@ -5,97 +5,29 @@ import { useParams, useRouter } from "next/navigation";
 import {
   AlertTriangle,
   CheckCircle2,
-  ClipboardPlus,
   Mail,
+  Pencil,
   Phone,
+  Save,
   ShieldPlus,
   UserRound,
   X,
 } from "lucide-react";
-import { patientFormsubmissionAction } from "@/app/actions/patientFormsubmissionAction";
+import { patientEditFormsubmissionAction } from "@/app/actions/patientEditFormsubmissionAction";
 import PatientImageUpload from "@/components/PatientImageUpload";
+import { buildEditPatientInitialState } from "@/lib/patientFormHelpers";
+import {
+  bloodGroups,
+  Field,
+  inputClassName,
+  SectionTitle,
+} from "@/components/patient/PatientFormUI";
 
-const initialState = {
-  success: false,
-  message: "",
-  fieldErrors: {
-    fullname: "",
-    gender: "",
-    dateOfBirth: "",
-    phone: "",
-    email: "",
-    address: "",
-    emergencyName: "",
-    relationship: "",
-    emergencyPhone: "",
-    bloodGroup: "",
-    age: "",
-    allergies: "",
-    profileImage: "",
-  },
-  values: {
-    fullname: "",
-    gender: "",
-    dateOfBirth: "",
-    phone: "",
-    email: "",
-    address: "",
-    emergencyName: "",
-    relationship: "",
-    emergencyPhone: "",
-    bloodGroup: "O_Positive",
-    age: "",
-    allergies: "",
-    profileImage: "",
-  },
-};
+// ---------------------------------------------------------------------------
+// Footer submit button for the edit-patient modal
+// ---------------------------------------------------------------------------
 
-const bloodGroups = [
-  ["O_Positive", "O+"],
-  ["O_Negative", "O-"],
-  ["A_Positive", "A+"],
-  ["A_Negative", "A-"],
-  ["B_Positive", "B+"],
-  ["B_Negative", "B-"],
-  ["AB_Positive", "AB+"],
-  ["AB_Negative", "AB-"],
-];
-
-const inputClassName =
-  "w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-blue-400 dark:focus:bg-gray-900 dark:focus:ring-blue-900/40";
-
-function Field({ label, error, children }) {
-  return (
-    <div className="space-y-1.5">
-      <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-        {label}
-      </label>
-      {children}
-      {error ? <p className="text-xs font-medium text-red-500">{error}</p> : null}
-    </div>
-  );
-}
-
-function SectionTitle({ icon: Icon, title, tone = "blue" }) {
-  const tones = {
-    blue: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300",
-    amber: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
-    red: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300",
-  };
-
-  return (
-    <div className="mb-5 flex items-center gap-3">
-      <div className={`flex h-9 w-9 items-center justify-center rounded-xl ${tones[tone]}`}>
-        <Icon className="h-4 w-4" />
-      </div>
-      <h3 className="text-sm font-black uppercase tracking-widest text-gray-700 dark:text-gray-200">
-        {title}
-      </h3>
-    </div>
-  );
-}
-
-function SubmitButton({ pending, success }) {
+function EditSubmitButton({ pending, success }) {
   return (
     <button
       type="submit"
@@ -106,21 +38,26 @@ function SubmitButton({ pending, success }) {
           : "bg-blue-600 shadow-blue-600/25 hover:bg-blue-700 disabled:opacity-60"
       }`}
     >
-      {success ? <CheckCircle2 className="h-4 w-4" /> : <ClipboardPlus className="h-4 w-4" />}
-      {pending ? "Registering..." : success ? "Registered" : "Register Patient"}
+      {success ? <CheckCircle2 className="h-4 w-4" /> : <Save className="h-4 w-4" />}
+      {pending ? "Saving..." : success ? "Saved" : "Save Changes"}
     </button>
   );
 }
 
-export default function AddPatientModal({ onClose }) {
+// ---------------------------------------------------------------------------
+// Edit patient modal — form body mirrors Register New Patient layout
+// ---------------------------------------------------------------------------
+
+export default function EditPatientModal({ patient, onClose }) {
   const params = useParams();
   const router = useRouter();
   const receptionistId = Array.isArray(params?.receptionistId)
     ? params.receptionistId[0]
     : params?.receptionistId || "";
+
   const [state, formAction, pending] = useActionState(
-    patientFormsubmissionAction,
-    initialState
+    patientEditFormsubmissionAction,
+    buildEditPatientInitialState(patient)
   );
 
   const handleTitleKeyDown = (e) => {
@@ -133,6 +70,7 @@ export default function AddPatientModal({ onClose }) {
     }
   };
 
+  // Refresh the patient list and close after a successful save
   useEffect(() => {
     if (!state.success) return undefined;
 
@@ -146,9 +84,10 @@ export default function AddPatientModal({ onClose }) {
 
   return (
     <>
+      {/* Backdrop */}
       <button
         type="button"
-        aria-label="Close patient registration modal"
+        aria-label="Close edit patient modal"
         className="fixed inset-0 z-40 cursor-default bg-black/50 backdrop-blur-sm"
         onClick={onClose}
       />
@@ -159,19 +98,22 @@ export default function AddPatientModal({ onClose }) {
           onKeyDown={handleTitleKeyDown}
           className="flex max-h-[95vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-gray-100 bg-background shadow-2xl dark:border-gray-800"
         >
+          <input type="hidden" name="id" value={patient.id} />
           <input type="hidden" name="receptionistId" value={receptionistId} />
 
-          <header className="flex shrink-0 items-center justify-between gap-4 border-b border-gray-100 px-6 py-5 dark:border-gray-800 dark:bg-gray-900 bg-white">
+          {/* Modal header */}
+          <header className="flex shrink-0 items-center justify-between gap-4 border-b border-gray-100 bg-white px-6 py-5 dark:border-gray-800 dark:bg-gray-900">
             <div className="flex min-w-0 items-center gap-3">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300">
-                <ClipboardPlus className="h-5 w-5" />
+                <Pencil className="h-5 w-5" />
               </div>
               <div className="min-w-0">
                 <h2 className="text-lg font-extrabold leading-none tracking-tight text-gray-900 dark:text-white">
-                  Register New Patient
+                  Edit Patient Details
                 </h2>
                 <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  Patient ID will be generated after registration.
+                  Patient ID:{" "}
+                  <span className="font-mono font-semibold">{patient.patientId}</span>
                 </p>
               </div>
             </div>
@@ -186,6 +128,7 @@ export default function AddPatientModal({ onClose }) {
           </header>
 
           <div className="min-h-0 flex-1 space-y-8 overflow-y-auto px-6 py-6">
+            {/* Status banner */}
             {state.message ? (
               <div
                 className={`flex items-start gap-3 rounded-xl border p-4 text-sm ${
@@ -203,6 +146,7 @@ export default function AddPatientModal({ onClose }) {
               </div>
             ) : null}
 
+            {/* Personal information */}
             <section>
               <SectionTitle icon={UserRound} title="Personal Information" />
               <div className="flex flex-col gap-6 md:flex-row">
@@ -214,45 +158,46 @@ export default function AddPatientModal({ onClose }) {
 
                 <div className="grid flex-1 grid-cols-1 gap-4 sm:grid-cols-2">
                   <div className="sm:col-span-2">
-                  <Field label="Full Name" error={state.fieldErrors.fullname}>
-                    <input
-                      name="fullname"
-                      type="text"
+                    <Field label="Full Name" error={state.fieldErrors.fullname}>
+                      <input
+                        name="fullname"
+                        type="text"
+                        className={inputClassName}
+                        placeholder="e.g. Amina Rahman"
+                        defaultValue={state.values.fullname}
+                        disabled={pending || state.success}
+                        required
+                      />
+                    </Field>
+                  </div>
+                  <Field label="Gender" error={state.fieldErrors.gender}>
+                    <select
+                      name="gender"
                       className={inputClassName}
-                      placeholder="e.g. Amina Rahman"
-                      defaultValue={state.values.fullname}
+                      defaultValue={state.values.gender}
                       disabled={pending || state.success}
                       required
+                    >
+                      <option value="">Select</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </Field>
+                  <Field label="Date of Birth" error={state.fieldErrors.dateOfBirth}>
+                    <input
+                      name="dateOfBirth"
+                      type="date"
+                      className={inputClassName}
+                      defaultValue={state.values.dateOfBirth}
+                      disabled={pending || state.success}
                     />
                   </Field>
                 </div>
-                <Field label="Gender" error={state.fieldErrors.gender}>
-                  <select
-                    name="gender"
-                    className={inputClassName}
-                    defaultValue={state.values.gender}
-                    disabled={pending || state.success}
-                    required
-                  >
-                    <option value="">Select</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </Field>
-                <Field label="Date of Birth" error={state.fieldErrors.dateOfBirth}>
-                  <input
-                    name="dateOfBirth"
-                    type="date"
-                    className={inputClassName}
-                    defaultValue={state.values.dateOfBirth}
-                    disabled={pending || state.success}
-                  />
-                </Field>
-              </div>
               </div>
             </section>
 
+            {/* Contact details */}
             <section>
               <SectionTitle icon={Mail} title="Contact Details" />
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -292,6 +237,7 @@ export default function AddPatientModal({ onClose }) {
               </div>
             </section>
 
+            {/* Emergency contact */}
             <section className="rounded-2xl border border-amber-100 bg-amber-50 p-5 dark:border-amber-800/30 dark:bg-amber-900/10">
               <SectionTitle icon={Phone} title="Emergency Contact" tone="amber" />
               <div className="grid gap-4 sm:grid-cols-3">
@@ -328,6 +274,7 @@ export default function AddPatientModal({ onClose }) {
               </div>
             </section>
 
+            {/* Medical snapshot */}
             <section>
               <SectionTitle icon={ShieldPlus} title="Medical Snapshot" tone="red" />
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -352,7 +299,7 @@ export default function AddPatientModal({ onClose }) {
                     type="number"
                     min={0}
                     max={150}
-                    className={`${inputClassName} pl-8 appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
+                    className={`${inputClassName} appearance-none pl-8 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
                     placeholder="Years"
                     defaultValue={state.values.age}
                     disabled={pending || state.success}
@@ -374,6 +321,7 @@ export default function AddPatientModal({ onClose }) {
             </section>
           </div>
 
+          {/* Modal footer */}
           <footer className="flex shrink-0 items-center justify-end gap-3 border-t border-gray-100 bg-gray-50 px-6 py-4 dark:border-gray-800 dark:bg-gray-800/40">
             <button
               type="button"
@@ -383,7 +331,7 @@ export default function AddPatientModal({ onClose }) {
             >
               Cancel
             </button>
-            <SubmitButton pending={pending} success={state.success} />
+            <EditSubmitButton pending={pending} success={state.success} />
           </footer>
         </form>
       </div>

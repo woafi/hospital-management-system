@@ -1,6 +1,8 @@
 import AddNewPatientModal from "@/components/AddNewPaitentModal";
+import EditPatientTrigger from "@/components/patient/EditPatientTrigger";
 import Pagination from "@/components/Pagination";
 import TypeaheadSearch from "@/components/TypeaheadSearch";
+import { serializePatientForEditForm } from "@/lib/patientFormHelpers";
 import Image from "next/image";
 import Link from "next/link";
 import { PrismaClient } from "@prisma/client";
@@ -258,6 +260,9 @@ export default async function PatientListPage({ params, searchParams }) {
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex justify-end gap-2">
+                          <EditPatientTrigger
+                            patient={serializePatientForEditForm(patient)}
+                          />
                           <Link
                             href={profileHref}
                             className="p-2 text-gray-400 hover:text-blue-600 transition-colors bg-gray-50 dark:bg-gray-700 rounded-lg"
