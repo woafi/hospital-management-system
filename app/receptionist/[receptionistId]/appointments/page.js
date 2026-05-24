@@ -96,6 +96,7 @@ function getOrderBy(sort) {
     case "doctor":
       return [{ doctor: { name: "asc" } }, { date: "desc" }];
     default:
+      // return [{ createdAt: "desc" }];
       return [{ date: "desc" }, { startTime: "desc" }];
   }
 }
@@ -372,17 +373,3 @@ export default async function AppointmentManagement({ params, searchParams }) {
     </div>
   );
 }
-
-// export async function generateStaticParams() {
-//   const receptionists = await prisma.receptionist.findMany({
-//     select: { id: true, userId: true },
-//   });
-
-//   const receptionistIds = new Set();
-//   for (const receptionist of receptionists) {
-//     receptionistIds.add(receptionist.id);
-//     receptionistIds.add(receptionist.userId);
-//   }
-
-//   return [...receptionistIds].map((receptionistId) => ({ receptionistId }));
-// }
