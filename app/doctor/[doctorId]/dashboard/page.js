@@ -113,7 +113,7 @@ export default async function DoctorPage({ params }) {
 
   return (
     <div className="relative flex-1 overflow-x-hidden bg-background text-gray-900 dark:text-gray-100 font-sans">
-      <main className="max-w-7xl mx-auto p-6 space-y-8 pb-20">
+      <main className="max-w-[1400px] mx-auto p-6 space-y-8 pb-20">
         
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* Daily Summary Metrics */}

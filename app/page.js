@@ -35,7 +35,7 @@ export default function Login() {
   return (
     <div className="min-h-screen flex bg-gray-50 dark:bg-gray-900 font-sans text-gray-800 dark:text-gray-200">
       {/* Left Side: Hero / Brand Image */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-cover bg-center mix-blend-normal" style={{ backgroundImage: "url('/loginPageImage.png')", }}>
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-cover bg-center mix-blend-plus-darker"  style={{ backgroundImage: "url('/loginPageImage.png')", }}>
         <div className="absolute inset-0 z-0">
           <div className="w-full h-full backdrop-blur-[5px]"></div>
         </div>

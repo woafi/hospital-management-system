@@ -17,7 +17,9 @@ const emptyFieldErrors = {
   relationship: "",
   emergencyPhone: "",
   bloodGroup: "",
+  age: "",
   allergies: "",
+  profileImage: "",
 };
 
 const emptyValues = {
@@ -31,24 +33,26 @@ const emptyValues = {
   relationship: "",
   emergencyPhone: "",
   bloodGroup: "O_Positive",
+  age: "",
   allergies: "",
+  profileImage: "",
 };
 
-function getValues(raw) {
-  return {
-    fullname: raw.fullname || "",
-    gender: raw.gender || "",
-    dateOfBirth: raw.dateOfBirth || "",
-    phone: raw.phone || "",
-    email: raw.email || "",
-    address: raw.address || "",
-    emergencyName: raw.emergencyName || "",
-    relationship: raw.relationship || "",
-    emergencyPhone: raw.emergencyPhone || "",
-    bloodGroup: raw.bloodGroup || "O_Positive",
-    allergies: raw.allergies || "",
-  };
-}
+const getValues = (raw) => ({
+  fullname: raw.fullname || "",
+  gender: raw.gender || "",
+  dateOfBirth: raw.dateOfBirth || "",
+  phone: raw.phone || "",
+  email: raw.email || "",
+  address: raw.address || "",
+  emergencyName: raw.emergencyName || "",
+  relationship: raw.relationship || "",
+  emergencyPhone: raw.emergencyPhone || "",
+  bloodGroup: raw.bloodGroup || "O_Positive",
+  age: raw.age || "",
+  allergies: raw.allergies || "",
+  profileImage: raw.profileImage || "",
+});
 
 function isValidOptionalPhone(value) {
   if (!value) return true;
@@ -69,6 +73,14 @@ function isValidOptionalDate(value) {
 function toNullableString(value) {
   const trimmed = String(value || "").trim();
   return trimmed ? trimmed : null;
+}
+
+function toNullableAge(value) {
+  const trimmed = String(value ?? "").trim();
+  if (!trimmed) return null;
+  const parsed = Number(trimmed);
+  if (!Number.isInteger(parsed)) return undefined;
+  return parsed;
 }
 
 function buildPatientId() {
@@ -94,7 +106,8 @@ const patientSchema = z.object({
   phone: z
     .string()
     .trim()
-    .refine(isValidOptionalPhone, "Enter a valid phone number"),
+    .min(1, "Phone number is required")
+    .regex(/^01[0-9]{9}$/, "Invalid phone number format"),
   email: z
     .string()
     .trim()
@@ -119,10 +132,27 @@ const patientSchema = z.object({
     ],
     "Blood group is required"
   ),
+  age: z
+    .string()
+    .trim()
+    .refine(
+      (value) => {
+        if (!value) return true;
+        const parsed = Number(value);
+        return Number.isInteger(parsed) && parsed >= 0 && parsed <= 150;
+      },
+      "Age must be a whole number between 0 and 150"
+    ),
   allergies: z.string().trim(),
+  profileImage: z
+    .string()
+    .trim()
+    .url("Uploaded image URL is invalid")
+    .optional()
+    .or(z.literal("")),
 });
 
-export async function createPatientAction(prevState, formData) {
+export async function patientFormsubmissionAction(prevState, formData) {
   const raw = Object.fromEntries(formData);
   const result = patientSchema.safeParse(raw);
 
@@ -143,7 +173,9 @@ export async function createPatientAction(prevState, formData) {
         relationship: fieldErrors.relationship?.[0] || "",
         emergencyPhone: fieldErrors.emergencyPhone?.[0] || "",
         bloodGroup: fieldErrors.bloodGroup?.[0] || "",
+        age: fieldErrors.age?.[0] || "",
         allergies: fieldErrors.allergies?.[0] || "",
+        profileImage: fieldErrors.profileImage?.[0] || "",
       },
       values: getValues(raw),
     };
@@ -161,8 +193,12 @@ export async function createPatientAction(prevState, formData) {
     relationship,
     emergencyPhone,
     bloodGroup,
+    age,
     allergies,
+    profileImage,
   } = result.data;
+
+  const parsedAge = toNullableAge(age);
 
   let patient = null;
 
@@ -179,10 +215,12 @@ export async function createPatientAction(prevState, formData) {
             email: toNullableString(email),
             address: toNullableString(address),
             bloodGroup,
+            age: parsedAge,
             allergies: toNullableString(allergies),
             emergencyName: toNullableString(emergencyName),
             emergencyPhone: toNullableString(emergencyPhone),
             relationship: toNullableString(relationship),
+            profileImage: profileImage || null,
           },
           select: {
             patientId: true,

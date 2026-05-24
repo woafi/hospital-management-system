@@ -12,11 +12,10 @@ import {
   UserRound,
   X,
 } from "lucide-react";
-import {
-  createPatientAction,
-} from "@/app/actions/patientActions";
+import { patientFormsubmissionAction } from "@/app/actions/patientFormsubmissionAction";
+import PatientImageUpload from "@/components/PatientImageUpload";
 
-const initialPatientFormState = {
+const initialState = {
   success: false,
   message: "",
   fieldErrors: {
@@ -30,7 +29,9 @@ const initialPatientFormState = {
     relationship: "",
     emergencyPhone: "",
     bloodGroup: "",
+    age: "",
     allergies: "",
+    profileImage: "",
   },
   values: {
     fullname: "",
@@ -43,7 +44,9 @@ const initialPatientFormState = {
     relationship: "",
     emergencyPhone: "",
     bloodGroup: "O_Positive",
+    age: "",
     allergies: "",
+    profileImage: "",
   },
 };
 
@@ -116,9 +119,19 @@ export default function AddPatientModal({ onClose }) {
     ? params.receptionistId[0]
     : params?.receptionistId || "";
   const [state, formAction, pending] = useActionState(
-    createPatientAction,
-    initialPatientFormState
+    patientFormsubmissionAction,
+    initialState
   );
+
+  const handleTitleKeyDown = (e) => {
+    if (
+      (e.ctrlKey || e.metaKey) &&
+      (e.key === "Enter" || e.key === "NumpadEnter")
+    ) {
+      e.preventDefault();
+      e.currentTarget.form.requestSubmit();
+    }
+  };
 
   useEffect(() => {
     if (!state.success) return undefined;
@@ -143,11 +156,12 @@ export default function AddPatientModal({ onClose }) {
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         <form
           action={formAction}
-          className="flex max-h-[95vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-2xl dark:border-gray-800 dark:bg-gray-900"
+          onKeyDown={handleTitleKeyDown}
+          className="flex max-h-[95vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-gray-100 bg-background shadow-2xl dark:border-gray-800"
         >
           <input type="hidden" name="receptionistId" value={receptionistId} />
 
-          <header className="flex shrink-0 items-center justify-between gap-4 border-b border-gray-100 px-6 py-5 dark:border-gray-800">
+          <header className="flex shrink-0 items-center justify-between gap-4 border-b border-gray-100 px-6 py-5 dark:border-gray-800 dark:bg-gray-900 bg-white">
             <div className="flex min-w-0 items-center gap-3">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300">
                 <ClipboardPlus className="h-5 w-5" />
@@ -191,8 +205,15 @@ export default function AddPatientModal({ onClose }) {
 
             <section>
               <SectionTitle icon={UserRound} title="Personal Information" />
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
-                <div className="sm:col-span-2">
+              <div className="flex flex-col gap-6 md:flex-row">
+                <PatientImageUpload
+                  disabled={pending || state.success}
+                  initialImageUrl={state.values.profileImage}
+                  error={state.fieldErrors.profileImage}
+                />
+
+                <div className="grid flex-1 grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="sm:col-span-2">
                   <Field label="Full Name" error={state.fieldErrors.fullname}>
                     <input
                       name="fullname"
@@ -229,6 +250,7 @@ export default function AddPatientModal({ onClose }) {
                   />
                 </Field>
               </div>
+              </div>
             </section>
 
             <section>
@@ -239,9 +261,10 @@ export default function AddPatientModal({ onClose }) {
                     name="phone"
                     type="tel"
                     className={inputClassName}
-                    placeholder="+880 17XX-XXXXXX"
+                    placeholder="01XXX-XXXXXX"
                     defaultValue={state.values.phone}
                     disabled={pending || state.success}
+                    required
                   />
                 </Field>
                 <Field label="Email Address" error={state.fieldErrors.email}>
@@ -271,7 +294,7 @@ export default function AddPatientModal({ onClose }) {
 
             <section className="rounded-2xl border border-amber-100 bg-amber-50 p-5 dark:border-amber-800/30 dark:bg-amber-900/10">
               <SectionTitle icon={Phone} title="Emergency Contact" tone="amber" />
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <div className="grid gap-4 sm:grid-cols-3">
                 <Field label="Full Name" error={state.fieldErrors.emergencyName}>
                   <input
                     name="emergencyName"
@@ -307,7 +330,7 @@ export default function AddPatientModal({ onClose }) {
 
             <section>
               <SectionTitle icon={ShieldPlus} title="Medical Snapshot" tone="red" />
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <Field label="Blood Group" error={state.fieldErrors.bloodGroup}>
                   <select
                     name="bloodGroup"
@@ -323,7 +346,19 @@ export default function AddPatientModal({ onClose }) {
                     ))}
                   </select>
                 </Field>
-                <div className="sm:col-span-3">
+                <Field label="Age" error={state.fieldErrors.age}>
+                  <input
+                    name="age"
+                    type="number"
+                    min={0}
+                    max={150}
+                    className={`${inputClassName} pl-8 appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
+                    placeholder="Years"
+                    defaultValue={state.values.age}
+                    disabled={pending || state.success}
+                  />
+                </Field>
+                <div className="sm:col-span-2">
                   <Field label="Known Allergies" error={state.fieldErrors.allergies}>
                     <textarea
                       name="allergies"

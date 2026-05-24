@@ -6,7 +6,7 @@ export default async function Dashboard() {
   return (
     <main className="flex-1 flex flex-col overflow-y-auto bg-background">
       {/* Dashboard Content */}
-      <div className="p-8 space-y-8">
+      <div className="p-8 space-y-8 max-w-[1600px] mx-auto">
         {/* Page Title & Quick Actions */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
@@ -14,10 +14,12 @@ export default async function Dashboard() {
             <p className="text-gray-500 dark:text-gray-400 mt-1">Real-time performance metrics and department analytics.</p>
           </div>
         </div>
+
         {/* KPI Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid xl:grid-cols-4 lg:grid-cols-3 gap-6">
           {/* Total Patients */}
           <KpiCard iconType="patient" title="Total Patients" value="1,240" />
+          <KpiCard iconType="patient" title="Total Appointments" value="1,240" />
           {/* Total Revenue */}
           {/* <KpiCard iconType="revenue" title="Total Revenue" value="$452,190" /> */}
           {/* Doctors Available */}

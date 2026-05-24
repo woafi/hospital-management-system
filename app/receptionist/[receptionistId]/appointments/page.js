@@ -168,7 +168,7 @@ export default async function AppointmentManagement({ params, searchParams }) {
 
   return (
     <div className="relative flex-1 overflow-x-hidden bg-background text-gray-900 dark:text-gray-100 font-sans">
-      <main className="max-w-7xl mx-auto p-6 space-y-8">
+      <main className="max-w-[1400px] mx-auto p-6 space-y-8">
         <div className="flex flex-wrap items-end justify-between gap-6 mb-8">
           <div className="flex flex-col gap-2">
             <h1 className="text-gray-900 dark:text-white text-3xl font-black leading-tight tracking-tight">

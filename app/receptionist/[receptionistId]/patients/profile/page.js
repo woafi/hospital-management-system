@@ -5,8 +5,6 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export const dynamic = "force-dynamic";
-
 function formatGender(gender) {
   const labels = { MALE: "Male", FEMALE: "Female", OTHER: "Other" };
   return labels[gender] ?? gender;
@@ -175,7 +173,7 @@ export default async function PatientProfilePage({ params, searchParams }) {
     <div className="flex flex-1 flex-col overflow-hidden bg-background text-gray-900 dark:text-gray-100">
       <div className="flex flex-1 min-h-0 overflow-hidden">
         {/* Sidebar — patient summary */}
-        <aside className="hidden lg:flex w-80 shrink-0 flex-col border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-y-auto">
+        <aside className="order-2 flex w-1/3 shrink-0 flex-col border-r border-gray-200 dark:border-gray-800 bg-foreground overflow-y-auto">
           <div className="p-6 text-center border-b border-gray-100 dark:border-gray-800">
             <div className="relative inline-block mb-4">
               <div className="relative w-24 h-24 rounded-full border-4 border-gray-50 dark:border-gray-800 shadow-sm mx-auto overflow-hidden bg-blue-100">
@@ -326,8 +324,8 @@ export default async function PatientProfilePage({ params, searchParams }) {
         </aside>
 
         {/* Main content */}
-        <main className="flex-1 flex flex-col min-w-0 overflow-y-auto bg-gray-50 dark:bg-gray-950">
-          <div className="sticky top-0 z-10 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-6 py-4">
+        <main className="order-1 flex-1 flex flex-col min-w-0 overflow-y-auto bg-background">
+          <div className="sticky top-0 z-10 bg-foreground backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-6 py-4">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
                 <Link
