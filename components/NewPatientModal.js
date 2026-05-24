@@ -157,7 +157,7 @@ export default function AddPatientModal({ onClose }) {
         <form
           action={formAction}
           onKeyDown={handleTitleKeyDown}
-          className="flex max-h-[95vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-gray-100 bg-background shadow-2xl dark:border-gray-800"
+          className="flex max-h-[95vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-gray-100 dark:bg-gray-900 bg-white shadow-2xl dark:border-gray-800"
         >
           <input type="hidden" name="receptionistId" value={receptionistId} />
 

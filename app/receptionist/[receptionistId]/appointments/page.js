@@ -3,6 +3,7 @@ import TypeaheadSearch from "@/components/TypeaheadSearch";
 import Pagination from "@/components/Pagination";
 import Link from "next/link";
 import { PrismaClient } from "@prisma/client";
+import BookAppointment from "@/components/BookAppointment";
 
 const prisma = new PrismaClient();
 const ITEMS_PER_PAGE = 8;
@@ -178,6 +179,7 @@ export default async function AppointmentManagement({ params, searchParams }) {
               Efficiently track and manage hospital scheduling workflows.
             </p>
           </div>
+          <BookAppointment />
         </div>
 
         {/* Search */}
