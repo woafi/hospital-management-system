@@ -8,8 +8,6 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 const ITEMS_PER_PAGE = 8;
 
-export const dynamic = "force-dynamic";
-
 function formatGender(gender) {
   const labels = { MALE: "Male", FEMALE: "Female", OTHER: "Other" };
   return labels[gender] ?? gender;
@@ -140,7 +138,7 @@ export default async function PatientListPage({ params, searchParams }) {
           <AddNewPatientModal />
         </div>
 
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 mb-6 flex flex-wrap items-center gap-4">
+        <div className="bg-foreground p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 mb-6 flex flex-wrap items-center gap-4">
           <div className="flex-1 min-w-[300px]">
             <TypeaheadSearch
               entity="patients"
@@ -152,7 +150,7 @@ export default async function PatientListPage({ params, searchParams }) {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="bg-foreground rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
@@ -344,16 +342,16 @@ export default async function PatientListPage({ params, searchParams }) {
   );
 }
 
-export async function generateStaticParams() {
-  const receptionists = await prisma.receptionist.findMany({
-    select: { id: true, userId: true },
-  });
+// export async function generateStaticParams() {
+//   const receptionists = await prisma.receptionist.findMany({
+//     select: { id: true, userId: true },
+//   });
 
-  const receptionistIds = new Set();
-  for (const receptionist of receptionists) {
-    receptionistIds.add(receptionist.id);
-    receptionistIds.add(receptionist.userId);
-  }
+//   const receptionistIds = new Set();
+//   for (const receptionist of receptionists) {
+//     receptionistIds.add(receptionist.id);
+//     receptionistIds.add(receptionist.userId);
+//   }
 
-  return [...receptionistIds].map((receptionistId) => ({ receptionistId }));
-}
+//   return [...receptionistIds].map((receptionistId) => ({ receptionistId }));
+// }

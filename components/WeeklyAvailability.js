@@ -456,7 +456,7 @@ export default function AvailabilitySchedule({ availabilities = [], doctorId, re
           </div>
         </div>
       ) : (
-        <div className="bg-white dark:bg-foreground rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden slide-up">
+        <div className="bg-foreground rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden slide-up">
           <table className="w-full border-collapse">
             <thead>
               <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">

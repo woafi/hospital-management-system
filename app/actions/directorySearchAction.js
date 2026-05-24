@@ -109,6 +109,71 @@ export async function searchDirectory(entity, term, context = {}) {
     }));
   }
 
+  if (entity === "appointments") {
+    const appointments = await prisma.appointment.findMany({
+      where: {
+        OR: [
+          { patient: { fullname: { contains: query, mode: "insensitive" } } },
+          { patient: { patientId: { contains: query, mode: "insensitive" } } },
+          { patient: { phone: { contains: query, mode: "insensitive" } } },
+          { doctor: { name: { contains: query, mode: "insensitive" } } },
+          { doctor: { specialization: { contains: query, mode: "insensitive" } } },
+          { doctor: { doctor_id: { contains: query, mode: "insensitive" } } },
+        ],
+      },
+      orderBy: [{ date: "desc" }, { startTime: "desc" }],
+      take: 6,
+      select: {
+        id: true,
+        date: true,
+        startTime: true,
+        status: true,
+        patient: {
+          select: {
+            id: true,
+            fullname: true,
+            patientId: true,
+            profileImage: true,
+          },
+        },
+        doctor: {
+          select: {
+            name: true,
+            specialization: true,
+          },
+        },
+      },
+    });
+
+    const statusLabels = {
+      SCHEDULED: "Scheduled",
+      WAITING: "Waiting",
+      IN_PROGRESS: "In Progress",
+      CHECKED_IN: "Checked In",
+    };
+
+    const profileBase =
+      typeof context.profileBasePath === "string" ? context.profileBasePath : "";
+
+    const dateFormatter = new Intl.DateTimeFormat(undefined, {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+
+    return appointments.map((appointment) => ({
+      id: appointment.id,
+      title: appointment.patient.fullname,
+      code: appointment.patient.patientId,
+      subtitle: `${appointment.doctor.name} · ${dateFormatter.format(appointment.date)}`,
+      contact: `${appointment.doctor.specialization} · ${statusLabels[appointment.status] ?? appointment.status}`,
+      image: appointment.patient.profileImage,
+      href: profileBase
+        ? `${profileBase}/profile?id=${appointment.patient.id}`
+        : `/patients/profile?id=${appointment.patient.id}`,
+    }));
+  }
+
   if (entity === "patients") {
     const patients = await prisma.patient.findMany({
       where: {
