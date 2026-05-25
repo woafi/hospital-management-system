@@ -2,10 +2,9 @@ import AppointmentSortSelect from "@/components/AppointmentSortSelect";
 import TypeaheadSearch from "@/components/TypeaheadSearch";
 import Pagination from "@/components/Pagination";
 import Link from "next/link";
-import { PrismaClient } from "@prisma/client";
 import BookAppointment from "@/components/BookAppointment";
+import prisma from "@/lib/prisma";
 
-const prisma = new PrismaClient();
 const ITEMS_PER_PAGE = 8;
 
 const STATUS_FILTERS = [

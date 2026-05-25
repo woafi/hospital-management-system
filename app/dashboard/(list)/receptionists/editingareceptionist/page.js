@@ -1,9 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PrismaClient } from "@prisma/client";
 import EditReceptionistForm from "@/components/EditReceptionistForm";
-
-const prisma = new PrismaClient();
+import prisma from "@/lib/prisma";
 
 const emptyFieldErrors = {
   name: "",

@@ -1,9 +1,7 @@
 "use server";
 
-import { PrismaClient } from "@prisma/client";
 import { revalidatePath } from "next/cache";
-
-const prisma = new PrismaClient();
+import prisma from "@/lib/prisma";
 
 const SLOT_REFERENCE = new Date(2000, 0, 1);
 const DAYS = new Set([

@@ -1,7 +1,5 @@
-import { PrismaClient } from "@prisma/client";
 import { notFound } from "next/navigation";
-
-const prisma = new PrismaClient();
+import prisma from "@/lib/prisma";
 
 function formatGender(gender) {
   const labels = { MALE: "Male", FEMALE: "Female", OTHER: "Other" };

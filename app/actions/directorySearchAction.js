@@ -1,8 +1,6 @@
 "use server";
 
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import prisma from "@/lib/prisma";
 
 function cleanSearchTerm(term) {
   return String(term || "").trim().slice(0, 80);

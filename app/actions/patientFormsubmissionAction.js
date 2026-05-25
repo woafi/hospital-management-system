@@ -1,10 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { z } from "zod";
-
-const prisma = new PrismaClient();
+import prisma from "@/lib/prisma";
 
 const emptyFieldErrors = {
   fullname: "",

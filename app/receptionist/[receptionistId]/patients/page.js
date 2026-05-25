@@ -5,9 +5,8 @@ import TypeaheadSearch from "@/components/TypeaheadSearch";
 import { serializePatientForEditForm } from "@/lib/patientFormHelpers";
 import Image from "next/image";
 import Link from "next/link";
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/prisma";
 
-const prisma = new PrismaClient();
 const ITEMS_PER_PAGE = 8;
 
 function formatGender(gender) {

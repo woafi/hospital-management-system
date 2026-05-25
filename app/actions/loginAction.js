@@ -2,12 +2,10 @@
 
 import { z } from 'zod'
 import { redirect } from 'next/navigation';
-import { PrismaClient } from "@prisma/client";
 import { generateAccessToken, setAuthCookies, verifyPassword } from '@/lib/auth';
 import { getRoleHome } from "@/lib/getRoleHome" 
+import prisma from "@/lib/prisma";
 
-
-const prisma = new PrismaClient();
 
 //LoginSchema
 const loginSchema = z.object({

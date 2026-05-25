@@ -4,8 +4,7 @@ import Pagination from "@/components/Pagination";
 import Image from "next/image";
 import TypeaheadSearch from "@/components/TypeaheadSearch";
 
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
+import prisma from "@/lib/prisma";
 
 const ITEMS_PER_PAGE = 5;
 

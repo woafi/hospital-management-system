@@ -1,9 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { Stethoscope, Clock, CheckCircle2, CalendarDays, DoorOpen } from "lucide-react";
+import prisma from "@/lib/prisma";
 
 function formatGender(gender) {
   const labels = { MALE: "Male", FEMALE: "Female", OTHER: "Other" };
@@ -84,7 +83,7 @@ function getAppointmentStatusClasses(status) {
     case "WAITING":
       return "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400";
     default:
-      return "bg-slate-100 text-slate-800 dark:bg-gray-700 dark:text-gray-300";
+      return "text-slate-800 dark:text-gray-300";
   }
 }
 
@@ -152,6 +151,7 @@ export default async function PatientProfilePage({ params, searchParams }) {
               name: true,
               specialization: true,
               doctor_id: true,
+              room: true,
             },
           },
         },
@@ -444,31 +444,68 @@ export default async function PatientProfilePage({ params, searchParams }) {
                         </div>
                       </div>
                       <div className="flex-1 min-w-0 bg-white dark:bg-gray-900 p-5 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm">
-                        <div className="flex flex-wrap justify-between items-start gap-2 mb-2">
-                          <div>
-                            <h3 className="font-bold text-lg text-gray-900 dark:text-white">
-                              {appointment.doctor?.specialization || "Consultation"}
-                            </h3>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                              {appointment.doctor?.name || "Doctor"}
-                              {appointment.doctor?.doctor_id
-                                ? ` · ${appointment.doctor.doctor_id}`
-                                : ""}
-                            </p>
+
+                        {/* Header: Doctor info + Time chip */}
+                        <div className="flex justify-between items-start gap-3 flex-wrap">
+                          <div className="flex items-center gap-3">
+                            <div className="w-11 h-11 rounded-full bg-blue-50 dark:bg-blue-950 flex items-center justify-center flex-shrink-0">
+                              <Stethoscope className="w-5 h-5 text-blue-500 dark:text-blue-400" />
+                            </div>
+                            <div>
+                              <p className="text-[15px] font-medium text-gray-900 dark:text-white">
+                                {appointment.doctor?.specialization || "Consultation"}
+                              </p>
+                              <p className="text-[13px] text-gray-500 dark:text-gray-400">
+                                {appointment.doctor?.name || "Doctor"}
+                                {appointment.doctor?.doctor_id ? ` · ${appointment.doctor.doctor_id}` : ""}
+                              </p>
+                            </div>
                           </div>
-                          <span className="text-sm font-bold text-gray-400 whitespace-nowrap">
-                            {formatDateTime(appointment.startTime)}
-                          </span>
+
+                          <div className="flex items-center gap-1.5 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-2.5 py-1.5 flex-shrink-0">
+                            <Clock className="w-3.5 h-3.5 text-gray-400" />
+                            <span className="text-[13px] font-medium text-gray-900 dark:text-white">
+                              {formatDateTime(appointment.startTime)}
+                            </span>
+                          </div>
                         </div>
-                        <div className="mt-3 flex flex-wrap items-center gap-2">
-                          <span
-                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${getAppointmentStatusClasses(appointment.status)}`}
-                          >
-                            {formatAppointmentStatus(appointment.status)}
-                          </span>
-                          <span className="text-xs text-gray-500 dark:text-gray-400">
-                            Visit date: {formatDate(appointment.date)}
-                          </span>
+
+                        {/* Info row: Status · Visit date · Room */}
+                        <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-800 grid grid-cols-3 gap-2">
+
+                          {/* Status */}
+                          <div className="flex flex-col gap-0.5">
+                            <span className="text-[11px] uppercase tracking-wide text-gray-400 dark:text-gray-500">
+                              Status
+                            </span>
+                            <span className={`inline-flex items-center gap-1 text-[13px] py-2 font-medium ${getAppointmentStatusClasses(appointment.status)}`}>
+                              <CheckCircle2 className="w-3.5 h-3.5" />
+                              {formatAppointmentStatus(appointment.status)}
+                            </span>
+                          </div>
+
+                          {/* Visit date */}
+                          <div className="flex flex-col gap-0.5">
+                            <span className="text-[11px] uppercase tracking-wide text-gray-400 dark:text-gray-500">
+                              Visit date
+                            </span>
+                            <span className="inline-flex items-center gap-1 text-[13px] font-medium text-gray-900 dark:text-white">
+                              <CalendarDays className="w-3.5 h-3.5 text-gray-400" />
+                              {formatDate(appointment.date)}
+                            </span>
+                          </div>
+
+                          {/* Room */}
+                          <div className="flex flex-col gap-0.5">
+                            <span className="text-[11px] uppercase tracking-wide text-gray-400 dark:text-gray-500">
+                              Room
+                            </span>
+                            <span className="inline-flex items-center gap-1 text-[13px] font-medium text-gray-900 dark:text-white">
+                              <DoorOpen className="w-3.5 h-3.5 text-gray-400" />
+                              Room {appointment.doctor?.room}
+                            </span>
+                          </div>
+
                         </div>
                       </div>
                     </article>

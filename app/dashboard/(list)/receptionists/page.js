@@ -5,8 +5,7 @@ import TypeaheadSearch from "@/components/TypeaheadSearch";
 import Link from "next/link";
 import Image from "next/image";
 
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
+import prisma from "@/lib/prisma";
 
 const ITEMS_PER_PAGE = 5;
 

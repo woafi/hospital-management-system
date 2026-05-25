@@ -1,9 +1,7 @@
 import AvailabilitySchedule from "@/components/WeeklyAvailability"
 import AppointmentCalender from "@/components/AppointmentCalender";
 import AppointmentButton from "@/components/AppointmentButton";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import prisma from "@/lib/prisma";
 
 export default async function DoctorPage({ params }) {
   const { doctorId } = await params; // Log the doctor ID to the console

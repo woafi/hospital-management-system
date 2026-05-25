@@ -1,9 +1,7 @@
 "use server";
 
-import { PrismaClient } from "@prisma/client";
 import { revalidatePath } from "next/cache";
-
-const prisma = new PrismaClient();
+import prisma from "@/lib/prisma";
 
 // Helper to format Date to AM/PM string (e.g. "09:00 AM")
 function formatToAmPm(dateValue) {

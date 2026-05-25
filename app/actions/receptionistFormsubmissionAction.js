@@ -2,10 +2,9 @@
 
 import { z } from "zod";
 import { redirect } from "next/navigation";
-import { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { hashPassword } from "@/lib/auth";
-
-const prisma = new PrismaClient();
+import prisma from "@/lib/prisma";
 
 const emptyFieldErrors = {
   name: "",

@@ -1,11 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { PrismaClient } from "@prisma/client";
 import { z } from "zod";
 import { emptyPatientFieldErrors } from "@/lib/patientFormHelpers";
-
-const prisma = new PrismaClient();
+import prisma from "@/lib/prisma";
 
 // ---------------------------------------------------------------------------
 // Validation helpers (mirrors patientFormsubmissionAction)
