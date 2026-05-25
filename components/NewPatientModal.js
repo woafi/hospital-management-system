@@ -134,6 +134,8 @@ export default function AddPatientModal({ onClose }) {
   };
 
   useEffect(() => {
+    if(!state.success) return undefined;
+
     router.refresh();
     const timeout = window.setTimeout(() => {
       onClose?.();
