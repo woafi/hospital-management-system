@@ -77,11 +77,11 @@ function formatAppointmentStatus(status) {
 function getAppointmentStatusClasses(status) {
   switch (status) {
     case "CHECKED_IN":
-      return "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400";
+      return "text-emerald-800 dark:text-emerald-400";
     case "IN_PROGRESS":
-      return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400";
+      return "text-blue-800 dark:text-blue-400";
     case "WAITING":
-      return "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400";
+      return "text-amber-800 dark:text-amber-400";
     default:
       return "text-slate-800 dark:text-gray-300";
   }

@@ -2,26 +2,36 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useId, useRef, useState, useTransition } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { searchDirectory } from "@/app/actions/directorySearchAction";
 
 const DEBOUNCE_MS = 500;
+const EMPTY_SEARCH_CONTEXT = Object.freeze({});
+
+function serializeSearchContext(context) {
+  try {
+    return JSON.stringify(context ?? EMPTY_SEARCH_CONTEXT);
+  } catch {
+    return "{}";
+  }
+}
 
 export default function TypeaheadSearch({
   entity,
   placeholder = "Search by name, ID, phone, or email...",
-  searchContext = {},
+  searchContext = EMPTY_SEARCH_CONTEXT,
 }) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
   const [error, setError] = useState("");
-  const [isPending, startTransition] = useTransition();
+  const [isSearching, setIsSearching] = useState(false);
   const router = useRouter();
   const listId = useId();
   const searchIdRef = useRef(0);
   const rootRef = useRef(null);
+  const searchContextKey = serializeSearchContext(searchContext);
 
   useEffect(() => {
     const term = query.trim();
@@ -29,20 +39,28 @@ export default function TypeaheadSearch({
     searchIdRef.current = searchId;
 
     if (!term) {
+      setIsSearching(false);
       return;
     }
 
+    setIsSearching(true);
+    const currentSearchContext = JSON.parse(searchContextKey);
+
     const timer = setTimeout(() => {
-      startTransition(async () => {
+      async function runSearch() {
         try {
-          const matches = await searchDirectory(entity, term, searchContext);
+          const matches = await searchDirectory(
+            entity,
+            term,
+            currentSearchContext
+          );
 
           if (searchIdRef.current !== searchId) return;
 
-          setResults(matches);
+          setResults(Array.isArray(matches) ? matches : []);
           setError("");
           setIsOpen(true);
-          setActiveIndex(matches.length ? 0 : -1);
+          setActiveIndex(matches?.length ? 0 : -1);
         } catch (searchError) {
           if (searchIdRef.current !== searchId) return;
 
@@ -51,12 +69,18 @@ export default function TypeaheadSearch({
           setError("Search is unavailable right now.");
           setIsOpen(true);
           setActiveIndex(-1);
+        } finally {
+          if (searchIdRef.current === searchId) {
+            setIsSearching(false);
+          }
         }
-      });
+      }
+
+      runSearch();
     }, DEBOUNCE_MS);
 
     return () => clearTimeout(timer);
-  }, [entity, query, searchContext]);
+  }, [entity, query, searchContextKey]);
 
   useEffect(() => {
     function handlePointerDown(event) {
@@ -146,7 +170,7 @@ export default function TypeaheadSearch({
       />
 
       <div className="absolute right-3 top-1/2 -translate-y-1/2">
-        {isPending ? (
+        {isSearching ? (
           <span className="block h-4 w-4 rounded-full border-2 border-blue-600 border-t-transparent animate-spin" />
         ) : query ? (
           <button
@@ -175,7 +199,11 @@ export default function TypeaheadSearch({
           ) : hasResults ? (
             <ul id={listId} role="listbox" className="max-h-80 overflow-y-auto py-1">
               {results.map((result, index) => (
-                <li key={result.id} role="option" aria-selected={activeIndex === index}>
+                <li
+                  key={`${result.href}-${result.id}`}
+                  role="option"
+                  aria-selected={activeIndex === index}
+                >
                   <Link
                     href={result.href}
                     onMouseEnter={() => setActiveIndex(index)}
