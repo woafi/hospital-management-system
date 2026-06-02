@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import prisma from "@/lib/prisma";
+import { notifyReceptionDashboard } from "@/lib/pusher";
 
 // Helper to format Date to AM/PM string (e.g. "09:00 AM")
 function formatToAmPm(dateValue) {
@@ -242,6 +243,11 @@ export async function bookAppointmentAction(payload) {
 
     // Revalidate receptionist appointments list
     revalidatePath("/receptionist/[receptionistId]/appointments");
+    await notifyReceptionDashboard({
+      appointmentId: appointment.id,
+      date: appointment.date.toISOString(),
+      status: appointment.status,
+    });
 
     return {
       success: true,

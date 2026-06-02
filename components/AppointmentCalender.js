@@ -3,8 +3,14 @@
 import { useMemo, useState } from "react";
 import Calendar from "react-calendar";
 
-const AppointmentCalender = () => {
-    const [value, onChange] = useState(new Date());
+const AppointmentCalender = ({ value: controlledValue, onChange: controlledOnChange }) => {
+    const [localValue, setLocalValue] = useState(new Date());
+    const value = controlledValue ?? localValue;
+
+    const handleChange = (nextValue) => {
+        setLocalValue(nextValue);
+        controlledOnChange?.(nextValue);
+    };
 
     const selectedLabel = useMemo(() => {
         const selected = Array.isArray(value) ? value?.[0] : value;
@@ -40,7 +46,7 @@ const AppointmentCalender = () => {
 
             <Calendar
                 className="hms-calendar text-gray-900 dark:text-gray-100"
-                onChange={onChange}
+                onChange={handleChange}
                 value={value}
                 next2Label={null}
                 prev2Label={null}

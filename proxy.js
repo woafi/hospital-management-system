@@ -59,6 +59,7 @@ export async function proxy(req) {
             '/dashboard': ['SUPER_ADMIN', 'ADMIN'],
             '/doctor': ['SUPER_ADMIN', 'ADMIN', 'DOCTOR'],
             '/receptionist': ['SUPER_ADMIN', 'ADMIN', 'RECEPTIONIST'],
+            '/api/receptiondashboard': ['SUPER_ADMIN', 'ADMIN', 'RECEPTIONIST'],
         };
 
         // =========================

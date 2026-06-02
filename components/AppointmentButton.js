@@ -1,12 +1,14 @@
 "use client"
 
-const AppointmentButton = ({text}) => {
+const AppointmentButton = ({ text, disabled = false, onClick }) => {
 
     const style = (status) => {
     switch (status) {
       case "Checked in":
+      case "Checked In":
         return "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300";
       case "In progress":
+      case "In Progress":
         return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300";
       case "Waiting":
         return "bg-amber-100 text-amber-900 dark:bg-amber-900/30 dark:text-amber-300";
@@ -19,7 +21,11 @@ const AppointmentButton = ({text}) => {
     return (
         <button
             type="button"
-            className={`${style(text)} cursor-pointer px-3 py-2 rounded-xl text-sm font-semibold hover:opacity-95 border border-primary/30 transition-opacity`}
+            onClick={onClick}
+            disabled={disabled}
+            className={`${style(text)} px-3 py-2 rounded-xl text-sm font-semibold border border-primary/30 transition-opacity ${
+                disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer hover:opacity-95"
+            }`}
         >
             {text}
         </button>
