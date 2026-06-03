@@ -240,8 +240,6 @@ export default async function DoctorProfilePage({ params }) {
                 </div>
               </div>
             </div>
-
-            <div className="grid grid-cols-2 gap-3 text-center sm:min-w-72">
               <div className="rounded-xl border border-blue-100 bg-blue-50 p-4 dark:border-blue-900/40 dark:bg-blue-950/20">
                 <p className="text-xs font-bold uppercase tracking-widest text-blue-600 dark:text-blue-300">
                   Fee
@@ -250,15 +248,6 @@ export default async function DoctorProfilePage({ params }) {
                   {formatFee(doctor.consultationFee)}
                 </p>
               </div>
-              <div className="rounded-xl border border-emerald-100 bg-emerald-50 p-4 dark:border-emerald-900/40 dark:bg-emerald-950/20">
-                <p className="text-xs font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-300">
-                  Appointments
-                </p>
-                <p className="mt-1 text-xl font-black text-gray-900 dark:text-white">
-                  {doctor._count.appointments}
-                </p>
-              </div>
-            </div>
           </div>
         </section>
 

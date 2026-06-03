@@ -57,7 +57,8 @@ const emptyMetrics = {
   completionPercent: 0,
 };
 
-const ReceptionDailySummaryMetrics = ({ receptionist, receptionistId, pusherConfig }) => {
+const DoctorDailySummaryMetrics = ({ doctor, doctorId, pusherConfig }) => {
+  // State management for appointments and metrics
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [metrics, setMetrics] = useState(emptyMetrics);
   const [appointments, setAppointments] = useState([]);
@@ -70,6 +71,7 @@ const ReceptionDailySummaryMetrics = ({ receptionist, receptionistId, pusherConf
   const todayLabel = useMemo(() => formatDashboardDate(selectedDate), [selectedDate]);
   const isRealtimeEnabled = Boolean(pusherConfig?.key && pusherConfig?.cluster);
 
+  // Fetch dashboard data from API
   const fetchDashboard = useCallback(
     async ({ silent = false } = {}) => {
       if (silent) {
@@ -82,10 +84,10 @@ const ReceptionDailySummaryMetrics = ({ receptionist, receptionistId, pusherConf
 
       try {
         const params = new URLSearchParams({
-          receptionistId,
+          doctorId,
           date: dateKey,
         });
-        const response = await fetch(`/api/receptiondashboard?${params.toString()}`);
+        const response = await fetch(`/api/doctordashboard?${params.toString()}`);
         const payload = await response.json();
 
         if (!response.ok || !payload.ok) {
@@ -101,13 +103,15 @@ const ReceptionDailySummaryMetrics = ({ receptionist, receptionistId, pusherConf
         setIsRefreshing(false);
       }
     },
-    [dateKey, receptionistId]
+    [dateKey, doctorId]
   );
 
+  // Initial fetch when component mounts or date changes
   useEffect(() => {
     fetchDashboard();
   }, [fetchDashboard]);
 
+  // Set up Pusher real-time updates
   useEffect(() => {
     if (!isRealtimeEnabled) return undefined;
 
@@ -116,6 +120,7 @@ const ReceptionDailySummaryMetrics = ({ receptionist, receptionistId, pusherConf
     });
     const channel = pusher.subscribe(pusherConfig.channel);
 
+    // Listen for appointment updates on this date
     channel.bind(pusherConfig.event, (payload) => {
       const eventDateKey = payload?.date ? formatDateKey(new Date(payload.date)) : dateKey;
 
@@ -131,12 +136,13 @@ const ReceptionDailySummaryMetrics = ({ receptionist, receptionistId, pusherConf
     };
   }, [dateKey, fetchDashboard, isRealtimeEnabled, pusherConfig]);
 
+  // Update appointment status and refresh dashboard
   const updateAppointmentStatus = async (appointmentId, status) => {
     setUpdatingId(appointmentId);
     setError("");
 
     try {
-      const response = await fetch("/api/receptiondashboard", {
+      const response = await fetch("/api/doctordashboard", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -144,7 +150,7 @@ const ReceptionDailySummaryMetrics = ({ receptionist, receptionistId, pusherConf
         body: JSON.stringify({
           appointmentId,
           status,
-          receptionistId,
+          doctorId,
         }),
       });
       const payload = await response.json();
@@ -162,12 +168,13 @@ const ReceptionDailySummaryMetrics = ({ receptionist, receptionistId, pusherConf
   };
 
   return (
-    <main className="max-w-[1400px] mx-auto p-6 space-y-8 pb-20">
+    <main className="max-w-350 mx-auto p-6 space-y-8 pb-20">
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         <div className="lg:col-span-7 space-y-4">
+          {/* Doctor info and real-time status badge */}
           <div className="flex flex-wrap items-center gap-3">
             <div className="shrink-0 text-xs sm:text-sm font-medium px-3 py-1 rounded-full bg-black/5 dark:bg-white/10 text-gray-700 dark:text-gray-200 border border-black/5 dark:border-white/10">
-              Receptionist ID: {receptionist.receptionists_id}
+              Doctor: {doctor.name} - {doctor.specialization}
             </div>
             <div className="shrink-0 text-xs sm:text-sm font-medium px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/15">
               {isRealtimeEnabled ? "Realtime active" : "Realtime env missing"}
@@ -177,13 +184,16 @@ const ReceptionDailySummaryMetrics = ({ receptionist, receptionistId, pusherConf
             ) : null}
           </div>
 
+          {/* Error message display */}
           {error ? (
             <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-300">
               {error}
             </div>
           ) : null}
 
+          {/* Key metrics grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Patients Seen - CHECKED_IN count */}
             <div className="bg-white/80 dark:bg-[#0d1117]/70 backdrop-blur p-5 rounded-2xl border border-black/5 dark:border-white/10 flex items-center gap-4 shadow-sm">
               <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300">
                 <span className="scale-130 material-symbols-outlined">how_to_reg</span>
@@ -198,6 +208,7 @@ const ReceptionDailySummaryMetrics = ({ receptionist, receptionistId, pusherConf
               </div>
             </div>
 
+            {/* Remaining Appointments - non-CHECKED_IN count */}
             <div className="bg-white/80 dark:bg-[#0d1117]/70 backdrop-blur p-5 rounded-2xl border border-black/5 dark:border-white/10 flex items-center gap-4 shadow-sm">
               <div className="w-12 h-12 rounded-xl bg-black dark:bg-white flex items-center justify-center text-white dark:text-black">
                 <span className="material-symbols-outlined scale-130">event_available</span>
@@ -212,6 +223,7 @@ const ReceptionDailySummaryMetrics = ({ receptionist, receptionistId, pusherConf
               </div>
             </div>
 
+            {/* In Progress count */}
             <div className="bg-white/80 dark:bg-[#0d1117]/70 backdrop-blur p-5 rounded-2xl border border-black/5 dark:border-white/10 flex items-center gap-4 shadow-sm">
               <div className="w-12 h-12 rounded-xl bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 flex items-center justify-center">
                 <span className="material-symbols-outlined scale-130">schedule</span>
@@ -226,6 +238,7 @@ const ReceptionDailySummaryMetrics = ({ receptionist, receptionistId, pusherConf
               </div>
             </div>
 
+            {/* Waiting count */}
             <div className="bg-white/80 dark:bg-[#0d1117]/70 backdrop-blur p-5 rounded-2xl border border-black/5 dark:border-white/10 flex items-center gap-4 shadow-sm">
               <div className="w-12 h-12 rounded-xl bg-orange-100 dark:bg-orange-900/25 flex items-center justify-center text-orange-600 dark:text-orange-300">
                 <span className="scale-130 material-symbols-outlined">hourglass_empty</span>
@@ -240,6 +253,7 @@ const ReceptionDailySummaryMetrics = ({ receptionist, receptionistId, pusherConf
               </div>
             </div>
 
+            {/* Day Progress bar */}
             <div className="sm:col-span-2 bg-white/80 dark:bg-[#0d1117]/70 backdrop-blur rounded-2xl border border-black/5 dark:border-white/10 p-5 shadow-sm">
               <div className="flex items-center justify-between mb-3">
                 <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide">
@@ -250,7 +264,7 @@ const ReceptionDailySummaryMetrics = ({ receptionist, receptionistId, pusherConf
                 </span>
               </div>
               <div
-                className="h-2 rounded-full bg-black/[0.05] dark:bg-white/[0.07] overflow-hidden"
+                className="h-2 rounded-full bg-black/5 dark:bg-white/10 overflow-hidden"
                 role="progressbar"
                 aria-label="Day progress"
                 aria-valuenow={metrics.completionPercent}
@@ -269,11 +283,13 @@ const ReceptionDailySummaryMetrics = ({ receptionist, receptionistId, pusherConf
           </div>
         </div>
 
+        {/* Date picker calendar */}
         <div className="lg:col-span-5">
           <AppointmentCalender value={selectedDate} onChange={setSelectedDate} />
         </div>
       </section>
 
+      {/* Appointments list section */}
       <section className="rounded-2xl border border-black/5 dark:border-white/10 bg-white/80 dark:bg-[#0d1117]/70 backdrop-blur shadow-sm overflow-hidden">
         <div className="p-5 sm:p-6 flex items-start justify-between gap-4">
           <div>
@@ -286,10 +302,10 @@ const ReceptionDailySummaryMetrics = ({ receptionist, receptionistId, pusherConf
           </div>
 
           <a
-            href={`/receptionist/${receptionistId}/patients`}
+            href={`/doctor/${doctorId}/appointments`}
             className="px-3 py-2 rounded-xl text-sm font-semibold bg-black/5 hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/15 border border-black/5 dark:border-white/10 transition-colors"
           >
-            Patient Directory
+            Directory
           </a>
         </div>
 
@@ -315,9 +331,10 @@ const ReceptionDailySummaryMetrics = ({ receptionist, receptionistId, pusherConf
               {appointments.map((appointment) => (
                 <li
                   key={appointment.id}
-                  className="px-5 sm:px-6 py-4 hover:bg-black/[0.02] dark:hover:bg-white/[0.03] transition-colors"
+                  className="px-5 sm:px-6 py-4 hover:bg-black/2 dark:hover:bg-white/3 transition-colors"
                 >
                   <div className="flex flex-col xl:flex-row xl:items-center gap-3 xl:gap-4">
+                    {/* Time and appointment ID */}
                     <div className="flex items-center gap-3 xl:w-56">
                       <div className="shrink-0 px-2.5 py-1 rounded-xl bg-primary/10 text-primary border border-primary/15 text-xs font-bold tracking-wide">
                         {appointment.time}
@@ -327,8 +344,9 @@ const ReceptionDailySummaryMetrics = ({ receptionist, receptionistId, pusherConf
                       </div>
                     </div>
 
+                    {/* Patient info and status badge */}
                     <div className="flex items-center gap-3 min-w-0 flex-1">
-                      <div className="w-10 h-10 rounded-2xl overflow-hidden flex-shrink-0 bg-blue-600 text-white font-bold flex items-center justify-center text-sm">
+                      <div className="w-10 h-10 rounded-2xl overflow-hidden shrink-0 bg-blue-600 text-white font-bold flex items-center justify-center text-sm">
                         {appointment.patient.initials}
                       </div>
                       <div className="min-w-0">
@@ -344,14 +362,15 @@ const ReceptionDailySummaryMetrics = ({ receptionist, receptionistId, pusherConf
                             {STATUS_LABELS[appointment.status]}
                           </span>
                         </div>
+                        {/* Patient details - hard text for now (to be enhanced later) */}
                         <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                          {appointment.doctor.specialization} - Dr. {appointment.doctor.name} - Room{" "}
-                          {appointment.doctor.room || "TBD"} - {appointment.patient.phone}
+                          {appointment.patient.phone}
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex flex-wrap items-center justify-start xl:justify-end gap-2 xl:w-[430px]">
+                    {/* Status update action buttons */}
+                    <div className="flex flex-wrap items-center justify-start xl:justify-end gap-2 xl:w-107.5">
                       {STATUS_ACTIONS.map((status) => (
                         <AppointmentButton
                           key={status}
@@ -372,4 +391,4 @@ const ReceptionDailySummaryMetrics = ({ receptionist, receptionistId, pusherConf
   );
 };
 
-export default ReceptionDailySummaryMetrics;
+export default DoctorDailySummaryMetrics;
