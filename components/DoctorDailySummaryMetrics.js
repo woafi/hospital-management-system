@@ -13,7 +13,7 @@ const STATUS_LABELS = {
   CHECKED_IN: "Checked In",
 };
 
-const STATUS_ACTIONS = ["SCHEDULED", "WAITING", "IN_PROGRESS", "CHECKED_IN"];
+const STATUS_ACTIONS = ["IN_PROGRESS", "CHECKED_IN"];
 
 function formatDateKey(date) {
   const selected = Array.isArray(date) ? date?.[0] : date;
@@ -58,7 +58,6 @@ const emptyMetrics = {
 };
 
 const DoctorDailySummaryMetrics = ({ doctor, doctorId, pusherConfig }) => {
-  // State management for appointments and metrics
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [metrics, setMetrics] = useState(emptyMetrics);
   const [appointments, setAppointments] = useState([]);
@@ -71,7 +70,6 @@ const DoctorDailySummaryMetrics = ({ doctor, doctorId, pusherConfig }) => {
   const todayLabel = useMemo(() => formatDashboardDate(selectedDate), [selectedDate]);
   const isRealtimeEnabled = Boolean(pusherConfig?.key && pusherConfig?.cluster);
 
-  // Fetch dashboard data from API
   const fetchDashboard = useCallback(
     async ({ silent = false } = {}) => {
       if (silent) {
@@ -106,12 +104,10 @@ const DoctorDailySummaryMetrics = ({ doctor, doctorId, pusherConfig }) => {
     [dateKey, doctorId]
   );
 
-  // Initial fetch when component mounts or date changes
   useEffect(() => {
     fetchDashboard();
   }, [fetchDashboard]);
 
-  // Set up Pusher real-time updates
   useEffect(() => {
     if (!isRealtimeEnabled) return undefined;
 
@@ -120,11 +116,11 @@ const DoctorDailySummaryMetrics = ({ doctor, doctorId, pusherConfig }) => {
     });
     const channel = pusher.subscribe(pusherConfig.channel);
 
-    // Listen for appointment updates on this date
     channel.bind(pusherConfig.event, (payload) => {
       const eventDateKey = payload?.date ? formatDateKey(new Date(payload.date)) : dateKey;
+      const eventDoctorId = payload?.doctorId || payload?.requestedDoctorId;
 
-      if (eventDateKey === dateKey) {
+      if (eventDateKey === dateKey && (!eventDoctorId || eventDoctorId === doctor.id)) {
         fetchDashboard({ silent: true });
       }
     });
@@ -134,9 +130,8 @@ const DoctorDailySummaryMetrics = ({ doctor, doctorId, pusherConfig }) => {
       pusher.unsubscribe(pusherConfig.channel);
       pusher.disconnect();
     };
-  }, [dateKey, fetchDashboard, isRealtimeEnabled, pusherConfig]);
+  }, [dateKey, doctor.id, fetchDashboard, isRealtimeEnabled, pusherConfig]);
 
-  // Update appointment status and refresh dashboard
   const updateAppointmentStatus = async (appointmentId, status) => {
     setUpdatingId(appointmentId);
     setError("");
@@ -168,13 +163,15 @@ const DoctorDailySummaryMetrics = ({ doctor, doctorId, pusherConfig }) => {
   };
 
   return (
-    <main className="max-w-350 mx-auto p-6 space-y-8 pb-20">
+    <main className="max-w-[1400px] mx-auto p-6 space-y-8 pb-20">
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         <div className="lg:col-span-7 space-y-4">
-          {/* Doctor info and real-time status badge */}
           <div className="flex flex-wrap items-center gap-3">
             <div className="shrink-0 text-xs sm:text-sm font-medium px-3 py-1 rounded-full bg-black/5 dark:bg-white/10 text-gray-700 dark:text-gray-200 border border-black/5 dark:border-white/10">
-              Doctor: {doctor.name} - {doctor.specialization}
+              Doctor ID: {doctor.doctor_id}
+            </div>
+            <div className="shrink-0 text-xs sm:text-sm font-medium px-3 py-1 rounded-full bg-black/5 dark:bg-white/10 text-gray-700 dark:text-gray-200 border border-black/5 dark:border-white/10">
+              {doctor.name} - {doctor.specialization}
             </div>
             <div className="shrink-0 text-xs sm:text-sm font-medium px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/15">
               {isRealtimeEnabled ? "Realtime active" : "Realtime env missing"}
@@ -184,16 +181,13 @@ const DoctorDailySummaryMetrics = ({ doctor, doctorId, pusherConfig }) => {
             ) : null}
           </div>
 
-          {/* Error message display */}
           {error ? (
             <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-300">
               {error}
             </div>
           ) : null}
 
-          {/* Key metrics grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* Patients Seen - CHECKED_IN count */}
             <div className="bg-white/80 dark:bg-[#0d1117]/70 backdrop-blur p-5 rounded-2xl border border-black/5 dark:border-white/10 flex items-center gap-4 shadow-sm">
               <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300">
                 <span className="scale-130 material-symbols-outlined">how_to_reg</span>
@@ -208,7 +202,6 @@ const DoctorDailySummaryMetrics = ({ doctor, doctorId, pusherConfig }) => {
               </div>
             </div>
 
-            {/* Remaining Appointments - non-CHECKED_IN count */}
             <div className="bg-white/80 dark:bg-[#0d1117]/70 backdrop-blur p-5 rounded-2xl border border-black/5 dark:border-white/10 flex items-center gap-4 shadow-sm">
               <div className="w-12 h-12 rounded-xl bg-black dark:bg-white flex items-center justify-center text-white dark:text-black">
                 <span className="material-symbols-outlined scale-130">event_available</span>
@@ -223,7 +216,6 @@ const DoctorDailySummaryMetrics = ({ doctor, doctorId, pusherConfig }) => {
               </div>
             </div>
 
-            {/* In Progress count */}
             <div className="bg-white/80 dark:bg-[#0d1117]/70 backdrop-blur p-5 rounded-2xl border border-black/5 dark:border-white/10 flex items-center gap-4 shadow-sm">
               <div className="w-12 h-12 rounded-xl bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 flex items-center justify-center">
                 <span className="material-symbols-outlined scale-130">schedule</span>
@@ -238,7 +230,6 @@ const DoctorDailySummaryMetrics = ({ doctor, doctorId, pusherConfig }) => {
               </div>
             </div>
 
-            {/* Waiting count */}
             <div className="bg-white/80 dark:bg-[#0d1117]/70 backdrop-blur p-5 rounded-2xl border border-black/5 dark:border-white/10 flex items-center gap-4 shadow-sm">
               <div className="w-12 h-12 rounded-xl bg-orange-100 dark:bg-orange-900/25 flex items-center justify-center text-orange-600 dark:text-orange-300">
                 <span className="scale-130 material-symbols-outlined">hourglass_empty</span>
@@ -253,7 +244,6 @@ const DoctorDailySummaryMetrics = ({ doctor, doctorId, pusherConfig }) => {
               </div>
             </div>
 
-            {/* Day Progress bar */}
             <div className="sm:col-span-2 bg-white/80 dark:bg-[#0d1117]/70 backdrop-blur rounded-2xl border border-black/5 dark:border-white/10 p-5 shadow-sm">
               <div className="flex items-center justify-between mb-3">
                 <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide">
@@ -283,13 +273,11 @@ const DoctorDailySummaryMetrics = ({ doctor, doctorId, pusherConfig }) => {
           </div>
         </div>
 
-        {/* Date picker calendar */}
         <div className="lg:col-span-5">
           <AppointmentCalender value={selectedDate} onChange={setSelectedDate} />
         </div>
       </section>
 
-      {/* Appointments list section */}
       <section className="rounded-2xl border border-black/5 dark:border-white/10 bg-white/80 dark:bg-[#0d1117]/70 backdrop-blur shadow-sm overflow-hidden">
         <div className="p-5 sm:p-6 flex items-start justify-between gap-4">
           <div>
@@ -323,7 +311,7 @@ const DoctorDailySummaryMetrics = ({ doctor, doctorId, pusherConfig }) => {
                 No appointments yet
               </h3>
               <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                Add an appointment or pick another date from the calendar.
+                Pick another date from the calendar to review a different schedule.
               </p>
             </div>
           ) : (
@@ -331,10 +319,9 @@ const DoctorDailySummaryMetrics = ({ doctor, doctorId, pusherConfig }) => {
               {appointments.map((appointment) => (
                 <li
                   key={appointment.id}
-                  className="px-5 sm:px-6 py-4 hover:bg-black/2 dark:hover:bg-white/3 transition-colors"
+                  className="px-5 sm:px-6 py-4 hover:bg-black/[0.02] dark:hover:bg-white/[0.03] transition-colors"
                 >
                   <div className="flex flex-col xl:flex-row xl:items-center gap-3 xl:gap-4">
-                    {/* Time and appointment ID */}
                     <div className="flex items-center gap-3 xl:w-56">
                       <div className="shrink-0 px-2.5 py-1 rounded-xl bg-primary/10 text-primary border border-primary/15 text-xs font-bold tracking-wide">
                         {appointment.time}
@@ -344,7 +331,6 @@ const DoctorDailySummaryMetrics = ({ doctor, doctorId, pusherConfig }) => {
                       </div>
                     </div>
 
-                    {/* Patient info and status badge */}
                     <div className="flex items-center gap-3 min-w-0 flex-1">
                       <div className="w-10 h-10 rounded-2xl overflow-hidden shrink-0 bg-blue-600 text-white font-bold flex items-center justify-center text-sm">
                         {appointment.patient.initials}
@@ -362,15 +348,13 @@ const DoctorDailySummaryMetrics = ({ doctor, doctorId, pusherConfig }) => {
                             {STATUS_LABELS[appointment.status]}
                           </span>
                         </div>
-                        {/* Patient details - hard text for now (to be enhanced later) */}
                         <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                          {appointment.patient.phone}
+                          {appointment.patient.patientId} - {appointment.patient.phone}
                         </div>
                       </div>
                     </div>
 
-                    {/* Status update action buttons */}
-                    <div className="flex flex-wrap items-center justify-start xl:justify-end gap-2 xl:w-107.5">
+                    <div className="flex flex-wrap items-center justify-start xl:justify-end gap-2 xl:w-[260px]">
                       {STATUS_ACTIONS.map((status) => (
                         <AppointmentButton
                           key={status}

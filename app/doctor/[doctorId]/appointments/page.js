@@ -1,6 +1,6 @@
 import Pagination from "@/components/Pagination";
 import Link from "next/link";
-// Booking is handled elsewhere for doctors — removed booking UI here
+import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
 
 const ITEMS_PER_PAGE = 8;
@@ -13,18 +13,16 @@ const STATUS_FILTERS = [
   { key: "CHECKED_IN", label: "Checked In" },
 ];
 
-function buildListUrl(basePath, { status, sort, q, page }) {
+function buildListUrl(basePath, { status, page }) {
   const params = new URLSearchParams();
-  if (q) params.set("q", q);
   if (status) params.set("status", status);
-  if (sort && sort !== "latest") params.set("sort", sort);
   if (page && page > 1) params.set("page", String(page));
   const query = params.toString();
   return query ? `${basePath}?${query}` : basePath;
 }
 
 function formatDate(value) {
-  if (!value) return "—";
+  if (!value) return "-";
   return new Intl.DateTimeFormat(undefined, {
     month: "short",
     day: "numeric",
@@ -40,7 +38,7 @@ function formatTimeRange(startTime, endTime) {
   const start = formatter.format(new Date(startTime));
   if (!endTime) return start;
   const end = formatter.format(new Date(endTime));
-  return `${start} – ${end}`;
+  return `${start} - ${end}`;
 }
 
 function formatAppointmentStatus(status) {
@@ -86,40 +84,6 @@ function getStatusBadge(status) {
   }
 }
 
-function getOrderBy(sort) {
-  switch (sort) {
-    case "department":
-      return [{ doctor: { specialization: "asc" } }, { date: "desc" }];
-    case "doctor":
-      return [{ doctor: { name: "asc" } }, { date: "desc" }];
-    default:
-      // return [{ createdAt: "desc" }];
-      return [{ date: "desc" }, { startTime: "desc" }];
-  }
-}
-
-function buildWhereClause({ status, q }) {
-  const where = {};
-
-  if (status) {
-    where.status = status;
-  }
-
-  const term = String(q || "").trim();
-  if (term) {
-    where.OR = [
-      { patient: { fullname: { contains: term, mode: "insensitive" } } },
-      { patient: { patientId: { contains: term, mode: "insensitive" } } },
-      { patient: { phone: { contains: term, mode: "insensitive" } } },
-      { doctor: { name: { contains: term, mode: "insensitive" } } },
-      { doctor: { specialization: { contains: term, mode: "insensitive" } } },
-      { doctor: { doctor_id: { contains: term, mode: "insensitive" } } },
-    ];
-  }
-
-  return where;
-}
-
 export default async function AppointmentManagement({ params, searchParams }) {
   const { doctorId } = await params;
   const query = await searchParams;
@@ -128,27 +92,33 @@ export default async function AppointmentManagement({ params, searchParams }) {
   const requestedPage = Number(query?.page);
   const currentPage =
     Number.isInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1;
-  const statusFilter = Array.isArray(query?.status) ? query.status[0] : query?.status;
+  const statusFilter = Array.isArray(query?.status)
+    ? query.status[0]
+    : query?.status;
   const activeStatus =
-    statusFilter && STATUS_FILTERS.some((f) => f.key === statusFilter) ? statusFilter : "";
-  const sort = Array.isArray(query?.sort) ? query.sort[0] : query?.sort;
-  const activeSort = ["latest", "department", "doctor"].includes(sort) ? sort : "latest";
-  const searchQuery = (Array.isArray(query?.q) ? query.q[0] : query?.q) || "";
+    statusFilter && STATUS_FILTERS.some((filter) => filter.key === statusFilter)
+      ? statusFilter
+      : "";
 
-  const where = buildWhereClause({ status: activeStatus, q: searchQuery });
-
-  // Restrict list to appointments that belong to this doctor only.
-  // Support matching by direct foreign key `doctorId` or by nested doctor identifiers.
-  where.AND = [
-    ...(where.AND || []),
-    {
-      OR: [
-        { doctorId: doctorId },
-        { doctor: { id: doctorId } },
-        { doctor: { doctor_id: doctorId } },
-      ],
+  const doctor = await prisma.doctor.findFirst({
+    where: {
+      OR: [{ id: doctorId }, { userId: doctorId }, { doctor_id: doctorId }],
     },
-  ];
+    select: {
+      id: true,
+      name: true,
+      specialization: true,
+    },
+  });
+
+  if (!doctor) {
+    notFound();
+  }
+
+  const where = {
+    doctorId: doctor.id,
+    ...(activeStatus ? { status: activeStatus } : {}),
+  };
 
   const totalAppointments = await prisma.appointment.count({ where });
   const totalPages = Math.max(1, Math.ceil(totalAppointments / ITEMS_PER_PAGE));
@@ -156,23 +126,14 @@ export default async function AppointmentManagement({ params, searchParams }) {
 
   const appointments = await prisma.appointment.findMany({
     where,
-    orderBy: getOrderBy(activeSort),
+    orderBy: [{ date: "desc" }, { startTime: "desc" }],
     skip: (safeCurrentPage - 1) * ITEMS_PER_PAGE,
     take: ITEMS_PER_PAGE,
     include: {
       patient: {
         select: {
-          id: true,
           fullname: true,
           patientId: true,
-        },
-      },
-      doctor: {
-        select: {
-          id: true,
-          name: true,
-          specialization: true,
-          doctor_id: true,
         },
       },
     },
@@ -180,40 +141,44 @@ export default async function AppointmentManagement({ params, searchParams }) {
 
   return (
     <div className="relative flex-1 overflow-x-hidden bg-background text-gray-900 dark:text-gray-100 font-sans">
-      <main className="max-w-350 mx-auto p-6 space-y-8">
+      <main className="max-w-[1400px] mx-auto p-6 space-y-8">
         <div className="flex flex-wrap items-end justify-between gap-6 mb-8">
           <div className="flex flex-col gap-2">
             <h1 className="text-gray-900 dark:text-white text-3xl font-black leading-tight tracking-tight">
-              Appointment Management
+              My Appointments
             </h1>
             <p className="text-gray-500 dark:text-gray-400 text-base font-normal">
-              Efficiently track and manage hospital scheduling workflows.
+              Review your patient schedule and current appointment status.
+            </p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              {doctor.name} - {doctor.specialization}
             </p>
           </div>
         </div>
 
-        {/* Filter */}
         <div className="flex flex-wrap items-center gap-3 mb-6">
           {STATUS_FILTERS.map((filter) => {
             const isActive = activeStatus === filter.key;
-            const href = buildListUrl(basePath, {
-              status: filter.key,
-              sort: activeSort,
-              q: searchQuery,
-            });
+            const href = buildListUrl(basePath, { status: filter.key });
 
             return (
               <Link
                 key={filter.key || "all"}
                 href={href}
-                className={`flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isActive
+                className={`flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                  isActive
                     ? "bg-blue-600 text-white"
                     : "bg-white dark:bg-gray-800 border border-blue-600/10 text-gray-700 dark:text-gray-300 hover:bg-blue-600/5"
-                  }`}
+                }`}
               >
                 <span>{filter.label}</span>
                 {filter.key === "" ? (
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -225,10 +190,8 @@ export default async function AppointmentManagement({ params, searchParams }) {
               </Link>
             );
           })}
-          
         </div>
 
-        {/* Table */}
         <div className="rounded-xl border border-blue-600/10 bg-foreground shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
@@ -239,12 +202,6 @@ export default async function AppointmentManagement({ params, searchParams }) {
                   </th>
                   <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">
                     Patient Name
-                  </th>
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">
-                    Doctor
-                  </th>
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">
-                    Department
                   </th>
                   <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">
                     Time Slot
@@ -261,11 +218,11 @@ export default async function AppointmentManagement({ params, searchParams }) {
                 {appointments.length === 0 && (
                   <tr>
                     <td
-                      colSpan={7}
+                      colSpan={5}
                       className="px-6 py-10 text-center text-sm text-gray-500 dark:text-gray-400"
                     >
                       No appointments found
-                      {searchQuery || activeStatus ? " for the current filters" : ""}.
+                      {activeStatus ? " for the current status" : ""}.
                     </td>
                   </tr>
                 )}
@@ -294,15 +251,10 @@ export default async function AppointmentManagement({ params, searchParams }) {
                         </p>
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
-                        {appointment.doctor.name}
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-600/10 text-blue-600">
-                          {appointment.doctor.specialization}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
-                        {formatTimeRange(appointment.startTime, appointment.endTime)}
+                        {formatTimeRange(
+                          appointment.startTime,
+                          appointment.endTime
+                        )}
                       </td>
                       <td className="px-6 py-4">
                         <span

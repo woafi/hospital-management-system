@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { notifyReceptionDashboard } from "@/lib/pusher";
+import { notifyDoctorDashboard, notifyReceptionDashboard } from "@/lib/pusher";
 
 const APPOINTMENT_STATUSES = new Set([
   "SCHEDULED",
@@ -193,15 +193,20 @@ export async function PATCH(request) {
         id: true,
         date: true,
         status: true,
+        doctorId: true,
       },
     });
 
-    await notifyReceptionDashboard({
+    const notificationPayload = {
       appointmentId: appointment.id,
+      doctorId: appointment.doctorId,
       receptionistId,
       date: appointment.date.toISOString(),
       status: appointment.status,
-    });
+    };
+
+    await notifyReceptionDashboard(notificationPayload);
+    await notifyDoctorDashboard(notificationPayload);
 
     return NextResponse.json({ ok: true, appointment });
   } catch (error) {

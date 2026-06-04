@@ -1,13 +1,8 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { notifyDoctorDashboard } from "@/lib/pusher";
+import { notifyDoctorDashboard, notifyReceptionDashboard } from "@/lib/pusher";
 
-const APPOINTMENT_STATUSES = new Set([
-  "SCHEDULED",
-  "WAITING",
-  "IN_PROGRESS",
-  "CHECKED_IN",
-]);
+const DOCTOR_ALLOWED_STATUS_UPDATES = new Set(["IN_PROGRESS", "CHECKED_IN"]);
 
 function getDateRange(dateParam) {
   const selectedDate = dateParam ? new Date(`${dateParam}T00:00:00`) : new Date();
@@ -31,6 +26,24 @@ function formatInitials(name = "") {
     .slice(0, 2)
     .map((part) => part[0]?.toUpperCase())
     .join("");
+}
+
+async function findDoctor(doctorId) {
+  if (!doctorId) return null;
+
+  return prisma.doctor.findFirst({
+    where: {
+      OR: [{ userId: doctorId }, { id: doctorId }, { doctor_id: doctorId }],
+    },
+    select: {
+      id: true,
+      userId: true,
+      doctor_id: true,
+      name: true,
+      specialization: true,
+      room: true,
+    },
+  });
 }
 
 function serializeAppointment(appointment) {
@@ -82,19 +95,7 @@ export async function GET(request) {
       );
     }
 
-    // Find the doctor by ID or userId
-    const doctor = await prisma.doctor.findFirst({
-      where: {
-        OR: [{ userId: doctorId }, { id: doctorId }, { doctor_id: doctorId }],
-      },
-      select: {
-        id: true,
-        userId: true,
-        name: true,
-        specialization: true,
-        room: true,
-      },
-    });
+    const doctor = await findDoctor(doctorId);
 
     if (!doctor) {
       return NextResponse.json(
@@ -103,7 +104,6 @@ export async function GET(request) {
       );
     }
 
-    // Fetch appointments for this specific doctor on the selected date
     const appointments = await prisma.appointment.findMany({
       where: {
         doctorId: doctor.id,
@@ -133,15 +133,16 @@ export async function GET(request) {
       },
     });
 
-    // Calculate metrics for doctor's appointments
     const metrics = appointments.reduce(
       (result, appointment) => {
         result.total += 1;
 
         if (appointment.status === "CHECKED_IN") result.patientSeen += 1;
         if (appointment.status === "IN_PROGRESS") result.inProgress += 1;
-        if (appointment.status === "WAITING") result.waiting += 1;
         if (appointment.status !== "CHECKED_IN") result.remaining += 1;
+        if (appointment.status === "WAITING") {
+          result.waiting += 1;
+        }
 
         return result;
       },
@@ -155,7 +156,9 @@ export async function GET(request) {
     );
 
     metrics.completionPercent =
-      metrics.total === 0 ? 0 : Math.round((metrics.patientSeen / metrics.total) * 100);
+      metrics.total === 0
+        ? 0
+        : Math.round((metrics.patientSeen / metrics.total) * 100);
 
     return NextResponse.json({
       ok: true,
@@ -184,10 +187,39 @@ export async function PATCH(request) {
     const status = String(body?.status || "");
     const doctorId = String(body?.doctorId || "");
 
-    if (!appointmentId || !APPOINTMENT_STATUSES.has(status)) {
+    if (!appointmentId || !DOCTOR_ALLOWED_STATUS_UPDATES.has(status)) {
       return NextResponse.json(
-        { ok: false, error: "Valid appointment ID and status are required." },
+        {
+          ok: false,
+          error: "Valid appointment ID and doctor status are required.",
+        },
         { status: 400 }
+      );
+    }
+
+    const doctor = await findDoctor(doctorId);
+
+    if (!doctor) {
+      return NextResponse.json(
+        { ok: false, error: "Doctor not found." },
+        { status: 404 }
+      );
+    }
+
+    const existingAppointment = await prisma.appointment.findFirst({
+      where: {
+        id: appointmentId,
+        doctorId: doctor.id,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!existingAppointment) {
+      return NextResponse.json(
+        { ok: false, error: "Appointment not found for this doctor." },
+        { status: 404 }
       );
     }
 
@@ -198,16 +230,20 @@ export async function PATCH(request) {
         id: true,
         date: true,
         status: true,
+        doctorId: true,
       },
     });
 
-    // Notify via Pusher for real-time updates
-    await notifyDoctorDashboard({
+    const notificationPayload = {
       appointmentId: appointment.id,
-      doctorId,
+      doctorId: doctor.id,
+      requestedDoctorId: doctorId,
       date: appointment.date.toISOString(),
       status: appointment.status,
-    });
+    };
+
+    await notifyDoctorDashboard(notificationPayload);
+    await notifyReceptionDashboard(notificationPayload);
 
     return NextResponse.json({ ok: true, appointment });
   } catch (error) {
