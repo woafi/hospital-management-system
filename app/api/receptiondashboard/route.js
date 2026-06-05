@@ -51,6 +51,7 @@ function serializeAppointment(appointment) {
       initials: formatInitials(appointment.patient.fullname) || "PT",
       phone: appointment.patient.phone || "No phone",
       patientId: appointment.patient.patientId,
+      profileImage: appointment.patient.profileImage || null,
     },
     doctor: {
       id: appointment.doctor.id,
@@ -116,6 +117,7 @@ export async function GET(request) {
             fullname: true,
             patientId: true,
             phone: true,
+            profileImage: true,
           },
         },
         doctor: {

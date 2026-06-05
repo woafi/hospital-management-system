@@ -17,7 +17,6 @@ export default function DoctorNavbar() {
             try {
                 const data = await getDoctorDetails(doctor_id);
                 setDoctor(data);
-                console.log(data)
             } catch (error) {
                 console.error("Error fetching doctor:", error);
             } finally {

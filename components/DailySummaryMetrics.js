@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Pusher from "pusher-js";
+import Image from "next/image";
 
 import AppointmentCalender from "@/components/AppointmentCalender";
 import AppointmentButton from "@/components/AppointmentButton";
@@ -286,10 +287,10 @@ const ReceptionDailySummaryMetrics = ({ receptionist, receptionistId, pusherConf
           </div>
 
           <a
-            href={`/receptionist/${receptionistId}/patients`}
+            href={`/receptionist/${receptionistId}/appointments`}
             className="px-3 py-2 rounded-xl text-sm font-semibold bg-black/5 hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/15 border border-black/5 dark:border-white/10 transition-colors"
           >
-            Patient Directory
+            Directory
           </a>
         </div>
 
@@ -328,8 +329,20 @@ const ReceptionDailySummaryMetrics = ({ receptionist, receptionistId, pusherConf
                     </div>
 
                     <div className="flex items-center gap-3 min-w-0 flex-1">
-                      <div className="w-10 h-10 rounded-2xl overflow-hidden flex-shrink-0 bg-blue-600 text-white font-bold flex items-center justify-center text-sm">
-                        {appointment.patient.initials}
+                      <div className="relative w-10 h-10 rounded-full overflow-hidden shrink-0 bg-blue-100">
+                        {appointment.patient.profileImage ? (
+                          <Image
+                            src={appointment.patient.profileImage}
+                            alt={appointment.patient.name}
+                            fill
+                            sizes="40px"
+                            className="object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-blue-600 flex items-center justify-center text-white font-bold text-sm">
+                            {appointment.patient.initials}
+                          </div>
+                        )}
                       </div>
                       <div className="min-w-0">
                         <div className="flex flex-wrap items-center gap-2 min-w-0">
