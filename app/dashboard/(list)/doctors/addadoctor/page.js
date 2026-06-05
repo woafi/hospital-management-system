@@ -22,11 +22,16 @@ const genderOptions = [
 ];
 
 const specializationOptions = [
-  "Cardiology",
-  "Neurology",
-  "Pediatrics",
-  "Orthopedics",
-  "Oncology",
+  "Cardiologist",
+  "Neurologist",
+  "Dermatologist",
+  "Orthopedic",
+  "Pediatrician",
+  "Psychiatrist",
+  "Dentist",
+  "ENT Specialist",
+  "General Physician",
+  "Gynecologist",
 ];
 
 function SectionCard({ icon: Icon, iconClassName, title, children, muted = false }) {
