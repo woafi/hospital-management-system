@@ -13,7 +13,7 @@ const STATUS_LABELS = {
   CHECKED_IN: "Checked In",
 };
 
-const STATUS_ACTIONS = ["SCHEDULED", "WAITING", "IN_PROGRESS", "CHECKED_IN"];
+const STATUS_ACTIONS = ["SCHEDULED", "WAITING"];
 
 function formatDateKey(date) {
   const selected = Array.isArray(date) ? date?.[0] : date;
