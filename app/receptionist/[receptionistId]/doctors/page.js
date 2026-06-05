@@ -188,7 +188,7 @@ export default async function DoctorsPage({ params }) {
                                   <div className="min-w-0 flex-1">
                                     <div className="flex items-center gap-2">
                                       <p className="text-base font-bold text-gray-900 dark:text-gray-50 truncate">
-                                        Dr. {doctor.name}
+                                        {doctor.name}
                                       </p>
                                       <BadgeCheck className="h-4 w-4 text-primary flex-shrink-0" />
                                     </div>
