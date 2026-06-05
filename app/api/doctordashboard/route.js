@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { notifyDoctorDashboard, notifyReceptionDashboard } from "@/lib/pusher";
+import {
+  notifyAdminDashboard,
+  notifyDoctorDashboard,
+  notifyReceptionDashboard,
+} from "@/lib/pusher";
+import { createAppointmentDashboardLog } from "@/lib/dashboardLog";
 
 const DOCTOR_ALLOWED_STATUS_UPDATES = new Set(["IN_PROGRESS", "CHECKED_IN"]);
 
@@ -228,11 +233,9 @@ export async function PATCH(request) {
     const appointment = await prisma.appointment.update({
       where: { id: appointmentId },
       data: { status },
-      select: {
-        id: true,
-        date: true,
-        status: true,
-        doctorId: true,
+      include: {
+        patient: { select: { fullname: true } },
+        doctor: { select: { name: true } },
       },
     });
 
@@ -244,8 +247,22 @@ export async function PATCH(request) {
       status: appointment.status,
     };
 
+    await createAppointmentDashboardLog({
+      type: appointment.status,
+      message: `${appointment.patient.fullname} with Dr. ${appointment.doctor.name} is ${appointment.status.replaceAll("_", " ")}.`,
+      appointmentId: appointment.id,
+      metadata: {
+        patientFullname: appointment.patient.fullname,
+        doctorName: appointment.doctor.name,
+      },
+    });
+
     await notifyDoctorDashboard(notificationPayload);
     await notifyReceptionDashboard(notificationPayload);
+    await notifyAdminDashboard({
+      ...notificationPayload,
+      type: "appointment-status-updated",
+    });
 
     return NextResponse.json({ ok: true, appointment });
   } catch (error) {

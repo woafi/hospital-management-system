@@ -5,6 +5,8 @@ import { redirect } from 'next/navigation';
 import { Prisma } from "@prisma/client";
 import { hashPassword } from '@/lib/auth';
 import prisma from "@/lib/prisma";
+import { notifyAdminDashboard } from "@/lib/pusher";
+import { createEntityDashboardLog } from "@/lib/dashboardLog";
 
 const emptyFieldErrors = {
     name: "",
@@ -145,7 +147,7 @@ export async function doctorFormsubmissionAction(prevState, formData) {
     try {
         const hashedPassword = await hashPassword(Default_DOCTOR_PASSWORD);
 
-        await prisma.doctor.create({
+        const doctor = await prisma.doctor.create({
             data: {
                 doctor_id,
                 name,
@@ -166,6 +168,21 @@ export async function doctorFormsubmissionAction(prevState, formData) {
                     },
                 },
             },
+            select: {
+              doctor_id: true,
+              name: true,
+            },
+        });
+
+        await createEntityDashboardLog({
+          type: "doctor",
+          message: `Doctor ${doctor.name} (${doctor.doctor_id}) was added.`,
+          entityId: doctor.doctor_id,
+        });
+
+        await notifyAdminDashboard({
+            type: "doctor-added",
+            doctorId: doctor_id,
         });
     } catch (error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {

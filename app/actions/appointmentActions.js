@@ -2,7 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 import prisma from "@/lib/prisma";
-import { notifyDoctorDashboard, notifyReceptionDashboard } from "@/lib/pusher";
+import {
+  notifyAdminDashboard,
+  notifyDoctorDashboard,
+  notifyReceptionDashboard,
+} from "@/lib/pusher";
+import { createAppointmentDashboardLog } from "@/lib/dashboardLog";
 
 // Helper to format Date to AM/PM string (e.g. "09:00 AM")
 function formatToAmPm(dateValue) {
@@ -242,6 +247,14 @@ export async function bookAppointmentAction(payload) {
           slotId,
           status: "SCHEDULED",
         },
+        include: {
+          patient: {
+            select: { fullname: true },
+          },
+          doctor: {
+            select: { name: true },
+          },
+        },
       });
 
       await tx.slot.update({
@@ -250,6 +263,16 @@ export async function bookAppointmentAction(payload) {
       });
 
       return newAppointment;
+    });
+
+    await createAppointmentDashboardLog({
+      type: appointment.status,
+      message: `${appointment.patient.fullname} with Dr. ${appointment.doctor.name} is ${appointment.status.replaceAll("_", " ")}.`,
+      appointmentId: appointment.id,
+      metadata: {
+        patientFullname: appointment.patient.fullname,
+        doctorName: appointment.doctor.name,
+      },
     });
 
     // Revalidate receptionist appointments list
@@ -263,6 +286,12 @@ export async function bookAppointmentAction(payload) {
     // Revalidate doctor appointments list
     revalidatePath("/doctor/[doctorId]/appointments");
     await notifyDoctorDashboard({
+      appointmentId: appointment.id,
+      date: appointment.date.toISOString(),
+      status: appointment.status,
+    });
+    await notifyAdminDashboard({
+      type: "appointment-created",
       appointmentId: appointment.id,
       date: appointment.date.toISOString(),
       status: appointment.status,

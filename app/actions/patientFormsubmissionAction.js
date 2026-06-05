@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
 import prisma from "@/lib/prisma";
+import { notifyAdminDashboard } from "@/lib/pusher";
+import { createEntityDashboardLog } from "@/lib/dashboardLog";
 
 const emptyFieldErrors = {
   fullname: "",
@@ -223,6 +225,7 @@ export async function patientFormsubmissionAction(prevState, formData) {
           },
           select: {
             patientId: true,
+            fullname: true,
           },
         });
         break;
@@ -253,6 +256,17 @@ export async function patientFormsubmissionAction(prevState, formData) {
   if (receptionistId) {
     revalidatePath(`/receptionist/${receptionistId}/patients`);
   }
+
+  await createEntityDashboardLog({
+    type: "patient",
+    message: `Patient ${patient.fullname} (${patient.patientId}) was added.`,
+    entityId: patient.patientId,
+  });
+
+  await notifyAdminDashboard({
+    type: "patient-added",
+    patientId: patient.patientId,
+  });
 
   return {
     success: true,

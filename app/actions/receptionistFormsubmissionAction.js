@@ -5,6 +5,8 @@ import { redirect } from "next/navigation";
 import { Prisma } from "@prisma/client";
 import { hashPassword } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { notifyAdminDashboard } from "@/lib/pusher";
+import { createEntityDashboardLog } from "@/lib/dashboardLog";
 
 const emptyFieldErrors = {
   name: "",
@@ -101,7 +103,7 @@ export async function receptionistFormsubmissionAction(prevState, formData) {
   try {
     const hashedPassword = await hashPassword(DEFAULT_RECEPTIONIST_PASSWORD);
 
-    await prisma.receptionist.create({
+    const receptionist = await prisma.receptionist.create({
       data: {
         name,
         receptionists_id,
@@ -118,6 +120,21 @@ export async function receptionistFormsubmissionAction(prevState, formData) {
           },
         },
       },
+      select: {
+        name: true,
+        receptionists_id: true,
+      },
+    });
+
+    await createEntityDashboardLog({
+      type: "receptionist",
+      message: `Receptionist ${receptionist.name} (${receptionist.receptionists_id}) was added.`,
+      entityId: receptionist.receptionists_id,
+    });
+
+    await notifyAdminDashboard({
+      type: "receptionist-added",
+      receptionistId: receptionists_id,
     });
   } catch (error) {
     // Unique constraint (email, phone, or receptionists_id)

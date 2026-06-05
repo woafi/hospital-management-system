@@ -199,6 +199,24 @@ model Appointment {
     updatedAt DateTime @updatedAt
 }
 
+model DashboardLog {
+    id String @id @default(cuid())
+    type String
+    category LogCategory
+    message String
+    entityId String?
+    appointmentId String?
+    metadata Json?
+    createdAt DateTime @default(now())
+
+    @@index([category, createdAt])
+}
+
+enum LogCategory {
+    ENTITY
+    APPOINTMENT
+}
+
 enum AppointmentStatus {
     SCHEDULED
     WAITING
