@@ -307,3 +307,77 @@ export async function bookAppointmentAction(payload) {
     return { success: false, message: "Could not book appointment. Please try again." };
   }
 }
+
+// Delete an appointment and free the associated slot
+export async function deleteAppointmentAction(appointmentId) {
+  try {
+    if (!appointmentId) {
+      return { success: false, message: "Appointment ID is required." };
+    }
+
+    // Fetch the appointment with patient and doctor info before deleting
+    const appointment = await prisma.appointment.findUnique({
+      where: { id: appointmentId },
+      include: {
+        patient: { select: { fullname: true } },
+        doctor: { select: { name: true } },
+      },
+    });
+
+    if (!appointment) {
+      return { success: false, message: "Appointment not found." };
+    }
+
+    // Delete appointment and free slot in a transaction
+    await prisma.$transaction(async (tx) => {
+      await tx.appointment.delete({
+        where: { id: appointmentId },
+      });
+
+      // Free the slot if one was associated
+      if (appointment.slotId) {
+        await tx.slot.update({
+          where: { id: appointment.slotId },
+          data: { is_booked: false },
+        });
+      }
+    });
+
+    await createAppointmentDashboardLog({
+      type: "CANCELLED",
+      message: `Appointment for ${appointment.patient.fullname} with Dr. ${appointment.doctor.name} has been cancelled.`,
+      appointmentId: appointment.id,
+      metadata: {
+        patientFullname: appointment.patient.fullname,
+        doctorName: appointment.doctor.name,
+      },
+    });
+
+    // Revalidate pages
+    revalidatePath("/receptionist/[receptionistId]/appointments");
+    revalidatePath("/doctor/[doctorId]/appointments");
+
+    // Notify all dashboards in real-time
+    const notificationPayload = {
+      appointmentId: appointment.id,
+      doctorId: appointment.doctorId,
+      date: appointment.date.toISOString(),
+      status: "DELETED",
+    };
+
+    await notifyReceptionDashboard(notificationPayload);
+    await notifyDoctorDashboard(notificationPayload);
+    await notifyAdminDashboard({
+      ...notificationPayload,
+      type: "appointment-deleted",
+    });
+
+    return {
+      success: true,
+      message: "Appointment deleted successfully.",
+    };
+  } catch (error) {
+    console.error("deleteAppointmentAction error:", error);
+    return { success: false, message: "Could not delete appointment. Please try again." };
+  }
+}

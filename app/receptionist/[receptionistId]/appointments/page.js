@@ -3,6 +3,7 @@ import TypeaheadSearch from "@/components/TypeaheadSearch";
 import Pagination from "@/components/Pagination";
 import Link from "next/link";
 import BookAppointment from "@/components/BookAppointment";
+import DeleteAppointmentButton from "@/components/DeleteAppointmentButton";
 import prisma from "@/lib/prisma";
 
 const ITEMS_PER_PAGE = 8;
@@ -327,32 +328,38 @@ export default async function AppointmentManagement({ params, searchParams }) {
                           {badge.label}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-center">
-                        <Link
-                          href={profileHref}
-                          className="inline-flex text-gray-400 hover:text-blue-600 transition-colors"
-                          title="View patient profile"
-                        >
-                          <svg
-                            className="w-6 h-6"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
+                      <td className="px-6 py-4">
+                        <div className="flex items-center justify-center gap-2">
+                          <Link
+                            href={profileHref}
+                            className="inline-flex text-gray-400 hover:text-blue-600 transition-colors"
+                            title="View patient profile"
                           >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                            />
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                            />
-                          </svg>
-                        </Link>
+                            <svg
+                              className="w-5 h-5"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                              />
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                              />
+                            </svg>
+                          </Link>
+                          <DeleteAppointmentButton
+                            appointmentId={appointment.id}
+                            patientName={appointment.patient.fullname}
+                          />
+                        </div>
                       </td>
                     </tr>
                   );
