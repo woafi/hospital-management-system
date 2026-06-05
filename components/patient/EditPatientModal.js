@@ -80,7 +80,7 @@ export default function EditPatientModal({ patient, onClose }) {
     }, 1000);
 
     return () => window.clearTimeout(timeout);
-  }, [onClose, router, state.success]);
+  }, [state.success]);
 
   return (
     <>
