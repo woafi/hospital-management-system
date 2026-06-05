@@ -7,7 +7,7 @@ import LogoutButton from "./LogoutButton"
 
 const DoctorSideNav = () => {
     const pathname = usePathname();
-    const doctor_id = pathname.split("/")[2]; 
+    const doctor_id = pathname.split("/")[2];
 
     return (
         <div className="w-20 lg:w-64 border-r border-gray-200 dark:border-gray-800 bg-foreground flex flex-col shrink-0 ">
@@ -23,6 +23,22 @@ const DoctorSideNav = () => {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                     <span className="font-medium hidden lg:block">Appointments</span>
+                </Link>
+                <Link href={`/doctor/${doctor_id}/weekly-schedule`} className={`flex items-center gap-3 p-3 rounded-lg ${pathname.includes("/patients") ? `bg-blue-600/10 text-blue-600` : `text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800`}  transition-colors`}>
+                    <svg
+                        className="w-6 h-6"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M8 7V3m8 4V3m-9 8h10m-12 9h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v11a2 2 0 002 2zM7 15h.01M11 15h.01M15 15h.01M7 18h.01M11 18h.01M15 18h.01"
+                        />
+                    </svg>
+                    <span className="font-medium hidden lg:block">Weekly Schedule</span>
                 </Link>
             </nav>
 

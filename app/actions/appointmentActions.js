@@ -205,6 +205,8 @@ export async function bookAppointmentAction(payload) {
       return { success: false, message: "Invalid time slot selected." };
     }
 
+
+
     // Compute actual calendar times for appointment
     const slotStart = new Date(slot.startTime);
     const slotEnd = new Date(slot.endTime);
@@ -224,21 +226,30 @@ export async function bookAppointmentAction(payload) {
       },
     });
 
-    if (existing) {
+    if (existing || slot.is_booked) {
       return { success: false, message: "This time slot is already booked for this doctor." };
     }
 
-    // Create the appointment
-    const appointment = await prisma.appointment.create({
-      data: {
-        date: apptDate,
-        startTime,
-        endTime,
-        patientId,
-        doctorId,
-        slotId,
-        status: "SCHEDULED",
-      },
+    // Create the appointment and mark the slot as booked in a transaction
+    const appointment = await prisma.$transaction(async (tx) => {
+      const newAppointment = await tx.appointment.create({
+        data: {
+          date: apptDate,
+          startTime,
+          endTime,
+          patientId,
+          doctorId,
+          slotId,
+          status: "SCHEDULED",
+        },
+      });
+
+      await tx.slot.update({
+        where: { id: slotId },
+        data: { is_booked: true },
+      });
+
+      return newAppointment;
     });
 
     // Revalidate receptionist appointments list
