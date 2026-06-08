@@ -1,300 +1,370 @@
-import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
+// prisma/seed.js
+
+const { PrismaClient, Role, Gender, Day, Status, Shift, BloodGroup, AppointmentStatus } = require("@prisma/client");
+const bcrypt = require("bcryptjs");
 
 const prisma = new PrismaClient();
 
-// Helper: create time slots
-function generateSlots(date, count) {
-  const slots = [];
-  let startHour = 9; // 9 AM start
+// =========================
+// HELPERS
+// =========================
 
-  for (let i = 0; i < count; i++) {
-    const start = new Date(date);
-    start.setHours(startHour + i, 0, 0);
-
-    const end = new Date(date);
-    end.setHours(startHour + i + 1, 0, 0);
-
-    slots.push({
-      startTime: start,
-      endTime: end,
-    });
-  }
-
-  return slots;
+function randomItem(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
 }
 
-async function main() {
-  /*
-    ===============================
-    SUPER ADMIN
-    ===============================
-  */
-  const superAdminEmail = "superadmin@example.com";
+function randomBool() {
+  return Math.random() > 0.5;
+}
 
-  const existingSuperAdmin = await prisma.user.findUnique({
-    where: { email: superAdminEmail },
+function randomDate(start, end) {
+  return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+}
+
+function createSlotTime(date, hourStart, hourEnd) {
+  const start = new Date(date);
+  start.setHours(hourStart, 0, 0, 0);
+
+  const end = new Date(date);
+  end.setHours(hourEnd, 0, 0, 0);
+
+  return { start, end };
+}
+
+// =========================
+// CONSTANTS
+// =========================
+
+const specializations = [
+  "Cardiologist",
+  "Neurologist",
+  "Dermatologist",
+  "Orthopedic",
+  "Pediatrician",
+  "Psychiatrist",
+  "Dentist",
+  "ENT Specialist",
+  "General Physician",
+  "Gynecologist",
+];
+
+const qualifications = [
+  "MBBS",
+  "MBBS, FCPS",
+  "MBBS, MD",
+  "MBBS, MS",
+  "MBBS, BCS",
+];
+
+const doctorNames = [
+  "Dr. John Smith",
+  "Dr. Sarah Ahmed",
+  "Dr. Michael Lee",
+  "Dr. Emily Brown",
+  "Dr. David Wilson",
+  "Dr. Olivia Taylor",
+  "Dr. Daniel Garcia",
+  "Dr. Sophia Martinez",
+  "Dr. James Anderson",
+  "Dr. Mia Thomas",
+  "Dr. Ethan White",
+  "Dr. Charlotte Harris",
+  "Dr. Benjamin Clark",
+  "Dr. Amelia Lewis",
+  "Dr. Noah Walker",
+  "Dr. Isabella Hall",
+  "Dr. William Allen",
+  "Dr. Ava Young",
+  "Dr. Lucas King",
+  "Dr. Grace Scott",
+];
+
+const receptionistNames = [
+  "Alice",
+  "Sophia",
+  "Emma",
+  "Liam",
+  "Noah",
+  "Mason",
+  "Olivia",
+  "Ava",
+  "Ethan",
+  "James",
+];
+
+const patientNames = [
+  "Rahim",
+  "Karim",
+  "Sakib",
+  "Tamim",
+  "Ayesha",
+  "Fatema",
+  "Nusrat",
+  "Mim",
+  "Hasan",
+  "Jannat",
+  "Rafi",
+  "Tanvir",
+  "Nabila",
+  "Arif",
+  "Shuvo",
+  "Farhan",
+  "Anika",
+  "Mehedi",
+  "Sadia",
+  "Rifat",
+];
+
+const slotTemplates = [
+  { start: 6, end: 8 },
+  { start: 8, end: 10 },
+  { start: 10, end: 12 },
+  { start: 13, end: 15 },
+  { start: 15, end: 17 },
+];
+
+const workingDays = [
+  Day.Monday,
+  Day.Tuesday,
+  Day.Wednesday,
+  Day.Thursday,
+  Day.Friday,
+  Day.Saturday,
+];
+
+const bloodGroups = Object.values(BloodGroup);
+
+// =========================
+// MAIN SEED
+// =========================
+
+async function main() {
+  console.log("🌱 Seeding database...");
+
+  // =========================
+  // CLEAN DATABASE
+  // =========================
+
+  await prisma.appointment.deleteMany();
+  await prisma.slot.deleteMany();
+  await prisma.availability.deleteMany();
+  await prisma.doctor.deleteMany();
+  await prisma.receptionist.deleteMany();
+  await prisma.patient.deleteMany();
+  await prisma.user.deleteMany();
+
+  // =========================
+  // PASSWORDS
+  // =========================
+
+  const adminPassword = await bcrypt.hash("Admin@123", 10);
+  const doctorPassword = await bcrypt.hash("Doctor@123", 10);
+  const receptionPassword = await bcrypt.hash("Reception@123", 10);
+
+  // =========================
+  // ADMIN
+  // =========================
+
+  await prisma.user.create({
+    data: {
+      email: "admin@hms.com",
+      password: adminPassword,
+      phone: "01700000000",
+      role: Role.ADMIN,
+    },
   });
 
-  if (!existingSuperAdmin) {
-    const hashedPassword = await bcrypt.hash("Admin@123", 12);
+  // =========================
+  // DOCTORS + AVAILABILITY + SLOTS
+  // =========================
 
-    await prisma.user.create({
+  const createdDoctors = [];
+
+  for (let i = 0; i < 20; i++) {
+    const user = await prisma.user.create({
       data: {
-        email: superAdminEmail,
-        password: hashedPassword,
-        role: "SUPER_ADMIN",
-        phone: "01700000000",
+        email: `doctor${i + 1}@hms.com`,
+        password: doctorPassword,
+        phone: `018100000${String(i).padStart(2, "0")}`,
+        role: Role.DOCTOR,
       },
     });
-
-    console.log("🚀 Super Admin created");
-  }
-
-  /*
-    ===============================
-    DOCTORS
-    ===============================
-  */
-  const doctors = [
-    {
-      name: "Dr. John Smith",
-      email: "doc1@example.com",
-      phone: "01711111111",
-      doctor_id: "DOC-001",
-      specialization: "Cardiology",
-      qualification: "MBBS, FCPS",
-      gender: "MALE",
-    },
-    {
-      name: "Dr. Sarah Ahmed",
-      email: "doc2@example.com",
-      phone: "01722222222",
-      doctor_id: "DOC-002",
-      specialization: "Neurology",
-      qualification: "MBBS, MD",
-      gender: "FEMALE",
-    },
-    {
-      name: "Dr. David Lee",
-      email: "doc3@example.com",
-      phone: "01733333333",
-      doctor_id: "DOC-003",
-      specialization: "Orthopedics",
-      qualification: "MBBS, MS",
-      gender: "MALE",
-    },
-    {
-      name: "Dr. Emily Brown",
-      email: "doc4@example.com",
-      phone: "01744444444",
-      doctor_id: "DOC-004",
-      specialization: "Dermatology",
-      qualification: "MBBS, DDV",
-      gender: "FEMALE",
-    },
-    {
-      name: "Dr. Michael Khan",
-      email: "doc5@example.com",
-      phone: "01755555555",
-      doctor_id: "DOC-005",
-      specialization: "Pediatrics",
-      qualification: "MBBS, DCH",
-      gender: "MALE",
-    },
-  ];
-
-  const days = [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-    "Sunday",
-  ];
-
-  for (const doc of doctors) {
-    const existing = await prisma.user.findUnique({
-      where: { email: doc.email },
-    });
-
-    if (existing) {
-      console.log(`✅ ${doc.name} exists`);
-      continue;
-    }
-
-    const hashedPassword = await bcrypt.hash("Doctor@123", 12);
 
     const doctor = await prisma.doctor.create({
       data: {
-        doctor_id: doc.doctor_id,
-        name: doc.name,
-        specialization: doc.specialization,
-        qualification: doc.qualification,
-        bio: `${doc.specialization} specialist`,
-        gender: doc.gender,
-        consultationFee: 500,
-
-        user: {
-          create: {
-            email: doc.email,
-            phone: doc.phone,
-            password: hashedPassword,
-            role: "DOCTOR",
-          },
-        },
+        doctor_id: `DOC-${String(i + 1).padStart(3, "0")}`,
+        name: doctorNames[i],
+        specialization: randomItem(specializations),
+        qualification: randomItem(qualifications),
+        room: 101 + i,
+        bio: `Experienced ${randomItem(specializations)} doctor.`,
+        gender: randomBool() ? Gender.MALE : Gender.FEMALE,
+        consultationFee: Math.floor(Math.random() * 1000) + 500,
+        isActive: true,
+        userId: user.id,
       },
     });
 
-    // Availability + Slots
-    for (const day of days) {
-      let status = "Available";
-      let slotCount = 5;
+    createdDoctors.push(doctor);
 
-      if (day === "Friday") {
-        status = "Off_duty";
-        slotCount = 0;
-      } else if (day === "Thursday") {
-        slotCount = 3; // half day
-      }
-
+    // Create Availabilities + Slots
+    for (const day of workingDays) {
       const availability = await prisma.availability.create({
         data: {
           day,
-          status,
+          status: randomItem([
+            Status.Available,
+            Status.Emergency_Only,
+            Status.Off_duty,
+          ]),
           doctorId: doctor.id,
         },
       });
 
-      if (slotCount > 0) {
+      // Create 5 slots
+      for (const slot of slotTemplates) {
         const today = new Date();
 
-        const slots = generateSlots(today, slotCount);
+        const { start, end } = createSlotTime(
+          today,
+          slot.start,
+          slot.end
+        );
 
-        for (const slot of slots) {
-          await prisma.slot.create({
-            data: {
-              startTime: slot.startTime,
-              endTime: slot.endTime,
-              availabilityId: availability.id,
-            },
-          });
-        }
+        await prisma.slot.create({
+          data: {
+            startTime: start,
+            endTime: end,
+            availabilityId: availability.id,
+          },
+        });
       }
     }
-
-    console.log(`🚀 ${doc.name} created with schedule`);
   }
 
-  /*
-    ===============================
-    RECEPTIONISTS
-    ===============================
-  */
-  const receptionists = [
-    {
-      name: "Alice Rahman",
-      receptionists_id: "REC-001",
-      email: "reception1@example.com",
-      phone: "01811111111",
-      gender: "FEMALE",
-      shift: "Morning",
-    },
-    {
-      name: "Bob Hasan",
-      receptionists_id: "REC-002",
-      email: "reception2@example.com",
-      phone: "01822222222",
-      gender: "MALE",
-      shift: "Evening",
-    },
-  ];
+  // =========================
+  // RECEPTIONISTS
+  // =========================
 
-  for (const rec of receptionists) {
-    const existing = await prisma.user.findUnique({
-      where: { email: rec.email },
+  for (let i = 0; i < 10; i++) {
+    const user = await prisma.user.create({
+      data: {
+        email: `reception${i + 1}@hms.com`,
+        password: receptionPassword,
+        phone: `019200000${String(i).padStart(2, "0")}`,
+        role: Role.RECEPTIONIST,
+      },
     });
-
-    if (existing) continue;
-
-    const hashedPassword = await bcrypt.hash("Reception@123", 12);
 
     await prisma.receptionist.create({
       data: {
-        name: rec.name,
-        receptionists_id: rec.receptionists_id,
-        gender: rec.gender,
-        shift: rec.shift,
+        name: receptionistNames[i],
+        receptionists_id: `REC-${String(i + 1).padStart(3, "0")}`,
+        gender: randomBool() ? Gender.MALE : Gender.FEMALE,
+        shift: randomItem([
+          Shift.Morning,
+          Shift.Evening,
+          Shift.Night,
+        ]),
+        isActive: true,
+        userId: user.id,
+      },
+    });
+  }
 
-        user: {
-          create: {
-            email: rec.email,
-            phone: rec.phone,
-            password: hashedPassword,
-            role: "RECEPTIONIST",
-          },
+  // =========================
+  // PATIENTS
+  // =========================
+
+  const createdPatients = [];
+
+  for (let i = 0; i < 20; i++) {
+    const patient = await prisma.patient.create({
+      data: {
+        patientId: `PAT-${String(i + 1).padStart(3, "0")}`,
+        fullname: patientNames[i],
+        age: Math.floor(Math.random() * 60) + 18,
+        gender: randomBool() ? Gender.MALE : Gender.FEMALE,
+        phone: `016300000${String(i).padStart(2, "0")}`,
+        email: `patient${i + 1}@mail.com`,
+        address: "Dhaka, Bangladesh",
+        bloodGroup: randomItem(bloodGroups),
+        allergies: randomBool() ? "Dust Allergy" : null,
+        emergencyName: "Emergency Contact",
+        emergencyPhone: "01799999999",
+        relationship: "Brother",
+      },
+    });
+
+    createdPatients.push(patient);
+  }
+
+  // =========================
+  // APPOINTMENTS
+  // =========================
+
+  for (let i = 0; i < 10; i++) {
+    const doctor = randomItem(createdDoctors);
+    const patient = randomItem(createdPatients);
+
+    const availableSlots = await prisma.slot.findMany({
+      where: {
+        is_booked: false,
+        availability: {
+          doctorId: doctor.id,
+          status: Status.Available,
         },
       },
-    });
-
-    console.log(`🚀 ${rec.name} created`);
-  }
-
-  /*
-    ===============================
-    PATIENTS
-    ===============================
-  */
-  const patients = [
-    {
-      fullname: "Rahim Uddin",
-      phone: "01911111111",
-      gender: "MALE",
-    },
-    {
-      fullname: "Karim Ahmed",
-      phone: "01922222222",
-      gender: "MALE",
-    },
-    {
-      fullname: "Ayesha Khan",
-      phone: "01933333333",
-      gender: "FEMALE",
-    },
-    {
-      fullname: "Nusrat Jahan",
-      phone: "01944444444",
-      gender: "FEMALE",
-    },
-    {
-      fullname: "Tanvir Hasan",
-      phone: "01955555555",
-      gender: "MALE",
-    },
-  ];
-
-  let counter = 1;
-
-  for (const p of patients) {
-    await prisma.patient.create({
-      data: {
-        patientId: `HMS-2026-${String(counter).padStart(6, "0")}`,
-        fullname: p.fullname,
-        gender: p.gender,
-        phone: p.phone,
+      include: {
+        availability: true,
       },
     });
 
-    counter++;
+    if (availableSlots.length === 0) continue;
+
+    const slot = randomItem(availableSlots);
+
+    const appointmentDate = randomDate(
+      new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
+      new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)  // 7 days ahead
+    );
+
+    const now = new Date();
+
+    const status =
+      appointmentDate < now
+        ? AppointmentStatus.CHECKED_IN
+        : AppointmentStatus.SCHEDULED;
+
+    await prisma.appointment.create({
+      data: {
+        date: appointmentDate,
+        startTime: slot.startTime,
+        endTime: slot.endTime,
+        status,
+        patientId: patient.id,
+        doctorId: doctor.id,
+        slotId: slot.id,
+      },
+    });
+
+    // Mark slot booked
+    await prisma.slot.update({
+      where: {
+        id: slot.id,
+      },
+      data: {
+        is_booked: true,
+      },
+    });
   }
 
-  console.log("🚀 Patients created");
+  console.log("✅ Database seeded successfully!");
 }
 
 main()
   .catch((e) => {
-    console.error("❌ Error:", e);
+    console.error(e);
     process.exit(1);
   })
   .finally(async () => {
