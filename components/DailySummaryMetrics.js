@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Pusher from "pusher-js";
 import Image from "next/image";
+import Link from "next/link";
 
 import AppointmentCalender from "@/components/AppointmentCalender";
 import AppointmentButton from "@/components/AppointmentButton";
@@ -327,43 +328,43 @@ const ReceptionDailySummaryMetrics = ({ receptionist, receptionistId, pusherConf
                         {appointment.id.slice(0, 8)}
                       </div>
                     </div>
-
-                    <div className="flex items-center gap-3 min-w-0 flex-1">
-                      <div className="relative w-10 h-10 rounded-full overflow-hidden shrink-0 bg-blue-100">
-                        {appointment.patient.profileImage ? (
-                          <Image
-                            src={appointment.patient.profileImage}
-                            alt={appointment.patient.name}
-                            fill
-                            sizes="40px"
-                            className="object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-blue-600 flex items-center justify-center text-white font-bold text-sm">
-                            {appointment.patient.initials}
-                          </div>
-                        )}
-                      </div>
-                      <div className="min-w-0">
-                        <div className="flex flex-wrap items-center gap-2 min-w-0">
-                          <div className="text-sm font-bold text-gray-900 dark:text-gray-50 truncate">
-                            {appointment.patient.name}
-                          </div>
-                          <span
-                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${getStatusBadgeClasses(
-                              appointment.status
-                            )}`}
-                          >
-                            {STATUS_LABELS[appointment.status]}
-                          </span>
+                    <Link href={`/receptionist/${receptionistId}/patients/profile?id=${appointment.patient.id}`}>
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <div className="relative w-10 h-10 rounded-full overflow-hidden shrink-0 bg-blue-100">
+                          {appointment.patient.profileImage ? (
+                            <Image
+                              src={appointment.patient.profileImage}
+                              alt={appointment.patient.name}
+                              fill
+                              sizes="40px"
+                              className="object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-blue-600 flex items-center justify-center text-white font-bold text-sm">
+                              {appointment.patient.initials}
+                            </div>
+                          )}
                         </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                          {appointment.doctor.specialization} - Dr. {appointment.doctor.name} - Room{" "}
-                          {appointment.doctor.room || "TBD"} - {appointment.patient.phone}
+                        <div className="min-w-0">
+                          <div className="flex flex-wrap items-center gap-2 min-w-0">
+                            <div className="text-sm font-bold text-gray-900 dark:text-gray-50 truncate">
+                              {appointment.patient.name}
+                            </div>
+                            <span
+                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${getStatusBadgeClasses(
+                                appointment.status
+                              )}`}
+                            >
+                              {STATUS_LABELS[appointment.status]}
+                            </span>
+                          </div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                            {appointment.doctor.specialization} - {appointment.doctor.name} - Room{" "}
+                            {appointment.doctor.room || "TBD"} - {appointment.patient.phone}
+                          </div>
                         </div>
                       </div>
-                    </div>
-
+                    </Link>
                     <div className="flex flex-wrap items-center justify-start xl:justify-end gap-2 xl:w-[430px]">
                       {STATUS_ACTIONS.map((status) => (
                         <AppointmentButton
