@@ -322,7 +322,7 @@ const DoctorDailySummaryMetrics = ({ doctor, doctorId, pusherConfig }) => {
                   key={appointment.id}
                   className="px-5 sm:px-6 py-4 hover:bg-black/[0.02] dark:hover:bg-white/[0.03] transition-colors"
                 >
-                  <div className="flex flex-col xl:flex-row xl:items-center gap-3 xl:gap-4">
+                  <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3 xl:gap-4">
                     <div className="flex items-center gap-3 xl:w-56">
                       <div className="shrink-0 px-2.5 py-1 rounded-xl bg-primary/10 text-primary border border-primary/15 text-xs font-bold tracking-wide">
                         {appointment.time}
@@ -367,7 +367,7 @@ const DoctorDailySummaryMetrics = ({ doctor, doctorId, pusherConfig }) => {
                       </div>
                     </div>
 
-                    <div className="flex flex-wrap items-center justify-start xl:justify-end gap-2 xl:w-[260px]">
+                    <div className="flex flex-wrap items-center justify-end gap-2 xl:w-[260px]">
                       {STATUS_ACTIONS.map((status) => (
                         <AppointmentButton
                           key={status}

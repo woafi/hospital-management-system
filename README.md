@@ -8,20 +8,20 @@
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
 ![Prisma](https://img.shields.io/badge/Prisma-3982CE?style=for-the-badge&logo=Prisma&logoColor=white)
-![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
+![Render](https://img.shields.io/badge/Render-000000?style=for-the-badge&logo=render&logoColor=white)
 ![Supabase](https://img.shields.io/badge/Supabase-181818?style=for-the-badge&logo=supabase&logoColor=white)
 
 </div>
 
 <div align="center">
 
-### 🌐 [Live Demo](https://hospital-management-system-ruby-eight.vercel.app/) | 📦 [GitHub Repository](https://github.com/woafi/hospital-management-system)
+### 🌐 [Live Demo](https://hospital-management-system.onrender.com) | 📦 [GitHub Repository](https://github.com/woafi/hospital-management-system)
 
 </div>
 
 A comprehensive, production-ready hospital management system built with Next.js 16, featuring server-side rendering for optimal performance and demonstrating modern full-stack development practices. The application provides complete management of hospital operations including appointments, patient records, doctor management, and multi-role dashboard systems.
 
-> ⚠️ **Deployment Note**: This project is deployed on **Vercel Free Tier** with **PostgreSQL database on Supabase Free Tier**. The majority of pages use **Server-Side Rendering (SSR)** to demonstrate professional server-side coding patterns and best practices. This architectural choice may result in slightly slower initial page loads during peak usage times. Image uploads are handled through **Cloudinary** for efficient media management. This is intentional to showcase real-world performance considerations in full-stack development in case of **Server-Side Rendering (SSR)**
+> ⚠️ **Deployment Note**: This project is deployed on **Render Free Tier** with **PostgreSQL database on Supabase Free Tier**. The majority of pages use **Server-Side Rendering (SSR)** to demonstrate professional server-side coding patterns and best practices. This architectural choice may result in slightly slower initial page loads during peak usage times. Image uploads are handled through **Cloudinary** for efficient media management. This is intentional to showcase real-world performance considerations in full-stack development in case of **Server-Side Rendering (SSR)**
 
 ## ✨ Key Features
 
@@ -91,7 +91,7 @@ A comprehensive, production-ready hospital management system built with Next.js 
 ### Deployment & Hosting
 | Service | Platform |
 |---------|----------|
-| **Frontend & Backend** | Vercel (Free Tier) |
+| **Frontend & Backend** | Render (Free Tier) |
 | **Database** | Supabase PostgreSQL (Free Tier) |
 | **Real-time** | Pusher (Free Plan) |
 | **Image Storage** | Cloudinary |
@@ -159,7 +159,7 @@ CLOUDINARY_API_SECRET="your-cloudinary-api-secret"
 ```env
 DATABASE_URL="postgresql://postgres:[PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres"
 JWT_SECRET="your-super-secret-jwt-key-change-this-in-production"
-NEXT_PUBLIC_API_URL="https://hospital-management-system-ruby-eight.vercel.app"
+NEXT_PUBLIC_API_URL="https://hospital-management-system.onrender.com"
 PUSHER_APP_ID="your-pusher-app-id"
 NEXT_PUBLIC_PUSHER_KEY="your-pusher-key"
 NEXT_PUBLIC_PUSHER_CLUSTER="mt1"
@@ -385,39 +385,39 @@ hospital-management-system/
 
 ## 🚀 Deployment
 
-This application is deployed on **Vercel** with a **free tier** hosting plan:
+This application is deployed on **Render** with a **free tier** hosting plan:
 
 ### Live Demo
-🌐 **[https://hospital-management-system-ruby-eight.vercel.app](https://hospital-management-system-ruby-eight.vercel.app/)**
+🌐 **[https://hospital-management-system.onrender.com](https://hospital-management-system.onrender.com/)**
 
 ### Deployment Architecture
 
-- **Frontend & Backend**: Deployed on [Vercel](https://vercel.com/) as a Next.js application
+- **Frontend & Backend**: Deployed on [Render](https://render.com/) as a Next.js application
 - **Server-Side Rendering**: Most pages use SSR for optimal performance and SEO
 - **Database**: PostgreSQL hosted on [Supabase](https://supabase.com/) (Free Tier)
 - **Real-time Updates**: [Pusher](https://pusher.com/) for live notifications
 
 ### Performance Considerations
 
-⚠️ **Note on Free Tier Performance**: The application uses **server-side rendering extensively** to demonstrate modern server-side development patterns and best practices. This architectural choice, combined with Vercel's free tier, may result in slightly slower initial page loads during peak usage. This is intentional to showcase:
+⚠️ **Note on Free Tier Performance**: The application uses **server-side rendering extensively** to demonstrate modern server-side development patterns and best practices. This architectural choice, combined with Render's free tier, may result in slightly slower initial page loads during peak usage. This is intentional to showcase:
 
 - Server-side data fetching patterns
 - Server Actions for form submissions
 - Optimized rendering strategies
 - Real-world performance trade-offs
 
-For production deployment with consistent performance, consider upgrading to Vercel Pro or using a dedicated database instance.
+For production deployment with consistent performance, consider upgrading to Render's paid plan or using a dedicated database instance.
 
 ### Deployment Setup
 
 1. **Push to GitHub**: Ensure your code is pushed to a GitHub repository
-2. **Connect to Vercel**: 
-   - Go to [Vercel Dashboard](https://vercel.com/dashboard)
-   - Click "Add New" → "Project"
+2. **Connect to Render**: 
+   - Go to [Render Dashboard](https://dashboard.render.com/)
+   - Click "New" → "Web Service"
    - Select your GitHub repository
 3. **Set Environment Variables**:
-   - Add `DATABASE_URL`, `JWT_SECRET`, and other required variables in Vercel project settings
-4. **Deploy**: Click "Deploy" - Vercel will automatically build and deploy your application
+   - Add `DATABASE_URL`, `JWT_SECRET`, and other required variables in Render service settings
+4. **Deploy**: Click "Create Web Service" - Render will automatically build and deploy your application
 5. **Database**: Setup Supabase PostgreSQL connection string in environment variables
 
 ## 📊 System Highlights
@@ -478,7 +478,7 @@ DATABASE_URL="postgresql://postgres:[PASSWORD]@db.[PROJECT-REF].supabase.co:5432
 
 # Same as development but with production values
 JWT_SECRET="your-production-jwt-secret"
-NEXT_PUBLIC_API_URL="https://hospital-management-system-ruby-eight.vercel.app"
+NEXT_PUBLIC_API_URL="https://hospital-management-system.onrender.com"
 
 # Pusher production configuration
 PUSHER_APP_ID="your-production-app-id"
@@ -521,6 +521,6 @@ Built as a professional full-stack healthcare management application demonstrati
 
 ⭐ Star this repo if you find it helpful!
 
-**[🌐 Live Demo](https://hospital-management-system-ruby-eight.vercel.app/) | [📚 GitHub](https://github.com/woafi/hospital-management-system)**
+**[🌐 Live Demo](https://hospital-management-system.onrender.com) | [📚 GitHub](https://github.com/woafi/hospital-management-system)**
 
 </div>

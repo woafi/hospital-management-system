@@ -319,7 +319,7 @@ const ReceptionDailySummaryMetrics = ({ receptionist, receptionistId, pusherConf
                   key={appointment.id}
                   className="px-5 sm:px-6 py-4 hover:bg-black/[0.02] dark:hover:bg-white/[0.03] transition-colors"
                 >
-                  <div className="flex flex-col xl:flex-row xl:items-center gap-3 xl:gap-4">
+                  <div className="flex flex-col xl:flex-row xl:items-center gap-3 xl:gap-4 justify-between">
                     <div className="flex items-center gap-3 xl:w-56">
                       <div className="shrink-0 px-2.5 py-1 rounded-xl bg-primary/10 text-primary border border-primary/15 text-xs font-bold tracking-wide">
                         {appointment.time}
