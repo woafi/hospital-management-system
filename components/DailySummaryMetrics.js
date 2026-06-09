@@ -365,7 +365,7 @@ const ReceptionDailySummaryMetrics = ({ receptionist, receptionistId, pusherConf
                         </div>
                       </div>
                     </Link>
-                    <div className="flex flex-wrap items-center justify-start xl:justify-end gap-2 xl:w-[430px]">
+                    <div className="flex flex-wrap items-center justify-end gap-2 xl:w-[430px]">
                       {STATUS_ACTIONS.map((status) => (
                         <AppointmentButton
                           key={status}
